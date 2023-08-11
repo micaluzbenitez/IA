@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Soldier : MonoBehaviour
+public class Soldier : MonoBehaviour, IDamageable
 {
     // ----------------------- States & flags ------------------------
 
@@ -30,6 +30,12 @@ public class Soldier : MonoBehaviour
     }
 
     // -------------------------- Variables --------------------------
+
+    [Header("HP")]
+    [SerializeField] private float hp;
+
+    [Header("Damage")]
+    [SerializeField] private int damage;
 
     [Header("Target")]
     [SerializeField] private GameObject target;
@@ -59,7 +65,7 @@ public class Soldier : MonoBehaviour
     private Vector3 initialPatrolPosition;
     private float time = 0;
 
-    // --------------------------- Methods ---------------------------
+    // ------------------------ Unity methods -------------------------
 
     private void Start()
     {
@@ -196,5 +202,15 @@ public class Soldier : MonoBehaviour
                 fsm.SetFlag((int)Flags.OnAlertTarget);
             }
         });
+    }
+
+    // ------------------------ Others methods ------------------------
+
+    public void TakeDamage(float damage)
+    {
+        if (hp <= 0) return;
+
+        hp -= damage;
+        if (hp < 0) hp = 0;
     }
 }
