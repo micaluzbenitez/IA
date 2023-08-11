@@ -5,16 +5,6 @@ using UnityEngine;
 
 public class Agent : MonoBehaviour
 { 
-    /*
-     * Ir a un target
-     * Patrol
-     * Idle
-     * Atack
-     * Morir
-     * recivir daño
-     * retirarse
-     * chase
-     */
     enum States
     {
         Patrol,

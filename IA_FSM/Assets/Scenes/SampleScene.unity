@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 419412389}
   - component: {fileID: 419412388}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -213,7 +213,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 419412387}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.39, y: 0, z: 0}
+  m_LocalPosition: {x: 15, y: 0, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -410,27 +410,14 @@ GameObject:
   - component: {fileID: 1444517329}
   - component: {fileID: 1444517328}
   - component: {fileID: 1444517327}
-  - component: {fileID: 1444517326}
+  - component: {fileID: 1444517331}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Soldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1444517326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444517325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e36d64fa5dba743488bcdeed396d5d62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 419412387}
 --- !u!65 &1444517327
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -509,3 +496,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1444517331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444517325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf638c1448983841a65519def7dd970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 419412387}
+  targetDetectionDistance: 20
+  targetChaseDistance: 10
+  targetAttackDistance: 0.1
+  idleDuration: 5
+  patrolDuration: 10
+  patrolSpeed: 5
+  patrolExtends: 10
+  goToTargetSpeed: 10
+  chaseSpeed: 15
+  goAwaySpeed: 5
