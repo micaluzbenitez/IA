@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class FSM
 {
-    public int currentStateIndex = 0;
     Dictionary<int, State> behaviours;
+    public int currentStateIndex = 0;
     private int[,] relations;
 
     public FSM(int states, int flags)
@@ -49,15 +49,15 @@ public class FSM
     {
         if (behaviours.ContainsKey(state))
         {
-            behaviours[state].behaviours.Add(behaviour);
+            behaviours[state].OnBehaviours.Add(behaviour);
         }
         else
         {
             State newState = new State();
-            newState.behaviours = new List<Action>();
+            newState.OnBehaviours = new List<Action>();
             newState.OnEnterBehaviours = new List<Action>();
             newState.OnExitBehaviours = new List<Action>();
-            newState.behaviours.Add(behaviour);
+            newState.OnBehaviours.Add(behaviour);
             behaviours.Add(state, newState);
         }
     }
@@ -71,7 +71,7 @@ public class FSM
         else
         {
             State newState = new State();
-            newState.behaviours = new List<Action>();
+            newState.OnBehaviours = new List<Action>();
             newState.OnEnterBehaviours = new List<Action>();
             newState.OnExitBehaviours = new List<Action>();
             newState.OnEnterBehaviours.Add(behaviour);
@@ -88,7 +88,7 @@ public class FSM
         else
         {
             State newState = new State();
-            newState.behaviours = new List<Action>();
+            newState.OnBehaviours = new List<Action>();
             newState.OnEnterBehaviours = new List<Action>();
             newState.OnExitBehaviours = new List<Action>();
             newState.OnExitBehaviours.Add(behaviour);
@@ -100,7 +100,7 @@ public class FSM
     {
         if (behaviours.ContainsKey(currentStateIndex))
         {
-            foreach (Action behaviour in behaviours[currentStateIndex].behaviours)
+            foreach (Action behaviour in behaviours[currentStateIndex].OnBehaviours)
             {
                 behaviour?.Invoke();
             }
