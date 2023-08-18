@@ -21,7 +21,7 @@ namespace Part2.AI
             {
                 transform.position += (objetiveTransform.position - transform.position).normalized * speed * Time.deltaTime;
 
-                if (Vector3.Distance(transform.position, objetiveTransform.position) < 0.1f)
+                if (Vector3.Distance(transform.position, objetiveTransform.position) < 1f)
                 {
                     time += Time.deltaTime;
 
