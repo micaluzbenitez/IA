@@ -5,22 +5,30 @@ using Part2.AI.Soldier;
 
 namespace Part2.AI
 {
-    public class IdleState : State
+    public class SaveMaterialsState : State
     {
+        private float time;
+
         public override List<Action> GetBehaviours(params object[] parameters)
         {
+            Transform transform = parameters[0] as Transform;
+            Transform objetiveTransform = parameters[1] as Transform;
+            float speed = Convert.ToSingle(parameters[2]);
+            float duration = Convert.ToSingle(parameters[3]);
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (Input.GetMouseButtonDown(0))
+                transform.position += (objetiveTransform.position - transform.position).normalized * speed * Time.deltaTime;
+
+                if (Vector3.Distance(transform.position, objetiveTransform.position) < 0.1f)
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                    time += Time.deltaTime;
+
+                    if (time > duration)
                     {
-                        if (raycastHit.transform.gameObject.tag == "Tree")
-                        {
-                            Transition((int)Flags.OnGoWork);
-                        }
+                        time = 0;
+                        Transition((int)Flags.OnFinishSaveMaterials);
                     }
                 }
             });

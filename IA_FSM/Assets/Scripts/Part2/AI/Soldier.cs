@@ -6,39 +6,45 @@ namespace Part2.AI.Soldier
     internal enum States
     {
         Idle,
-        Patrol,
+        Cut,
+        SaveMaterials
     }
 
     internal enum Flags
     {
-        OnGoIdle,
-        OnGoPatrol,
+        OnGoWork,
+        OnSaveMaterials,
+        OnFinishSaveMaterials,
     }
 
     public class Soldier : MonoBehaviour
     {
-        [Header("Idle state")]
-        [SerializeField] private float idleDuration;
+        [SerializeField] private float speed;
+        
+        [Header("Cut state")]
+        [SerializeField] private float cutDuration;
+        [SerializeField] private Transform objetiveTransform;
 
-        [Header("Patrol state")]
-        [SerializeField] private float patrolDuration;
-        [SerializeField] private float patrolSpeed;
-        [SerializeField] private float patrolExtends;
+        [Header("Save Materials state")]
+        [SerializeField] private float saveMaterialsDuration;
+        [SerializeField] private Transform materialsBoxTransform;
 
         private FSM fsm;
-        private Vector3 initialPatrolPosition;
 
         private void Start()
         {
             fsm = new FSM(Enum.GetValues(typeof(States)).Length, Enum.GetValues(typeof(Flags)).Length);
 
-            fsm.SetRelation((int)States.Idle, (int)Flags.OnGoPatrol, (int)States.Patrol);
-            fsm.SetRelation((int)States.Patrol, (int)Flags.OnGoIdle, (int)States.Idle);
+            fsm.SetRelation((int)States.Idle, (int)Flags.OnGoWork, (int)States.Cut);
+            fsm.SetRelation((int)States.Idle, (int)Flags.OnGoWork, (int)States.Cut);
+            fsm.SetRelation((int)States.Cut, (int)Flags.OnSaveMaterials, (int)States.SaveMaterials);
+            fsm.SetRelation((int)States.SaveMaterials, (int)Flags.OnFinishSaveMaterials, (int)States.Idle);
 
-            fsm.AddState<IdleState>((int)States.Idle,
-                () => (new object[2] { gameObject.transform, idleDuration }));
-            fsm.AddState<PatrolState>((int)States.Patrol,
-                () => (new object[4] { gameObject.transform, patrolDuration, patrolSpeed, patrolExtends }));
+            fsm.AddState<IdleState>((int)States.Idle);
+            fsm.AddState<CutState>((int)States.Cut,
+                () => (new object[4] { gameObject.transform, objetiveTransform, speed, cutDuration }));
+            fsm.AddState<SaveMaterialsState>((int)States.SaveMaterials,
+                () => (new object[4] { gameObject.transform, materialsBoxTransform, speed, saveMaterialsDuration }));
 
             fsm.SetCurrentStateForced((int)States.Idle);
         }

@@ -5,28 +5,31 @@ using Part2.AI.Soldier;
 
 namespace Part2.AI
 {
-    public class PatrolState : State
+    public class CutState : State
     {
-        private float time = 0;
+        private float time;
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
             Transform transform = parameters[0] as Transform;
-            float duration = Convert.ToSingle(parameters[1]);
+            Transform objetiveTransform = parameters[1] as Transform;
             float speed = Convert.ToSingle(parameters[2]);
-            float extends = Convert.ToSingle(parameters[3]);
+            float duration = Convert.ToSingle(parameters[3]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                transform.position += Vector3.right * speed * Time.deltaTime;
-                //if (Mathf.Abs(transform.position.x - (initialPatrolPosition.x + patrolExtends)) > patrolExtends) speed *= -1;
-                time += Time.deltaTime;
+                transform.position += (objetiveTransform.position - transform.position).normalized * speed * Time.deltaTime;
 
-                if (time > duration)
+                if (Vector3.Distance(transform.position, objetiveTransform.position) < 0.1f)
                 {
-                    time = 0;
-                    Transition((int)Flags.OnGoIdle);
+                    time += Time.deltaTime;
+
+                    if (time > duration)
+                    {
+                        time = 0;
+                        Transition((int)Flags.OnSaveMaterials);
+                    }
                 }
             });
 
