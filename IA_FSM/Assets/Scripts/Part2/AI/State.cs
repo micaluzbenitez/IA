@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace Part2.AI
 {
-    public class State
+    public abstract class State
     {
-        public List<Action> OnEnterBehaviours;
-        public List<Action> OnBehaviours;
-        public List<Action> OnExitBehaviours;
+        public Action<int> SetFlag;
+        public abstract List<Action> GetOnEnterBehaviours(params object[] parameters);
+        public abstract List<Action> GetBehaviours(params object[] parameters);
+        public abstract List<Action> GetExitBehaviours(params object[] parameters);
+        public abstract void Transition(int flag);
     }
 }

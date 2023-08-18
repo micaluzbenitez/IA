@@ -5,7 +5,10 @@ namespace Part2.AI
 {
     public class FSM
     {
-        Dictionary<int, State> behaviours;
+        Dictionary<int, State> states;
+        Dictionary<int, Func<object[]>> statesParameters;
+        Dictionary<int, Func<object[]>> statesOnEnterParameters;
+        Dictionary<int, Func<object[]>> statesOnExitParameters;
         public int currentStateIndex = 0;
         private int[,] relations;
 
@@ -20,7 +23,10 @@ namespace Part2.AI
                     relations[i, j] = -1;
                 }
             }
-            behaviours = new Dictionary<int, State>();
+            this.states = new Dictionary<int, State>();
+            this.statesParameters = new Dictionary<int, Func<object[]>>();
+            this.statesOnEnterParameters = new Dictionary<int, Func<object[]>>();
+            this.statesOnExitParameters = new Dictionary<int, Func<object[]>>();
         }
 
         public void SetCurrentStateForced(int state)
@@ -37,72 +43,35 @@ namespace Part2.AI
         {
             if (relations[currentStateIndex, flag] != -1)
             {
-                foreach (Action OnExit in behaviours[currentStateIndex].OnExitBehaviours)
+                foreach (Action OnExit in states[currentStateIndex].GetExitBehaviours())
                     OnExit?.Invoke();
 
                 currentStateIndex = relations[currentStateIndex, flag];
 
-                foreach (Action OnEnter in behaviours[currentStateIndex].OnEnterBehaviours)
+                foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours())
                     OnEnter?.Invoke();
             }
         }
 
-        public void AddBehaviour(int state, Action behaviour)
+        public void AddState<T>(int stateIndex, Func<object[]> stateParams = null,
+            Func<object[]> stateOnEnterParams = null, Func<object[]> stateOnExitParams = null) where T : State, new()
         {
-            if (behaviours.ContainsKey(state))
+            if (!states.ContainsKey(stateIndex))
             {
-                behaviours[state].OnBehaviours.Add(behaviour);
-            }
-            else
-            {
-                State newState = new State();
-                newState.OnBehaviours = new List<Action>();
-                newState.OnEnterBehaviours = new List<Action>();
-                newState.OnExitBehaviours = new List<Action>();
-                newState.OnBehaviours.Add(behaviour);
-                behaviours.Add(state, newState);
-            }
-        }
-
-        public void AddOnEnterBehaviour(int state, Action behaviour)
-        {
-            if (behaviours.ContainsKey(state))
-            {
-                behaviours[state].OnEnterBehaviours.Add(behaviour);
-            }
-            else
-            {
-                State newState = new State();
-                newState.OnBehaviours = new List<Action>();
-                newState.OnEnterBehaviours = new List<Action>();
-                newState.OnExitBehaviours = new List<Action>();
-                newState.OnEnterBehaviours.Add(behaviour);
-                behaviours.Add(state, newState);
-            }
-        }
-
-        public void AddOnExitBehaviour(int state, Action behaviour)
-        {
-            if (behaviours.ContainsKey(state))
-            {
-                behaviours[state].OnExitBehaviours.Add(behaviour);
-            }
-            else
-            {
-                State newState = new State();
-                newState.OnBehaviours = new List<Action>();
-                newState.OnEnterBehaviours = new List<Action>();
-                newState.OnExitBehaviours = new List<Action>();
-                newState.OnExitBehaviours.Add(behaviour);
-                behaviours.Add(state, newState);
+                State newState = new T();
+                newState.SetFlag += SetFlag;
+                states.Add(stateIndex, newState);
+                statesParameters.Add(stateIndex, stateParams);
+                statesOnEnterParameters.Add(stateIndex, stateOnEnterParams);
+                statesOnExitParameters.Add(stateIndex, stateOnExitParams);   
             }
         }
 
         public void Update()
         {
-            if (behaviours.ContainsKey(currentStateIndex))
+            if (states.ContainsKey(currentStateIndex))
             {
-                foreach (Action behaviour in behaviours[currentStateIndex].OnBehaviours)
+                foreach (Action behaviour in states[currentStateIndex].GetBehaviours(statesParameters[currentStateIndex]?.Invoke()))
                 {
                     behaviour?.Invoke();
                 }
