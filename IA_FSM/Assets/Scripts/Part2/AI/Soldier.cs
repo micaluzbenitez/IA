@@ -49,7 +49,7 @@ namespace Part2.AI.Soldier
             fsm.SetCurrentStateForced((int)States.Idle);
         }
 
-        private void Update()
+        public void Update()
         {
             fsm.Update();
         }
