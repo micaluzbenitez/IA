@@ -21,7 +21,7 @@ namespace Part2.AI.Soldier
 
             Parallel.ForEach(soldiers, options, currentItem =>
             {
-                currentItem.Update();
+                currentItem.UpdateData();
 
             });
         }
