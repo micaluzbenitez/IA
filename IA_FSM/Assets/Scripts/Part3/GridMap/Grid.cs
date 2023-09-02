@@ -69,12 +69,12 @@ namespace Part3.GridMap
             }
         }
 
-        private Vector3 GetWorldPosition(int x, int y)
+        public Vector3 GetWorldPosition(int x, int y)
         {
             return new Vector3(x, y) * cellSize + originPosition;
         }
 
-        private void GetXY(Vector3 worldPosition, out int x, out int y)
+        public void GetXY(Vector3 worldPosition, out int x, out int y)
         {
             x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
             y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
@@ -105,6 +105,21 @@ namespace Part3.GridMap
         #endregion
 
         #region GETTERS
+        public int GetWidth()
+        {
+            return width;
+        }
+
+        public int GetHeight()
+        {
+            return height;
+        }
+
+        public float GetCellSize()
+        {
+            return cellSize;
+        }
+
         public TGridObject GetGridObject(int x, int y)
         {
             if (x >= 0 && y >= 0 && x < width && y < height)

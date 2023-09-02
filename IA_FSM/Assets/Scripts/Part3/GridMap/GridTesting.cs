@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Part3.GridMap
 {
-    public class GridManager : MonoBehaviour
+    public class GridTesting : MonoBehaviour
     {
         private Grid<int> gridInt;
         private Grid<bool> gridBool;
