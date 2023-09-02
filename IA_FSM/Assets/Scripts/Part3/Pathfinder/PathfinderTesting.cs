@@ -5,6 +5,7 @@ namespace Part3.Pathfinder
 {
     public class PathfinderTesting : MonoBehaviour
     {
+        [SerializeField] private Player player;
         private Pathfinding pathfinding;
 
         private void Start()
@@ -30,6 +31,8 @@ namespace Part3.Pathfinder
                                        Color.green);
                     }
                 }
+
+                player.SetTargetPosition(mouseWorldPosition);
             }
 
             if (Input.GetMouseButtonDown(1))

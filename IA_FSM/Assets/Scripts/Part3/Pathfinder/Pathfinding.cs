@@ -14,14 +14,39 @@ namespace Part3.Pathfinder
         private List<PathNode> openList;    // Nodes queued up for searching
         private List<PathNode> closedList;  // Nodes that have already been searched
 
+        public static Pathfinding Instance { get; private set; }
         public Pathfinding(int width, int height)
         {
+            Instance = this;
             grid = new Grid<PathNode>(width, height, 10f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         }
 
         public Grid<PathNode> GetGrid()
         {
             return grid;
+        }
+
+        // Return vector3 path for the player
+        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition)
+        {
+            grid.GetXY(startWorldPosition, out int startX, out int startY);
+            grid.GetXY(endWorldPosition, out int endX, out int endY);
+
+            List<PathNode> path = FindPath(startX, startY, endX, endY);
+
+            if (path == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<Vector3> vectorPath = new List<Vector3>();
+                foreach (PathNode pathNode in path)
+                {
+                    vectorPath.Add(new Vector3(pathNode.x, pathNode.y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * 0.5f);
+                }
+                return vectorPath;
+            }
         }
 
         public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
