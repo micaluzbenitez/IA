@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Part3.GridMap
+namespace Pathfinder.GridMap
 {
     public class GridTesting : MonoBehaviour
     {

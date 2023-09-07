@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Part3.GridMap
+namespace Pathfinder.GridMap
 {
     public class Grid<TGridObject>
     {

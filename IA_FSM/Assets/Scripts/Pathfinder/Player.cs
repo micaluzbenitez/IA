@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Part3.Pathfinder
+namespace Pathfinder
 {
     public class Player : MonoBehaviour
     {
-        private const float speed = 5f;
+        [SerializeField] private float speed = 5f;
 
         private int currentPathIndex;
         private List<Vector3> pathVectorList;

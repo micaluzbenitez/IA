@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Part2.AI
+namespace FiniteStateMachine.States
 {
     public abstract class State
     {

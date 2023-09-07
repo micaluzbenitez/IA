@@ -1,7 +1,6 @@
-using UnityEngine;
-using Part3.GridMap;
+using Pathfinder.GridMap;
 
-namespace Part3.Pathfinder
+namespace Pathfinder
 {
     public class PathNode
     {

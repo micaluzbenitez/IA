@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Part2.AI.Soldier;
 
-namespace Part2.AI
+namespace FiniteStateMachine.States
 {
     public class CutState : State
     {
@@ -28,7 +27,7 @@ namespace Part2.AI
                     if (time > duration)
                     {
                         time = 0;
-                        Transition((int)Flags.OnSaveMaterials);
+                        Transition((int)FSM_Flags.OnSaveMaterials);
                     }
                 }
             });

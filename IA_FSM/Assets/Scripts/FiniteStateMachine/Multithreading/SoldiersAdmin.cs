@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Part2.AI.Soldier
+namespace FiniteStateMachine.Multithreading
 {
     public class SoldiersAdmin : MonoBehaviour
     {
@@ -21,8 +21,7 @@ namespace Part2.AI.Soldier
 
             Parallel.ForEach(soldiers, options, currentItem =>
             {
-                currentItem.UpdateData();
-
+                //currentItem.Update();
             });
         }
     }

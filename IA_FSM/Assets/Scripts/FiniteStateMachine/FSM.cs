@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using FiniteStateMachine.States;
 
-namespace Part2.AI
+namespace FiniteStateMachine
 {
     public class FSM
     {
