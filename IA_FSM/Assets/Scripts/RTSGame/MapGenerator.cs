@@ -1,7 +1,6 @@
-using Pathfinder;
-using Pathfinder.GridMap;
-using Toolbox;
 using UnityEngine;
+using Pathfinder;
+using Toolbox;
 
 namespace RTSGame
 {
@@ -22,15 +21,16 @@ namespace RTSGame
         private void Start()
         {
             pathfinding = new Pathfinding(width, height, cellSize);
+            CreateGoldMines();
         }
 
-        private void Update()
+        private void CreateGoldMines()
         {
-            if (Input.GetMouseButtonDown(1))
-            {
-                Vector3 mouseWorldPosition = MousePosition.GetMouseWorldPosition();
-                pathfinding.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
+            if (goldMinesQuantity <= 0) return;
 
+            for (int i = 0; i < goldMinesQuantity; i++)
+            {
+                pathfinding.GetGrid().GetRandomGridObject(out int x, out int y);
                 Vector2 position = pathfinding.GetGrid().GetWorldPosition(x, y) + (Vector3.one * (cellSize / 2));
                 Instantiate(cube, position, Quaternion.identity);
             }

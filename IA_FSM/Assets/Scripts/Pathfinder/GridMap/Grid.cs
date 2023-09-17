@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Toolbox;
+using Random = UnityEngine.Random;
 
 namespace Pathfinder.GridMap
 {
@@ -140,6 +141,12 @@ namespace Pathfinder.GridMap
             int y;
             GetXY(worldPosition, out x, out y);
             return GetGridObject(x, y);
+        }
+
+        public void GetRandomGridObject(out int x, out int y)
+        {
+            x = Random.Range(0, width);
+            y = Random.Range(0, height);
         }
         #endregion
     }
