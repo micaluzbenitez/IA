@@ -1,4 +1,5 @@
 using UnityEngine;
+using Toolbox;
 
 namespace Pathfinder.GridMap
 {
@@ -17,30 +18,13 @@ namespace Pathfinder.GridMap
         {
             if (Input.GetMouseButtonDown(0))
             {
-                gridInt.SetGridObject(GetMouseWorldPosition(), 56);
+                gridInt.SetGridObject(MousePosition.GetMouseWorldPosition(), 56);
             }
 
             if (Input.GetMouseButtonDown(1))
             {
-                Debug.Log(gridInt.GetGridObject(GetMouseWorldPosition()));
+                Debug.Log(gridInt.GetGridObject(MousePosition.GetMouseWorldPosition()));
             }
         }
-
-        #region MOUSE_POSITION
-        /// Get mouse position in world with Z = 0f
-        private static Vector3 GetMouseWorldPosition()
-        {
-            Vector3 vec = GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
-            vec.z = 0f;
-            return vec;
-        }
-
-        private static Vector3 GetMouseWorldPositionWithZ(Vector3 screenPosition, Camera worldCamera)
-        {
-            screenPosition.z = Mathf.Abs(worldCamera.transform.position.z);
-            Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
-            return worldPosition;
-        }
-        #endregion
     }
 }

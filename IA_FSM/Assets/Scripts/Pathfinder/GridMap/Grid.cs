@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Toolbox;
 
 namespace Pathfinder.GridMap
 {
@@ -50,7 +51,7 @@ namespace Pathfinder.GridMap
                     {
                         // Grid number
                         Vector3 offset = new Vector3(cellSize, cellSize) * 0.5f;
-                        debugTextArray[x, y] = CreateWorldText("", null, GetWorldPosition(x, y) + offset, 30, Color.white, TextAnchor.MiddleCenter);
+                        debugTextArray[x, y] = WorldText.CreateWorldText("", null, GetWorldPosition(x, y) + offset, 30, Color.white, TextAnchor.MiddleCenter);
 
                         // Gizmos Lines
                         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
@@ -139,31 +140,6 @@ namespace Pathfinder.GridMap
             int y;
             GetXY(worldPosition, out x, out y);
             return GetGridObject(x, y);
-        }
-        #endregion
-
-        #region WORLD_TEXT
-        /// Create text int the world
-        private TextMesh CreateWorldText(string text, Transform parent = null, Vector3 localPosition = default(Vector3), int fontSize = 40, Color? color = null, TextAnchor textAnchor = TextAnchor.UpperLeft, TextAlignment textAlignment = TextAlignment.Left, int sortingOrder = 5000)
-        {
-            if (color == null) color = Color.white;
-            return CreateWorldText(parent, text, localPosition, fontSize, (Color)color, textAnchor, textAlignment, sortingOrder);
-        }
-
-        private TextMesh CreateWorldText(Transform parent, string text, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignment textAlignment, int sortingOrder)
-        {
-            GameObject gameObject = new GameObject("World_Text", typeof(TextMesh));
-            Transform transform = gameObject.transform;
-            transform.SetParent(parent, false);
-            transform.localPosition = localPosition;
-            TextMesh textMesh = gameObject.GetComponent<TextMesh>();
-            textMesh.anchor = textAnchor;
-            textMesh.alignment = textAlignment;
-            textMesh.text = text;
-            textMesh.fontSize = fontSize;
-            textMesh.color = color;
-            textMesh.GetComponent<MeshRenderer>().sortingOrder = sortingOrder;
-            return textMesh;
         }
         #endregion
     }
