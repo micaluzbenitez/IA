@@ -24,32 +24,20 @@ namespace Pathfinder
                 if (Vector3.Distance(transform.position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - transform.position).normalized;
-
-                    float distanceBefore = Vector3.Distance(transform.position, targetPosition);
                     transform.position = transform.position + moveDir * speed * Time.deltaTime;
                 }
                 else
                 {
                     currentPathIndex++;
-                    if (currentPathIndex >= pathVectorList.Count) StopMoving();
+                    if (currentPathIndex >= pathVectorList.Count) pathVectorList = null; // Stop moving
                 }
             }
-        }
-
-        private void StopMoving()
-        {
-            pathVectorList = null;
-        }
-
-        public Vector3 GetPosition()
-        {
-            return transform.position;
         }
 
         public void SetTargetPosition(Vector3 targetPosition)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(GetPosition(), targetPosition);
+            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {

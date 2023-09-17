@@ -15,6 +15,7 @@ namespace Pathfinder
 
         private void Update()
         {
+            // Move player
             if (Input.GetMouseButton(0))
             {
                 Vector3 mouseWorldPosition = GetMouseWorldPosition();
@@ -22,6 +23,7 @@ namespace Pathfinder
                 player.SetTargetPosition(mouseWorldPosition);
             }
 
+            // Add obstacle
             if (Input.GetMouseButtonDown(1))
             {
                 Vector3 mouseWorldPosition = GetMouseWorldPosition();
