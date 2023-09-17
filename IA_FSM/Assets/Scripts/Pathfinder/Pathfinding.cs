@@ -114,21 +114,10 @@ namespace Pathfinder
         {
             List<PathNode> neightbourList = new List<PathNode>();
 
-            if (currentNode.x - 1 >= 0)
-            {
-                neightbourList.Add(GetNode(currentNode.x - 1, currentNode.y));                                                // Left
-                if (currentNode.y - 1 >= 0) neightbourList.Add(GetNode(currentNode.x - 1, currentNode.y - 1));                // Left down
-                if (currentNode.y + 1 < grid.GetHeight()) neightbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));  // Left up
-            }
-            if (currentNode.x + 1 < grid.GetWidth())
-            {
-                neightbourList.Add(GetNode(currentNode.x + 1, currentNode.y));                                                // Right
-                if (currentNode.y - 1 >= 0) neightbourList.Add(GetNode(currentNode.x + 1, currentNode.y - 1));                // Right down
-                if (currentNode.y + 1 < grid.GetHeight()) neightbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));  // Right up
-            }
-
             if (currentNode.y - 1 >= 0) neightbourList.Add(GetNode(currentNode.x, currentNode.y - 1));                        // Down
             if (currentNode.y + 1 < grid.GetHeight()) neightbourList.Add(GetNode(currentNode.x, currentNode.y + 1));          // Top
+            if (currentNode.x - 1 >= 0) neightbourList.Add(GetNode(currentNode.x - 1, currentNode.y));                        // Left
+            if (currentNode.x + 1 < grid.GetWidth()) neightbourList.Add(GetNode(currentNode.x + 1, currentNode.y));           // Right
                                                                                                                               
             return neightbourList;
         }
