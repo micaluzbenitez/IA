@@ -1,6 +1,5 @@
 using UnityEngine;
 using Pathfinder;
-using Toolbox;
 
 namespace RTSGame
 {
@@ -12,9 +11,8 @@ namespace RTSGame
         [SerializeField, Tooltip("Distance between map nodes")] private float cellSize;
 
         [Header("Gold mines")]
+        [SerializeField] private GameObject goldMinePrefab;
         [SerializeField] private int goldMinesQuantity;
-
-        public GameObject cube;
 
         private Pathfinding pathfinding;
 
@@ -32,7 +30,7 @@ namespace RTSGame
             {
                 pathfinding.GetGrid().GetRandomGridObject(out int x, out int y);
                 Vector2 position = pathfinding.GetGrid().GetWorldPosition(x, y) + (Vector3.one * (cellSize / 2));
-                Instantiate(cube, position, Quaternion.identity);
+                Instantiate(goldMinePrefab, position, Quaternion.identity);
             }
         }
     }

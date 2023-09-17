@@ -170,8 +170,8 @@ MonoBehaviour:
   width: 5
   height: 2
   cellSize: 10
+  goldMinePrefab: {fileID: 1027358623848706744, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
   goldMinesQuantity: 5
-  cube: {fileID: 1027358623848706744, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
 --- !u!1 &820805321
 GameObject:
   m_ObjectHideFlags: 0
