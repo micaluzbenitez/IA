@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 195065652}
-  - component: {fileID: 195065651}
+  - component: {fileID: 195065653}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -140,19 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &195065651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 195065650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b410e2c0cb58f2b40b6ee7a63f3c05a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 820805322}
 --- !u!4 &195065652
 Transform:
   m_ObjectHideFlags: 0
@@ -168,6 +155,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &195065653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195065650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae3102656b6a0046aa0bf336fa7599e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 5
+  height: 2
+  cellSize: 10
+  goldMinesQuantity: 0
+  cube: {fileID: 1027358623848706744, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
 --- !u!1 &820805321
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +191,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &820805322
 MonoBehaviour:
   m_ObjectHideFlags: 0

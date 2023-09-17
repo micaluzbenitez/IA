@@ -7,17 +7,16 @@ namespace Pathfinder
     public class Pathfinding
     {
         private const int MOVE_STRAIGHT_COST = 10;
-        private const int MOVE_DIAGONAL_COST = 14;
 
         private Grid<PathNode> grid;
         private List<PathNode> openList;    // Nodes queued up for searching
         private List<PathNode> closedList;  // Nodes that have already been searched
 
         public static Pathfinding Instance { get; private set; }
-        public Pathfinding(int width, int height)
+        public Pathfinding(int width, int height, float cellSize = 10f, Vector3 originPosition = default)
         {
             Instance = this;
-            grid = new Grid<PathNode>(width, height, 10f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+            grid = new Grid<PathNode>(width, height, cellSize, originPosition, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         }
 
         public Grid<PathNode> GetGrid()
@@ -148,7 +147,7 @@ namespace Pathfinder
             int xDistance = Mathf.Abs(a.x - b.x);
             int yDistance = Mathf.Abs(a.y - b.y);
             int remaining = Mathf.Abs(xDistance - yDistance);
-            return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+            return MOVE_STRAIGHT_COST * remaining;
         }
 
         private PathNode GetLowestFCostNode(List<PathNode> pathNodeList)

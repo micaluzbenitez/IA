@@ -19,7 +19,6 @@ namespace Pathfinder
             if (Input.GetMouseButton(0))
             {
                 Vector3 mouseWorldPosition = MousePosition.GetMouseWorldPosition();
-                pathfinding.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
                 player.SetTargetPosition(mouseWorldPosition);
             }
 
