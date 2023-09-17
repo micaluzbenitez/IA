@@ -48,9 +48,9 @@ namespace Pathfinder.GridMap
                 {
                     for (int y = 0; y < gridArray.GetLength(1); y++)
                     {
-                        // Number
+                        // Grid number
                         Vector3 offset = new Vector3(cellSize, cellSize) * 0.5f;
-                        debugTextArray[x, y] = CreateWorldText(gridArray[x, y]?.ToString(), null, GetWorldPosition(x, y) + offset, 30, Color.white, TextAnchor.MiddleCenter);
+                        debugTextArray[x, y] = CreateWorldText("", null, GetWorldPosition(x, y) + offset, 30, Color.white, TextAnchor.MiddleCenter);
 
                         // Gizmos Lines
                         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
@@ -62,9 +62,10 @@ namespace Pathfinder.GridMap
                 Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
                 Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
 
+                // Obstacle
                 OnGridValueChanged += (object sender, OnGridValueChangedEventArgs eventArgs) =>
                 {
-                    debugTextArray[eventArgs.x, eventArgs.y].text = gridArray[eventArgs.x, eventArgs.y]?.ToString();
+                    debugTextArray[eventArgs.x, eventArgs.y].text = "Obs";
                 };
             }
         }
@@ -82,7 +83,7 @@ namespace Pathfinder.GridMap
 
         public void TriggerGridObjectChanged(int x, int y)
         {
-            if (OnGridValueChanged != null) OnGridValueChanged(this, new OnGridValueChangedEventArgs { x = x, y = y });
+            OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y });
         }
 
         #region SETTERS
