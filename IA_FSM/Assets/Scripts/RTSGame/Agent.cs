@@ -1,10 +1,13 @@
+using Pathfinder;
 using System.Collections.Generic;
+using Toolbox;
 using UnityEngine;
 
-namespace Pathfinder
+namespace RTSGame
 {
-    public class Player : MonoBehaviour
+    public class Agent : MonoBehaviour
     {
+        [Header("Movement")]
         [SerializeField] private float speed = 5f;
         [SerializeField] private PathNode.PathNode_Type[] pathNodeWalkables;
 
@@ -14,6 +17,12 @@ namespace Pathfinder
         private void Update()
         {
             HandleMovement();
+
+            if (Input.GetMouseButton(0))
+            {
+                Vector3 mouseWorldPosition = MousePosition.GetMouseWorldPosition();
+                SetTargetPosition(mouseWorldPosition);
+            }
         }
 
         private void HandleMovement()

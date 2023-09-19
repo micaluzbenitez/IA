@@ -15,8 +15,8 @@ namespace Pathfinder
         public int hCost;  // Heuristic cost to reach end node
         public int fCost;  // gCost + hCost
 
-        public bool isWalkable = false;
-        public bool available = true;
+        public bool available;
+        public bool isWalkable;
         public PathNode cameFromNode;
 
         #region PathNode_Type
@@ -42,6 +42,7 @@ namespace Pathfinder
             this.grid = grid;
             this.x = x;
             this.y = y;
+            available = true;
             isWalkable = true;
         }
 

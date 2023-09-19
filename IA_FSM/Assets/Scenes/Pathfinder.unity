@@ -201,6 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  pathNodeWalkables: 000000000100000002000000
 --- !u!65 &820805323
 BoxCollider:
   m_ObjectHideFlags: 0

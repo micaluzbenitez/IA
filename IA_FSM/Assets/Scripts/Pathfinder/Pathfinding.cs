@@ -33,12 +33,12 @@ namespace Pathfinder
         }
 
         // Return vector3 path for the player
-        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition)
+        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition, PathNode.PathNode_Type[] pathNodeWalkables)
         {
             grid.GetXY(startWorldPosition, out int startX, out int startY);
             grid.GetXY(endWorldPosition, out int endX, out int endY);
 
-            List<PathNode> path = FindPath(startX, startY, endX, endY);
+            List<PathNode> path = FindPath(startX, startY, endX, endY, pathNodeWalkables);
 
             if (path == null)
             {
@@ -55,7 +55,7 @@ namespace Pathfinder
             }
         }
 
-        public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
+        public List<PathNode> FindPath(int startX, int startY, int endX, int endY, PathNode.PathNode_Type[] pathNodeWalkables)
         {
             PathNode startNode = grid.GetGridObject(startX, startY);
             PathNode endNode = grid.GetGridObject(endX, endY);
@@ -94,7 +94,15 @@ namespace Pathfinder
                 {
                     if (closedList.Contains(neighbourNode)) continue;
 
-                    if (!neighbourNode.isWalkable)
+                    // Check if is an agent walkable node
+                    bool notAgentWalkable = true;
+                    for (int i = 0; i < pathNodeWalkables.Length; i++)
+                    {
+                        if (neighbourNode.pathNodeType == pathNodeWalkables[i]) notAgentWalkable = false;
+                    }
+
+                    // Check if is a walkable node
+                    if (!neighbourNode.isWalkable || notAgentWalkable)
                     {
                         closedList.Add(neighbourNode);
                         continue;
