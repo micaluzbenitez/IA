@@ -17,6 +17,14 @@ namespace Pathfinder
         {
             Instance = this;
             grid = new Grid<PathNode>(width, height, cellSize, originPosition, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    GetNode(x, y).SetRandomType();
+                }
+            }
         }
 
         public Grid<PathNode> GetGrid()

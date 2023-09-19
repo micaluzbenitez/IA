@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Toolbox;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 namespace Pathfinder.GridMap
 {
@@ -20,6 +21,7 @@ namespace Pathfinder.GridMap
         {
             public int x;
             public int y;
+            public string text;
         }
 
         public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
@@ -52,7 +54,7 @@ namespace Pathfinder.GridMap
                     {
                         // Grid number
                         Vector3 offset = new Vector3(cellSize, cellSize) * 0.5f;
-                        debugTextArray[x, y] = WorldText.CreateWorldText("", null, GetWorldPosition(x, y) + offset, 30, Color.white, TextAnchor.MiddleCenter);
+                        debugTextArray[x, y] = WorldText.CreateWorldText("", null, GetWorldPosition(x, y) + offset, 20, Color.white, TextAnchor.MiddleCenter);
 
                         // Gizmos Lines
                         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
@@ -67,7 +69,7 @@ namespace Pathfinder.GridMap
                 // Obstacle
                 OnGridValueChanged += (object sender, OnGridValueChangedEventArgs eventArgs) =>
                 {
-                    debugTextArray[eventArgs.x, eventArgs.y].text = "Obs";
+                    debugTextArray[eventArgs.x, eventArgs.y].text = eventArgs.text;
                 };
             }
         }
@@ -83,9 +85,9 @@ namespace Pathfinder.GridMap
             y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
         }
 
-        public void TriggerGridObjectChanged(int x, int y)
+        public void TriggerGridObjectChanged(int x, int y, string text)
         {
-            OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y });
+            OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y, text = text });
         }
 
         #region SETTERS
