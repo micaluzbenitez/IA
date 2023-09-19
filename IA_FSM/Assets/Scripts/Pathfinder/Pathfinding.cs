@@ -134,6 +134,19 @@ namespace Pathfinder
             return grid.GetGridObject(x, y);
         }
 
+        public bool CheckAvailableNode(int x, int y)
+        {
+            PathNode pathNode = grid.GetGridObject(x, y);
+
+            if (pathNode.available)
+            {
+                pathNode.available = false;
+                return true;
+            }
+            
+            return false;
+        }
+
         private List<PathNode> CalculatePath(PathNode endNode)
         {
             List<PathNode> path = new List<PathNode>();

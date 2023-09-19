@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using Toolbox;
 using Random = UnityEngine.Random;
-using UnityEngine.UI;
 
 namespace Pathfinder.GridMap
 {
@@ -54,7 +53,7 @@ namespace Pathfinder.GridMap
                     {
                         // Grid number
                         Vector3 offset = new Vector3(cellSize, cellSize) * 0.5f;
-                        debugTextArray[x, y] = WorldText.CreateWorldText("", null, GetWorldPosition(x, y) + offset, 20, Color.white, TextAnchor.MiddleCenter);
+                        debugTextArray[x, y] = WorldText.CreateWorldText("", null, GetWorldPosition(x, y) + offset, 10, Color.white, TextAnchor.MiddleCenter);
 
                         // Gizmos Lines
                         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
@@ -145,10 +144,12 @@ namespace Pathfinder.GridMap
             return GetGridObject(x, y);
         }
 
-        public void GetRandomGridObject(out int x, out int y)
+        public Vector2Int GetRandomGridObject()
         {
-            x = Random.Range(0, width);
-            y = Random.Range(0, height);
+            int x = Random.Range(0, width);
+            int y = Random.Range(0, height);
+
+            return new Vector2Int(x, y);
         }
         #endregion
     }

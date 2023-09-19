@@ -168,10 +168,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   width: 5
-  height: 2
+  height: 5
   cellSize: 10
   goldMinePrefab: {fileID: 1027358623848706744, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
   goldMinesQuantity: 5
+  urbanCenterPrefab: {fileID: 1027358623848706744, guid: dcc865d27d84c4b4a9c94596d10c2aa1, type: 3}
 --- !u!1 &820805321
 GameObject:
   m_ObjectHideFlags: 0
