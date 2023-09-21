@@ -1,18 +1,24 @@
-using Pathfinder;
 using System.Collections.Generic;
-using Toolbox;
 using UnityEngine;
+using Pathfinder;
+using Toolbox;
 
 namespace RTSGame
 {
+    [RequireComponent(typeof(AgentPathNodes))]
     public class Agent : MonoBehaviour
     {
         [Header("Movement")]
         [SerializeField] private float speed = 5f;
-        [SerializeField] private PathNode.PathNode_Type[] pathNodeWalkables;
 
+        private AgentPathNodes agentPathNodes;
         private int currentPathIndex;
         private List<Vector3> pathVectorList;
+
+        private void Awake()
+        {
+            agentPathNodes = GetComponent<AgentPathNodes>();
+        }
 
         private void Update()
         {
@@ -47,7 +53,7 @@ namespace RTSGame
         public void SetTargetPosition(Vector3 targetPosition)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {

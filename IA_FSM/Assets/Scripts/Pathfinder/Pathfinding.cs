@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder.GridMap;
+using RTSGame;
 
 namespace Pathfinder
 {
@@ -32,13 +33,18 @@ namespace Pathfinder
             return grid;
         }
 
+        public PathNode GetNode(int x, int y)
+        {
+            return grid.GetGridObject(x, y);
+        }
+
         // Return vector3 path for the player
-        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition, PathNode.PathNode_Type[] pathNodeWalkables)
+        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition, AgentPathNodes.PathNode_Walkable[] agentPathNodeWalkables)
         {
             grid.GetXY(startWorldPosition, out int startX, out int startY);
             grid.GetXY(endWorldPosition, out int endX, out int endY);
 
-            List<PathNode> path = FindPath(startX, startY, endX, endY, pathNodeWalkables);
+            List<PathNode> path = FindPath(startX, startY, endX, endY, agentPathNodeWalkables);
 
             if (path == null)
             {
@@ -55,7 +61,7 @@ namespace Pathfinder
             }
         }
 
-        public List<PathNode> FindPath(int startX, int startY, int endX, int endY, PathNode.PathNode_Type[] pathNodeWalkables)
+        public List<PathNode> FindPath(int startX, int startY, int endX, int endY, AgentPathNodes.PathNode_Walkable[] agentPathNodeWalkables)
         {
             PathNode startNode = grid.GetGridObject(startX, startY);
             PathNode endNode = grid.GetGridObject(endX, endY);
@@ -69,14 +75,14 @@ namespace Pathfinder
                 {
                     PathNode pathNode = grid.GetGridObject(x, y);
                     pathNode.gCost = int.MaxValue;
-                    pathNode.CalculateFCost();
+                    pathNode.CalculateFCost(GetAgentPathNodeCost(agentPathNodeWalkables, startNode));
                     pathNode.cameFromNode = null;
                 }
             }
 
             startNode.gCost = 0;
-            startNode.hCost = CalculateDistanceCost(startNode, endNode);
-            startNode.CalculateFCost();
+            startNode.hCost = CalculateDistanceCost(startNode, endNode);            
+            startNode.CalculateFCost(GetAgentPathNodeCost(agentPathNodeWalkables, startNode));
 
             while (openList.Count > 0)
             {
@@ -96,9 +102,9 @@ namespace Pathfinder
 
                     // Check if is an agent walkable node
                     bool notAgentWalkable = true;
-                    for (int i = 0; i < pathNodeWalkables.Length; i++)
+                    for (int i = 0; i < agentPathNodeWalkables.Length; i++)
                     {
-                        if (neighbourNode.pathNodeType == pathNodeWalkables[i]) notAgentWalkable = false;
+                        if (neighbourNode.pathNodeType == agentPathNodeWalkables[i].pathNodeType) notAgentWalkable = false;
                     }
 
                     // Check if is a walkable node
@@ -114,7 +120,7 @@ namespace Pathfinder
                         neighbourNode.cameFromNode = currentNode;
                         neighbourNode.gCost = tentativeGCost;
                         neighbourNode.hCost = CalculateDistanceCost(neighbourNode, endNode);
-                        neighbourNode.CalculateFCost();
+                        neighbourNode.CalculateFCost(GetAgentPathNodeCost(agentPathNodeWalkables, startNode));
 
                         if (!openList.Contains(neighbourNode)) openList.Add(neighbourNode);
                     }
@@ -123,6 +129,19 @@ namespace Pathfinder
 
             // Out of nodes on the openList
             return null;
+        }
+
+        private int GetAgentPathNodeCost(AgentPathNodes.PathNode_Walkable[] agentPathNodeWalkables, PathNode startNode)
+        {
+            for (int i = 0; i < agentPathNodeWalkables.Length; i++)
+            {
+                if (startNode.pathNodeType == agentPathNodeWalkables[i].pathNodeType)
+                {
+                    return agentPathNodeWalkables[i].cost;
+                }
+            }
+
+            return 0;
         }
 
         private List<PathNode> GetNeightbourList(PathNode currentNode)
@@ -135,24 +154,6 @@ namespace Pathfinder
             if (currentNode.x + 1 < grid.GetWidth()) neightbourList.Add(GetNode(currentNode.x + 1, currentNode.y));           // Right
                                                                                                                               
             return neightbourList;
-        }
-
-        public PathNode GetNode(int x, int y)
-        {
-            return grid.GetGridObject(x, y);
-        }
-
-        public bool CheckAvailableNode(int x, int y)
-        {
-            PathNode pathNode = grid.GetGridObject(x, y);
-
-            if (pathNode.available)
-            {
-                pathNode.available = false;
-                return true;
-            }
-            
-            return false;
         }
 
         private List<PathNode> CalculatePath(PathNode endNode)
@@ -192,6 +193,19 @@ namespace Pathfinder
             }
 
             return lowestFCostNode;
+        }
+
+        public bool CheckAvailableNode(int x, int y)
+        {
+            PathNode pathNode = grid.GetGridObject(x, y);
+
+            if (pathNode.available)
+            {
+                pathNode.available = false;
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 820805325}
   - component: {fileID: 820805324}
   - component: {fileID: 820805323}
+  - component: {fileID: 820805328}
   - component: {fileID: 820805327}
   m_Layer: 0
   m_Name: Player
@@ -284,7 +285,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  pathNodeWalkables: 0000000001000000
+--- !u!114 &820805328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820805321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf79c778d0dbd6a44996b53419cd4767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathNodeWalkables:
+  - pathNodeType: 0
+    cost: 1
+  - pathNodeType: 1
+    cost: 2
 --- !u!1 &1284657347
 GameObject:
   m_ObjectHideFlags: 0

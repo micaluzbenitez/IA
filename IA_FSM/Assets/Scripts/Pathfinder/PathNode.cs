@@ -68,9 +68,9 @@ namespace Pathfinder
             return 0;
         }
 
-        public void CalculateFCost()
+        public void CalculateFCost(int agentCost)
         {
-            fCost = gCost + hCost + GetPathNodeCost();
+            fCost = gCost + hCost + agentCost + GetPathNodeCost();
         }
 
         public override string ToString()
