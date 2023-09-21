@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder.GridMap;
-using RTSGame;
+using RTSGame.Entities.Agents;
 
 namespace Pathfinder
 {

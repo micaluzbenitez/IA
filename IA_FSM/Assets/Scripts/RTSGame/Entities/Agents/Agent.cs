@@ -3,7 +3,7 @@ using UnityEngine;
 using Pathfinder;
 using Toolbox;
 
-namespace RTSGame
+namespace RTSGame.Entities.Agents
 {
     [RequireComponent(typeof(AgentPathNodes))]
     public class Agent : MonoBehaviour

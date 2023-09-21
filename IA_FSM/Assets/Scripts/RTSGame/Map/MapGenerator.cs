@@ -1,8 +1,7 @@
 using UnityEngine;
 using Pathfinder;
-using UnityEngine.UIElements;
 
-namespace RTSGame
+namespace RTSGame.Map
 {
     public class MapGenerator : MonoBehaviour
     {

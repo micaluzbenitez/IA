@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using RTSGame;
+using RTSGame.Entities.Agents;
 
 namespace Pathfinder
 {

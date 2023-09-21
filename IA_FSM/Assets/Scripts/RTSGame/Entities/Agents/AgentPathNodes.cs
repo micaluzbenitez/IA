@@ -2,7 +2,7 @@ using Pathfinder;
 using System;
 using UnityEngine;
 
-namespace RTSGame
+namespace RTSGame.Entities.Agents
 {
     public class AgentPathNodes : MonoBehaviour
     {
