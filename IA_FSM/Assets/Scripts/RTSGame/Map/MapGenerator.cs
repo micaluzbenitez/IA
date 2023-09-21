@@ -1,14 +1,26 @@
 using UnityEngine;
 using Pathfinder;
+using System;
+using UnityEditor.Experimental.GraphView;
 
 namespace RTSGame.Map
 {
     public class MapGenerator : MonoBehaviour
     {
+        [Serializable]
+        public class PathNode_Visible
+        {
+            public PathNode.PathNode_Type pathNodeType;
+            public GameObject prefab;
+        }
+
         [Header("Map")]
         [SerializeField] private int width;
         [SerializeField] private int height;
         [SerializeField, Tooltip("Distance between map nodes")] private float cellSize;
+
+        [Header("Path nodes")]
+        public PathNode_Visible[] pathNodeVisibles;
 
         [Header("Gold mines")]
         [SerializeField] private GameObject goldMinePrefab;
@@ -24,6 +36,23 @@ namespace RTSGame.Map
             pathfinding = new Pathfinding(width, height, cellSize);
             CreateGoldMines();
             CreateUrbanCenter();
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    Vector2 position = pathfinding.GetGrid().GetWorldPosition(x, y) + (Vector3.one * (cellSize / 2));
+
+                    for (int i = 0; i < pathNodeVisibles.Length; i++)
+                    {
+                        if (pathfinding.GetNode(x, y).pathNodeType == pathNodeVisibles[i].pathNodeType && pathNodeVisibles[i].prefab)
+                        {
+                            GameObject GO = Instantiate(pathNodeVisibles[i].prefab, position, Quaternion.identity);
+                            GO.transform.localScale = Vector3.one * cellSize;
+                        }
+                    }
+                }
+            }
         }
 
         private void CreateGoldMines()
@@ -53,7 +82,8 @@ namespace RTSGame.Map
 
             // Create building
             Vector2 position = pathfinding.GetGrid().GetWorldPosition(coords.x, coords.y) + (Vector3.one * (cellSize / 2));
-            Instantiate(buildingPrefab, position, Quaternion.identity);
+            GameObject GO = Instantiate(buildingPrefab, position, Quaternion.identity);
+            GO.transform.localScale = Vector3.one * cellSize;
         }
     }
 }

@@ -167,9 +167,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae3102656b6a0046aa0bf336fa7599e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 5
-  height: 5
+  width: 10
+  height: 10
   cellSize: 10
+  pathNodeVisibles:
+  - pathNodeType: 0
+    prefab: {fileID: 1027358623848706744, guid: d80b61f6918717a4491a2b8f3af6a950, type: 3}
+  - pathNodeType: 1
+    prefab: {fileID: 1027358623848706744, guid: 4911baaf5bdca904a8af3bd3616483a2, type: 3}
+  - pathNodeType: 2
+    prefab: {fileID: 1027358623848706744, guid: d5862912bd02c6a42a91fedcb053d50f, type: 3}
   goldMinePrefab: {fileID: 1027358623848706744, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
   goldMinesQuantity: 5
   urbanCenterPrefab: {fileID: 1027358623848706744, guid: dcc865d27d84c4b4a9c94596d10c2aa1, type: 3}
@@ -337,7 +344,7 @@ Camera:
   m_GameObject: {fileID: 1284657347}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
