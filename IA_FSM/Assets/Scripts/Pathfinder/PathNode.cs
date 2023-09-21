@@ -47,9 +47,26 @@ namespace Pathfinder
         }
 
         public void SetRandomType()
-        {
-            pathNodeType = (PathNode_Type)Random.Range(0, System.Enum.GetValues(typeof(PathNode_Type)).Length);
+        {            
+            float[] nodeTypePercentages = { 80f, 10f, 10f }; // Defines the percentages for each type of node
+            float randomValue = Random.Range(0f, 100f);
+
+            // Find node type based on random value
+            int nodeTypeIndex = 0;
+            foreach (float percentage in nodeTypePercentages)
+            {
+                if (randomValue <= percentage)
+                {
+                    pathNodeType = (PathNode_Type)nodeTypeIndex;
+                    break;
+                }
+                randomValue -= percentage;
+                nodeTypeIndex++;
+            }
+
+            // Notifies the change
             grid.TriggerGridObjectChanged(x, y, pathNodeType.ToString());
+
         }
 
         public void SetIsWalkable(bool isWalkable)
