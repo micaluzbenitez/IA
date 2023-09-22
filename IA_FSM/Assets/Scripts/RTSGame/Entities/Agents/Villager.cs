@@ -40,6 +40,13 @@ namespace RTSGame.Entities.Agents
             if (Input.GetKeyDown(KeyCode.M)) SetTargetPosition(FindNearestGoldMine());
         }
 
+        protected Vector3 FindNearestGoldMine()
+        {
+            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
+            int randomIndex = Random.Range(0, goldMines.Length);
+            return goldMines[randomIndex].gameObject.transform.position;
+        }
+
         private void UpdateMineTimer()
         {
             if (mineTimer.Active) mineTimer.UpdateTimer();

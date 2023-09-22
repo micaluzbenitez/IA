@@ -37,13 +37,6 @@ namespace RTSGame.Entities.Agents
             }
         }
 
-        protected Vector3 FindNearestGoldMine()
-        {
-            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
-            int randomIndex = Random.Range(0, goldMines.Length);
-            return goldMines[randomIndex].gameObject.transform.position;
-        }
-
         protected Vector3 FindUrbanCenter()
         {
             UrbanCenter urbanCenter = FindObjectOfType<UrbanCenter>();

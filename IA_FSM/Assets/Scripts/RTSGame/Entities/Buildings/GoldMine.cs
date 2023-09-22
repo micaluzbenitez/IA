@@ -13,6 +13,9 @@ namespace RTSGame.Entities.Buildings
 
         private int foodQuantity;
 
+        private bool withVillagers = false;
+        public bool WithVillagers => withVillagers;
+
         private void Awake()
         {
             goldText.text = goldQuantity.ToString();
@@ -46,6 +49,16 @@ namespace RTSGame.Entities.Buildings
             foodQuantity--;
             foodtext.text = foodQuantity.ToString();
             return true;
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Villager")) withVillagers = true;
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Villager")) withVillagers = false;
         }
     }
 }
