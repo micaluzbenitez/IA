@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder;
+using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents
 {
@@ -25,6 +26,30 @@ namespace RTSGame.Entities.Agents
             HandleMovement();
         }
 
+        protected void SetTargetPosition(Vector3 targetPosition)
+        {
+            currentPathIndex = 0;
+            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, agentPathNodes.pathNodeWalkables);
+
+            if (pathVectorList != null && pathVectorList.Count > 1)
+            {
+                pathVectorList.RemoveAt(0);
+            }
+        }
+
+        protected Vector3 FindNearestGoldMine()
+        {
+            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
+            int randomIndex = Random.Range(0, goldMines.Length);
+            return goldMines[randomIndex].gameObject.transform.position;
+        }
+
+        protected Vector3 FindUrbanCenter()
+        {
+            UrbanCenter urbanCenter = FindObjectOfType<UrbanCenter>();
+            return urbanCenter.gameObject.transform.position;
+        }
+
         protected void HandleMovement()
         {
             if (pathVectorList != null)
@@ -41,17 +66,6 @@ namespace RTSGame.Entities.Agents
                     currentPathIndex++;
                     if (currentPathIndex >= pathVectorList.Count) pathVectorList = null; // Stop moving
                 }
-            }
-        }
-
-        public void SetTargetPosition(Vector3 targetPosition)
-        {
-            currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, agentPathNodes.pathNodeWalkables);
-
-            if (pathVectorList != null && pathVectorList.Count > 1)
-            {
-                pathVectorList.RemoveAt(0);
             }
         }
     }

@@ -21,12 +21,12 @@ namespace RTSGame.Entities.Buildings
             }
         }
 
-        public bool Interact()
+        public bool Interact(int goldQuantity)
         {
-            if (goldQuantity <= 0) return false;
+            if (this.goldQuantity <= 0) return false;
 
-            goldQuantity--;
-            if (debugText) debugText.Text.text = goldQuantity.ToString();
+            this.goldQuantity--;
+            if (debugText) debugText.Text.text = this.goldQuantity.ToString();
             return true;
         }
     }

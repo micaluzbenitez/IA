@@ -1,5 +1,4 @@
 using UnityEngine;
-using RTSGame.Entities.Buildings;
 using RTSGame.Interfaces;
 using Toolbox;
 
@@ -9,6 +8,7 @@ namespace RTSGame.Entities.Agents
     {
         [Header("Gold mine")]
         [SerializeField] private float timePerMine;
+        [SerializeField] private float maxGoldRecolected;
 
         private DebugText debugText;
         private IInteractable interactable;
@@ -37,42 +37,46 @@ namespace RTSGame.Entities.Agents
             if (Input.GetKeyDown(KeyCode.M)) SetTargetPosition(FindNearestGoldMine());
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            interactable = collision.GetComponent<IInteractable>();
-
-            if (interactable != null)
-            {
-                if (collision.CompareTag("GoldMine")) mineTimer.ActiveTimer();
-                if (collision.CompareTag("UrbanCenter")) interactable.Interact();
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            if (collision.CompareTag("GoldMine")) mineTimer.DesactiveTimer();
-        }
-
         private void UpdateMineTimer()
         {
             if (mineTimer.Active) mineTimer.UpdateTimer();
 
             if (mineTimer.ReachedTimer())
             {
-                if (interactable.Interact())
+                if (interactable.Interact(goldQuantity))
                 {
                     goldQuantity++;
                     if (debugText) debugText.Text.text = goldQuantity.ToString();
-                    mineTimer.ActiveTimer();
+
+                    if (goldQuantity == maxGoldRecolected) SetTargetPosition(FindUrbanCenter());
+                    else mineTimer.ActiveTimer();
                 }
             }
         }
 
-        private Vector3 FindNearestGoldMine()
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
-            int randomIndex = Random.Range(0, goldMines.Length);
-            return goldMines[randomIndex].gameObject.transform.position;
+            interactable = collision.GetComponent<IInteractable>();
+
+            if (interactable != null)
+            {
+                if (collision.CompareTag("GoldMine"))
+                {
+                    mineTimer.ActiveTimer();
+                }
+                if (collision.CompareTag("UrbanCenter"))
+                {
+                    interactable.Interact(goldQuantity); 
+                    SetTargetPosition(FindNearestGoldMine());
+                    goldQuantity = 0;
+                    if (debugText) debugText.Text.text = goldQuantity.ToString();
+                }
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (collision.CompareTag("GoldMine")) mineTimer.DesactiveTimer();
         }
     }
 }

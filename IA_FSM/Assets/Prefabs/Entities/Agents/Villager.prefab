@@ -151,7 +151,6 @@ MonoBehaviour:
   textSize: 25
   textColor: {r: 0, g: 0, b: 0, a: 1}
   textOffset: {x: 0, y: 3.7, z: 0}
-  text: {fileID: 0}
 --- !u!114 &2187897219725719343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,3 +185,4 @@ MonoBehaviour:
   speed: 10
   distancePerObjetive: 4
   timePerMine: 1
+  maxGoldRecolected: 1
