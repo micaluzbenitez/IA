@@ -6,26 +6,23 @@ namespace RTSGame.Entities.Agents
 {
     public class Villager : Agent
     {
+        [Header("Gold")]
+        [SerializeField] private TextMesh text;
+
         [Header("Gold mine")]
         [SerializeField] private float timePerMine;
         [SerializeField] private float maxGoldRecolected;
 
-        private DebugText debugText;
         private IInteractable interactable;
         private int goldQuantity;
 
         // Gold mine
         private Timer mineTimer = new Timer();
 
-        private void Start()
+        protected override void Awake()
         {
-            debugText = GetComponent<DebugText>();
-            if (debugText)
-            {
-                debugText.SetParent(transform);
-                debugText.Text.text = goldQuantity.ToString();
-            }
-
+            base.Awake();
+            text.text = goldQuantity.ToString();
             mineTimer.SetTimer(timePerMine, Timer.TIMER_MODE.DECREASE);
         }
 
@@ -46,7 +43,7 @@ namespace RTSGame.Entities.Agents
                 if (interactable.Interact(goldQuantity))
                 {
                     goldQuantity++;
-                    if (debugText) debugText.Text.text = goldQuantity.ToString();
+                    text.text = goldQuantity.ToString();
 
                     if (goldQuantity == maxGoldRecolected) SetTargetPosition(FindUrbanCenter());
                     else mineTimer.ActiveTimer();
@@ -69,7 +66,7 @@ namespace RTSGame.Entities.Agents
                     interactable.Interact(goldQuantity); 
                     SetTargetPosition(FindNearestGoldMine());
                     goldQuantity = 0;
-                    if (debugText) debugText.Text.text = goldQuantity.ToString();
+                    text.text = goldQuantity.ToString();
                 }
             }
         }

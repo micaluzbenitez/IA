@@ -7,18 +7,12 @@ namespace RTSGame.Entities.Buildings
     public class GoldMine : MonoBehaviour, IInteractable
     {
         [Header("Gold")]
+        [SerializeField] private TextMesh text;
         [SerializeField] private int goldQuantity;
 
-        private DebugText debugText;
-
-        private void Start()
+        private void Awake()
         {
-            debugText = GetComponent<DebugText>();
-            if (debugText)
-            {
-                debugText.SetParent(transform);
-                debugText.Text.text = goldQuantity.ToString();
-            }
+            text.text = goldQuantity.ToString();
         }
 
         public bool Interact(int goldQuantity)
@@ -26,7 +20,7 @@ namespace RTSGame.Entities.Buildings
             if (this.goldQuantity <= 0) return false;
 
             this.goldQuantity--;
-            if (debugText) debugText.Text.text = this.goldQuantity.ToString();
+            text.text = this.goldQuantity.ToString();
             return true;
         }
     }

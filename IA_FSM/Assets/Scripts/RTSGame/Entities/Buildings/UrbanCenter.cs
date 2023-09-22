@@ -5,23 +5,20 @@ namespace RTSGame.Entities.Buildings
 {
     public class UrbanCenter : MonoBehaviour, IInteractable
     {
-        private int goldQuantity;
-        private DebugText debugText;
+        [Header("Gold")]
+        [SerializeField] private TextMesh text;
 
-        private void Start()
+        public int goldQuantity;
+
+        private void Awake()
         {
-            debugText = GetComponent<DebugText>();
-            if (debugText)
-            {
-                debugText.SetParent(transform);
-                debugText.Text.text = goldQuantity.ToString();
-            }
+            text.text = goldQuantity.ToString();
         }
 
         public bool Interact(int goldQuantity)
         {
             this.goldQuantity += goldQuantity;
-            if (debugText) debugText.Text.text = this.goldQuantity.ToString();
+            text.text = this.goldQuantity.ToString();
             return true;
         }
     }

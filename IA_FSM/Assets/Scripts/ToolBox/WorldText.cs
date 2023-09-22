@@ -24,6 +24,10 @@ namespace Toolbox
             textMesh.fontSize = fontSize;
             textMesh.color = color;
             textMesh.GetComponent<MeshRenderer>().sortingOrder = sortingOrder;
+
+            GameObject GO = GameObject.Find("UI");
+            if (GO) textMesh.transform.SetParent(GO.transform);
+
             return textMesh;
         }
     }
