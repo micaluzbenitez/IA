@@ -1,28 +1,33 @@
 using UnityEngine;
-using RTSGame.Interfaces;
 using Toolbox;
+using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents
 {
     public class Villager : Agent
     {
-        [Header("Gold")]
-        [SerializeField] private TextMesh text;
-
         [Header("Gold mine")]
         [SerializeField] private float timePerMine;
         [SerializeField] private float maxGoldRecolected;
 
-        private IInteractable interactable;
-        private int goldQuantity;
+        [Header("Food")]
+        [SerializeField] private int goldsPerFood;
+
+        [Header("UI")]
+        [SerializeField] private TextMesh goldText;
 
         // Gold mine
+        private GoldMine goldMine;
+        private int goldQuantity;
         private Timer mineTimer = new Timer();
+
+        // Food
+        private bool needsFood = false;
 
         protected override void Awake()
         {
             base.Awake();
-            text.text = goldQuantity.ToString();
+            goldText.text = goldQuantity.ToString();
             mineTimer.SetTimer(timePerMine, Timer.TIMER_MODE.DECREASE);
         }
 
@@ -30,6 +35,7 @@ namespace RTSGame.Entities.Agents
         {
             base.Update();
             UpdateMineTimer();
+            CheckForFood();
 
             if (Input.GetKeyDown(KeyCode.M)) SetTargetPosition(FindNearestGoldMine());
         }
@@ -40,34 +46,45 @@ namespace RTSGame.Entities.Agents
 
             if (mineTimer.ReachedTimer())
             {
-                if (interactable.Interact(goldQuantity))
+                if (goldMine.ConsumeGold())
                 {
                     goldQuantity++;
-                    text.text = goldQuantity.ToString();
+                    goldText.text = goldQuantity.ToString();
 
                     if (goldQuantity == maxGoldRecolected) SetTargetPosition(FindUrbanCenter());
+                    else if (goldQuantity % goldsPerFood == 0) needsFood = true;
                     else mineTimer.ActiveTimer();
+                }
+            }
+        }
+
+        private void CheckForFood()
+        {
+            if (needsFood)
+            {
+                if (goldMine.ConsumeFood())
+                {
+                    mineTimer.ActiveTimer();
+                    needsFood = false;
                 }
             }
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            interactable = collision.GetComponent<IInteractable>();
-
-            if (interactable != null)
+            if (collision.CompareTag("GoldMine"))
             {
-                if (collision.CompareTag("GoldMine"))
-                {
-                    mineTimer.ActiveTimer();
-                }
-                if (collision.CompareTag("UrbanCenter"))
-                {
-                    interactable.Interact(goldQuantity); 
-                    SetTargetPosition(FindNearestGoldMine());
-                    goldQuantity = 0;
-                    text.text = goldQuantity.ToString();
-                }
+                goldMine = collision.GetComponent<GoldMine>();
+                mineTimer.ActiveTimer();
+            }
+
+            if (collision.CompareTag("UrbanCenter"))
+            {
+                UrbanCenter urbanCenter = collision.GetComponent<UrbanCenter>();
+                urbanCenter.DeliverGold(goldQuantity);
+                goldQuantity = 0;
+                goldText.text = goldQuantity.ToString();
+                SetTargetPosition(FindNearestGoldMine());
             }
         }
 

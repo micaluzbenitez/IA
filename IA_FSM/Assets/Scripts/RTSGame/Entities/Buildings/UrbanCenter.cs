@@ -1,25 +1,23 @@
-using RTSGame.Interfaces;
 using UnityEngine;
 
 namespace RTSGame.Entities.Buildings
 {
-    public class UrbanCenter : MonoBehaviour, IInteractable
+    public class UrbanCenter : MonoBehaviour
     {
         [Header("Gold")]
-        [SerializeField] private TextMesh text;
+        [SerializeField] private TextMesh goldText;
 
         public int goldQuantity;
 
         private void Awake()
         {
-            text.text = goldQuantity.ToString();
+            goldText.text = goldQuantity.ToString();
         }
 
-        public bool Interact(int goldQuantity)
+        public void DeliverGold(int goldQuantity)
         {
             this.goldQuantity += goldQuantity;
-            text.text = this.goldQuantity.ToString();
-            return true;
+            goldText.text = this.goldQuantity.ToString();
         }
     }
 }
