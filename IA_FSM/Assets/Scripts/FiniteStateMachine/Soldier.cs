@@ -54,23 +54,5 @@ namespace FiniteStateMachine
         {
             fsm.Update();
         }
-
-        /*
-        public void UpdateData()
-        {
-            ParallelOptions options = new ParallelOptions();
-            
-            for (int i = 0; i < soldiers.Count; i++)
-            {
-                List<(Vector3 minerPos, int currentState, Vector3 targetPos)> threadData = new List<(Vector3 minerPos, int currentState, Vector3 targetPos)>();
-            }
-            
-            Parallel.ForEach(threadData, options, threadData =>
-            {
-                threadData.soldiers.Add(7);
-            
-            });
-        }
-        */
     }
 }

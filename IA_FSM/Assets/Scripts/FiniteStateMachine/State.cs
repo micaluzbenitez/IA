@@ -1,9 +1,10 @@
-using System;
 using System.Collections.Generic;
+using System;
+using UnityEngine;
 
-namespace FiniteStateMachine.States
+namespace FiniteStateMachine
 {
-    public abstract class State
+    public abstract class State : MonoBehaviour
     {
         public Action<int> SetFlag;
         public abstract List<Action> GetOnEnterBehaviours(params object[] parameters);

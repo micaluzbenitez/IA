@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 4624094040634711921}
   - component: {fileID: -7182160280500910530}
   - component: {fileID: 2187897219725719343}
-  - component: {fileID: 6550479352795879693}
+  - component: {fileID: 3763820242339453498}
   m_Layer: 0
   m_Name: Villager
   m_TagString: Villager
@@ -239,7 +239,7 @@ MonoBehaviour:
     cost: 2
   - pathNodeType: 2
     cost: 3
---- !u!114 &6550479352795879693
+--- !u!114 &3763820242339453498
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -248,11 +248,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2187897219725719350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 225bb3803c2464e4c9c81825347810dd, type: 3}
+  m_Script: {fileID: 11500000, guid: 2830917177ca1044b99cdbe089c1d4d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  distancePerObjetive: 4
   timePerMine: 1
   maxGoldRecolected: 15
   goldsPerFood: 3

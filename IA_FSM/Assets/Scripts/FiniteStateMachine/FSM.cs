@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using FiniteStateMachine.States;
 
 namespace FiniteStateMachine
 {
@@ -33,6 +32,9 @@ namespace FiniteStateMachine
         public void SetCurrentStateForced(int state)
         {
             currentStateIndex = state;
+
+            //foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))
+            //    OnEnter?.Invoke();
         }
 
         public void SetRelation(int sourceState, int flag, int destinationState)
@@ -44,12 +46,12 @@ namespace FiniteStateMachine
         {
             if (relations[currentStateIndex, flag] != -1)
             {
-                foreach (Action OnExit in states[currentStateIndex].GetExitBehaviours())
+                foreach (Action OnExit in states[currentStateIndex].GetExitBehaviours(statesOnExitParameters[currentStateIndex]?.Invoke()))
                     OnExit?.Invoke();
 
                 currentStateIndex = relations[currentStateIndex, flag];
 
-                foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours())
+                foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))
                     OnEnter?.Invoke();
             }
         }
