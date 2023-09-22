@@ -55,6 +55,10 @@ namespace RTSGame.Entities.Agents
                     else if (goldQuantity % goldsPerFood == 0) needsFood = true;
                     else mineTimer.ActiveTimer();
                 }
+                else
+                {
+                    SetTargetPosition(FindNearestGoldMine());
+                }
             }
         }
 
