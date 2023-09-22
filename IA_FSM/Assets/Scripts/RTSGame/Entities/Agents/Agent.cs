@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder;
-using Toolbox;
 
 namespace RTSGame.Entities.Agents
 {
@@ -9,35 +8,30 @@ namespace RTSGame.Entities.Agents
     public class Agent : MonoBehaviour
     {
         [Header("Movement")]
-        [SerializeField] private float speed = 5f;
+        [SerializeField] protected float speed = 5f;
+        [SerializeField] protected float distancePerObjetive = 2.5f;
 
-        private AgentPathNodes agentPathNodes;
-        private int currentPathIndex;
-        private List<Vector3> pathVectorList;
+        protected AgentPathNodes agentPathNodes;
+        protected int currentPathIndex;
+        protected List<Vector3> pathVectorList;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             agentPathNodes = GetComponent<AgentPathNodes>();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             HandleMovement();
-
-            if (Input.GetMouseButton(0))
-            {
-                Vector3 mouseWorldPosition = MousePosition.GetMouseWorldPosition();
-                SetTargetPosition(mouseWorldPosition);
-            }
         }
 
-        private void HandleMovement()
+        protected void HandleMovement()
         {
             if (pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
-                if (Vector3.Distance(transform.position, targetPosition) > 1f)
+                if (Vector3.Distance(transform.position, targetPosition) > distancePerObjetive)
                 {
                     Vector3 moveDir = (targetPosition - transform.position).normalized;
                     transform.position = transform.position + moveDir * speed * Time.deltaTime;
