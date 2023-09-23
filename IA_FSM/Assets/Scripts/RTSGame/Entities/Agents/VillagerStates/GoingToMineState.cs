@@ -111,6 +111,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
                     currentPathIndex++;
                     if (currentPathIndex >= pathVectorList.Count)
                     {
+                        goldMine.AddVillager();
                         pathVectorList = null; // Stop moving
                         Transition((int)FSM_Villager_Flags.OnMining);
                     }

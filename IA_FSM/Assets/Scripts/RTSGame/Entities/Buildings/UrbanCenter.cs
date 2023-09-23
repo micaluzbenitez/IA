@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace RTSGame.Entities.Buildings
@@ -14,6 +15,7 @@ namespace RTSGame.Entities.Buildings
         }
 
         [Header("Agents")]
+        [SerializeField] Vector3 positionOffset;
         [SerializeField] private Agent[] agents;
 
         [Header("Gold")]
@@ -28,11 +30,19 @@ namespace RTSGame.Entities.Buildings
 
         private void Start()
         {
+            StartCoroutine(SpawnAgents());
+        }
+
+        private IEnumerator SpawnAgents()
+        {
+            yield return new WaitForSeconds(0.5f);
+
             for (int i = 0; i < agents.Length; i++)
             {
                 for (int j = 0; j < agents[i].quantity; j++)
                 {
-                    Instantiate(agents[i].prefab, transform.position, Quaternion.identity);
+                    Instantiate(agents[i].prefab, transform.position + positionOffset, Quaternion.identity);
+                    yield return new WaitForSeconds(0.2f);
                 }
             }
         }

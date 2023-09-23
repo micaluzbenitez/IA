@@ -10,12 +10,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
     {
         private Timer mineTimer = new Timer();
         private int totalGoldsRecolected;
+        private GoldMine goldMine;
 
         public static Action OnMine;
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            GoldMine goldMine = parameters[0] as GoldMine;
+            goldMine = parameters[0] as GoldMine;
             float timePerMine = Convert.ToSingle(parameters[1]);
             int goldQuantity = Convert.ToInt32(parameters[2]);
             int maxGoldRecolected = Convert.ToInt32(parameters[3]);
@@ -70,12 +71,23 @@ namespace RTSGame.Entities.Agents.VillagerStates
                     OnMine?.Invoke();
                     totalGoldsRecolected++;
 
-                    if ((goldQuantity + 1) == maxGoldRecolected) Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
-                    else if (totalGoldsRecolected % goldsPerFood == 0) Transition((int)FSM_Villager_Flags.OnGoEat);
-                    else mineTimer.ActiveTimer();
+                    if ((goldQuantity + 1) == maxGoldRecolected) // Save golds
+                    {
+                        goldMine.RemoveVillager();
+                        Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
+                    }
+                    else if (totalGoldsRecolected % goldsPerFood == 0) // Eat
+                    {
+                        Transition((int)FSM_Villager_Flags.OnGoEat);
+                    }
+                    else // Continue mining
+                    {
+                        mineTimer.ActiveTimer();
+                    }
                 }
                 else
                 {
+                    goldMine.RemoveVillager();
                     Transition((int)FSM_Villager_Flags.OnGoMine);
                 }
             }

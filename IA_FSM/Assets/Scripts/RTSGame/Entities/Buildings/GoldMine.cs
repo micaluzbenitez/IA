@@ -12,6 +12,7 @@ namespace RTSGame.Entities.Buildings
         [SerializeField] private TextMesh foodText;
 
         private int foodQuantity;
+        private int villagersOn;
 
         private bool withVillagers = false;
         public bool WithVillagers => withVillagers;
@@ -57,14 +58,16 @@ namespace RTSGame.Entities.Buildings
             return true;
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+        public void AddVillager()
         {
-            if (collision.CompareTag("Villager")) withVillagers = true;
+            villagersOn++;
+            withVillagers = true;
         }
 
-        private void OnTriggerExit2D(Collider2D collision)
+        public void RemoveVillager()
         {
-            if (collision.CompareTag("Villager")) withVillagers = false;
+            villagersOn--;
+            if (villagersOn <= 0) withVillagers = false;
         }
     }
 }
