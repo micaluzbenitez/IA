@@ -41,10 +41,6 @@ namespace RTSGame.Entities.Agents
 
         private AgentPathNodes agentPathNodes;
 
-        // Food
-        private int foodQuantity;
-
-        // Gold mine
         private GoldMine goldMine;
 
         private FSM fsm;
@@ -53,9 +49,7 @@ namespace RTSGame.Entities.Agents
         private void Awake()
         {
             agentPathNodes = GetComponent<AgentPathNodes>();
-            foodText.text = foodQuantity.ToString();
-            TakeFoodState.OnTakeFood += AddFood;
-            DeliverMineState.OnDeliverFood += EmptyFood;
+            foodText.text = "0";
         }
 
         private void Start()
@@ -86,13 +80,13 @@ namespace RTSGame.Entities.Agents
                 () => (new object[2] { agentPathNodes, transform }));
 
             fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood,
-                () => (new object[] { }));
+                () => (new object[2] { foodPerTravel, foodText}));
 
             fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine,
                 () => (new object[3] { agentPathNodes, transform, speed }));
 
             fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood,
-                () => (new object[2] { goldMine, foodQuantity }));
+                () => (new object[3] { goldMine, foodPerTravel, foodText }));
 
             fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge,
                 () => (new object[3] { transform, speed, previousState }),
@@ -108,18 +102,6 @@ namespace RTSGame.Entities.Agents
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
-        }
-
-        private void AddFood()
-        {
-            foodQuantity = foodPerTravel;
-            foodText.text = foodQuantity.ToString();
-        }
-
-        private void EmptyFood()
-        {
-            foodQuantity = 0;
-            foodText.text = foodQuantity.ToString();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)

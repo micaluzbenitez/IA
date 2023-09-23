@@ -47,12 +47,8 @@ namespace RTSGame.Entities.Agents
 
         private AgentPathNodes agentPathNodes;
 
-        // Urban center
         private UrbanCenter urbanCenter;
-
-        // Gold mine
         private GoldMine goldMine;
-        private int goldQuantity;
 
         private FSM fsm;
         private FSM_Caravan_States previousState;
@@ -60,9 +56,7 @@ namespace RTSGame.Entities.Agents
         private void Awake()
         {
             agentPathNodes = GetComponent<AgentPathNodes>();
-            goldText.text = goldQuantity.ToString();
-            MineState.OnMine += AddGold;
-            SaveMaterialsState.OnSaveMaterials += EmptyGold;
+            goldText.text = "0";
         }
 
         private void Start()
@@ -99,7 +93,7 @@ namespace RTSGame.Entities.Agents
                 () => (new object[3] { agentPathNodes, transform, speed }));
 
             fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
-                () => (new object[5] { goldMine, timePerMine, goldQuantity, maxGoldRecolected, goldsPerFood }));
+                () => (new object[5] { goldMine, timePerMine, maxGoldRecolected, goldsPerFood, goldText }));
 
             fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
                 () => (new object[1] { goldMine }));
@@ -109,7 +103,7 @@ namespace RTSGame.Entities.Agents
                 () => (new object[2] { agentPathNodes, transform }));
 
             fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials,
-                () => (new object[2] { urbanCenter, goldQuantity }));
+                () => (new object[3] { urbanCenter, maxGoldRecolected, goldText }));
 
             fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge,
                 () => (new object[3] { transform, speed, previousState }),
@@ -125,18 +119,6 @@ namespace RTSGame.Entities.Agents
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
-        }
-
-        private void AddGold()
-        {
-            goldQuantity++;
-            goldText.text = goldQuantity.ToString();
-        }
-
-        private void EmptyGold()
-        {
-            goldQuantity = 0;
-            goldText.text = goldQuantity.ToString();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)

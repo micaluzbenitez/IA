@@ -130,10 +130,10 @@ MonoBehaviour:
   agents:
   - tag: Villager
     prefab: {fileID: 2187897219725719350, guid: 64b98334cade4aa4d94a66a347589bf0, type: 3}
-    quantity: 1
+    quantity: 4
   - tag: Caravan
     prefab: {fileID: 2187897219725719350, guid: ae562c64a3fd2ff40ad9c5644c7eb717, type: 3}
-    quantity: 1
+    quantity: 2
   goldText: {fileID: 5441546071139528487}
 --- !u!1 &1289515796425317456
 GameObject:
