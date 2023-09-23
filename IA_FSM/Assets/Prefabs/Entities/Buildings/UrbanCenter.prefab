@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 3672817777346635451}
   - component: {fileID: 2602158761062661204}
   - component: {fileID: 5441546071139528487}
+  - component: {fileID: 7956172717774519547}
   m_Layer: 0
   m_Name: GoldText
   m_TagString: Untagged
@@ -225,6 +226,17 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!210 &7956172717774519547
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289515796425317456}
+  m_Enabled: 1
+  m_SortingLayerID: -1929687119
+  m_SortingLayer: 3
+  m_SortingOrder: 0
 --- !u!1 &1497429228206829885
 GameObject:
   m_ObjectHideFlags: 0

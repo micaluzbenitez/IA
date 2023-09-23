@@ -240,7 +240,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1929687119
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 00b75b9e2ccd5ff41872591b05438a6a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 4775842841407221167}
   - component: {fileID: 4251446783172174663}
   - component: {fileID: 564786310125634920}
+  - component: {fileID: 2649858692683531405}
   m_Layer: 0
   m_Name: FoodText
   m_TagString: Untagged
@@ -350,3 +351,14 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!210 &2649858692683531405
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5050655934522301214}
+  m_Enabled: 1
+  m_SortingLayerID: -1929687119
+  m_SortingLayer: 3
+  m_SortingOrder: 1

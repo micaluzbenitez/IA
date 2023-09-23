@@ -9,6 +9,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
     public class MineState : State
     {
         private Timer mineTimer = new Timer();
+        private int totalGoldsRecolected;
 
         public static Action OnMine;
 
@@ -54,9 +55,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
                 if (goldMine.ConsumeGold())
                 {
                     OnMine?.Invoke();
+                    totalGoldsRecolected++;
 
                     if ((goldQuantity + 1) == maxGoldRecolected) Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
-                    else if ((goldQuantity + 1) % goldsPerFood == 0) Transition((int)FSM_Villager_Flags.OnGoEat);
+                    else if (totalGoldsRecolected % goldsPerFood == 0) Transition((int)FSM_Villager_Flags.OnGoEat);
                     else mineTimer.ActiveTimer();
                 }
                 else

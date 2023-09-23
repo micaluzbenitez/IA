@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 3186749910880039627}
   - component: {fileID: 3849442231406104497}
   - component: {fileID: 1324345324739225827}
+  - component: {fileID: 1387667432585568874}
   m_Layer: 0
   m_Name: GoldText
   m_TagString: Untagged
@@ -311,6 +312,17 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!210 &1387667432585568874
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3264633867783349079}
+  m_Enabled: 1
+  m_SortingLayerID: -1929687119
+  m_SortingLayer: 3
+  m_SortingOrder: 0
 --- !u!1 &7629887954532740800
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +418,7 @@ GameObject:
   - component: {fileID: 8827529626023925807}
   - component: {fileID: 453752955556080737}
   - component: {fileID: 4952006534588220140}
+  - component: {fileID: 3372561091676282419}
   m_Layer: 0
   m_Name: FoodText
   m_TagString: Untagged
@@ -493,3 +506,14 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!210 &3372561091676282419
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8081910423398124588}
+  m_Enabled: 1
+  m_SortingLayerID: -1929687119
+  m_SortingLayer: 3
+  m_SortingOrder: 0
