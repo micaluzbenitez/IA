@@ -1,21 +1,24 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Pathfinder;
 using FiniteStateMachine;
+using Pathfinder;
 using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents.CaravanStates
 {
-    public class GoingToTakeFoodState : State
+    public class TakeRefugeState : State
     {
         private int currentPathIndex;
         private List<Vector3> pathVectorList;
+
+        private FSM_Caravan_States previousState;
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
             Transform transform = parameters[0] as Transform;
             float speed = Convert.ToSingle(parameters[1]);
+            previousState = (FSM_Caravan_States)parameters[2];
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -34,7 +37,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+                Alarm.OnStopAlarm += ReturnPreviousState;
                 SetTargetPosition(transform, FindUrbanCenter(), agentPathNodes);
             });
 
@@ -46,7 +49,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+                Alarm.OnStopAlarm -= ReturnPreviousState;
             });
 
             return behaviours;
@@ -88,12 +91,27 @@ namespace RTSGame.Entities.Agents.CaravanStates
                 else
                 {
                     currentPathIndex++;
-                    if (currentPathIndex >= pathVectorList.Count)
-                    {
-                        pathVectorList = null; // Stop moving
-                        Transition((int)FSM_Caravan_Flags.OnTakingFood);
-                    }
+                    if (currentPathIndex >= pathVectorList.Count) pathVectorList = null; // Stop moving
                 }
+            }
+        }
+
+        private void ReturnPreviousState()
+        {
+            switch (previousState) 
+            {
+                case FSM_Caravan_States.GoingToTakeFood:
+                    Transition((int)FSM_Caravan_Flags.OnGoTakeFood);
+                    break;
+                case FSM_Caravan_States.TakeFood:
+                    Transition((int)FSM_Caravan_Flags.OnTakingFood);
+                    break;
+                case FSM_Caravan_States.GoingToMine:
+                    Transition((int)FSM_Caravan_Flags.OnGoMine);
+                    break;
+                case FSM_Caravan_States.DeliverFood:
+                    Transition((int)FSM_Caravan_Flags.OnDeliveringFood);
+                    break;
             }
         }
     }

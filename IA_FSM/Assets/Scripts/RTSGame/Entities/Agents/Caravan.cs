@@ -11,7 +11,8 @@ namespace RTSGame.Entities.Agents
         GoingToTakeFood,
         TakeFood,
         GoingToMine,
-        DeliverFood
+        DeliverFood,
+        TakeRefuge
     }
 
     internal enum FSM_Caravan_Flags
@@ -19,12 +20,16 @@ namespace RTSGame.Entities.Agents
         OnGoTakeFood,
         OnTakingFood,
         OnGoMine,
-        OnDeliveringFood
+        OnDeliveringFood,
+        OnTakingRefuge
     }
 
     [RequireComponent(typeof(AgentPathNodes))]
     public class Caravan : MonoBehaviour
     {
+        [Header("FSM")]
+        [SerializeField] private FSM_Caravan_States currentState;
+
         [Header("Movement")]
         [SerializeField] private float speed = 5f;
 
@@ -43,6 +48,7 @@ namespace RTSGame.Entities.Agents
         private GoldMine goldMine;
 
         private FSM fsm;
+        private FSM_Caravan_States previousState;
 
         private void Awake()
         {
@@ -58,12 +64,21 @@ namespace RTSGame.Entities.Agents
 
             // Set relations
             fsm.SetRelation((int)FSM_Caravan_States.GoingToTakeFood, (int)FSM_Caravan_Flags.OnTakingFood, (int)FSM_Caravan_States.TakeFood);
+            fsm.SetRelation((int)FSM_Caravan_States.GoingToTakeFood, (int)FSM_Caravan_Flags.OnTakingRefuge, (int)FSM_Caravan_States.TakeRefuge);
 
             fsm.SetRelation((int)FSM_Caravan_States.TakeFood, (int)FSM_Caravan_Flags.OnGoMine, (int)FSM_Caravan_States.GoingToMine);
+            fsm.SetRelation((int)FSM_Caravan_States.TakeFood, (int)FSM_Caravan_Flags.OnTakingRefuge, (int)FSM_Caravan_States.TakeRefuge);
 
             fsm.SetRelation((int)FSM_Caravan_States.GoingToMine, (int)FSM_Caravan_Flags.OnDeliveringFood, (int)FSM_Caravan_States.DeliverFood);
+            fsm.SetRelation((int)FSM_Caravan_States.GoingToMine, (int)FSM_Caravan_Flags.OnTakingRefuge, (int)FSM_Caravan_States.TakeRefuge);
 
             fsm.SetRelation((int)FSM_Caravan_States.DeliverFood, (int)FSM_Caravan_Flags.OnGoTakeFood, (int)FSM_Caravan_States.GoingToTakeFood);
+            fsm.SetRelation((int)FSM_Caravan_States.DeliverFood, (int)FSM_Caravan_Flags.OnTakingRefuge, (int)FSM_Caravan_States.TakeRefuge);
+
+            fsm.SetRelation((int)FSM_Caravan_States.TakeRefuge, (int)FSM_Caravan_Flags.OnGoTakeFood, (int)FSM_Caravan_States.GoingToTakeFood);
+            fsm.SetRelation((int)FSM_Caravan_States.TakeRefuge, (int)FSM_Caravan_Flags.OnTakingFood, (int)FSM_Caravan_States.TakeFood);
+            fsm.SetRelation((int)FSM_Caravan_States.TakeRefuge, (int)FSM_Caravan_Flags.OnGoMine, (int)FSM_Caravan_States.GoingToMine);
+            fsm.SetRelation((int)FSM_Caravan_States.TakeRefuge, (int)FSM_Caravan_Flags.OnDeliveringFood, (int)FSM_Caravan_States.DeliverFood);
 
             // Add states
             fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood,
@@ -79,6 +94,10 @@ namespace RTSGame.Entities.Agents
             fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood,
                 () => (new object[2] { goldMine, foodQuantity }));
 
+            fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge,
+                () => (new object[3] { transform, speed, previousState }),
+                () => (new object[2] { agentPathNodes, transform }));
+
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Caravan_States.TakeFood);
         }
@@ -86,6 +105,9 @@ namespace RTSGame.Entities.Agents
         private void Update()
         {
             fsm.Update();
+
+            previousState = (FSM_Caravan_States)fsm.previousStateIndex;
+            currentState = (FSM_Caravan_States)fsm.currentStateIndex;
         }
 
         private void AddFood()

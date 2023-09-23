@@ -125,8 +125,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af849c299a197534daee390511184a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agents:
+  - tag: Villager
+    prefab: {fileID: 2187897219725719350, guid: 64b98334cade4aa4d94a66a347589bf0, type: 3}
+    quantity: 1
+  - tag: Caravan
+    prefab: {fileID: 2187897219725719350, guid: ae562c64a3fd2ff40ad9c5644c7eb717, type: 3}
+    quantity: 1
   goldText: {fileID: 5441546071139528487}
-  goldQuantity: 0
 --- !u!1 &1289515796425317456
 GameObject:
   m_ObjectHideFlags: 0

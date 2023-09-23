@@ -9,6 +9,7 @@ namespace FiniteStateMachine
         Dictionary<int, Func<object[]>> statesParameters;
         Dictionary<int, Func<object[]>> statesOnEnterParameters;
         Dictionary<int, Func<object[]>> statesOnExitParameters;
+        public int previousStateIndex = -1;
         public int currentStateIndex = 0;
         private int[,] relations;
 
@@ -49,6 +50,7 @@ namespace FiniteStateMachine
                 foreach (Action OnExit in states[currentStateIndex].GetExitBehaviours(statesOnExitParameters[currentStateIndex]?.Invoke()))
                     OnExit?.Invoke();
 
+                previousStateIndex = currentStateIndex;
                 currentStateIndex = relations[currentStateIndex, flag];
 
                 foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))

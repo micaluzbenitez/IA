@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goldText: {fileID: 1324345324739225827}
-  goldQuantity: 5
+  goldQuantity: 50
   foodText: {fileID: 4952006534588220140}
 --- !u!1 &3264633867783349079
 GameObject:

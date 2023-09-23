@@ -22,12 +22,24 @@ namespace RTSGame.Entities.Agents.CaravanStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
-            return new List<Action>();
+            List<Action> behaviours = new List<Action>();
+            behaviours.Add(() =>
+            {
+                Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+            });
+
+            return behaviours;
         }
 
         public override List<Action> GetExitBehaviours(params object[] parameters)
         {
-            return new List<Action>();
+            List<Action> behaviours = new List<Action>();
+            behaviours.Add(() =>
+            {
+                Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+            });
+
+            return behaviours;
         }
 
         public override void Transition(int flag)

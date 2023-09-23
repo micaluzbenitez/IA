@@ -1,12 +1,12 @@
 using System;
 using UnityEngine;
 
-namespace RTSGame
+namespace RTSGame.Entities
 {
     public class Alarm : MonoBehaviour
     {
-        public Action OnStartAlarm;
-        public Action OnStopAlarm;
+        public static Action OnStartAlarm;
+        public static Action OnStopAlarm;
 
         public void StartAlarm()
         {
