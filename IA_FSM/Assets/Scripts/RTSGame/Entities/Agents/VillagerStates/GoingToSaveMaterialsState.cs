@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using RTSGame.Entities.Buildings; 
 using Pathfinder;
 using FiniteStateMachine;
+using RTSGame.Entities.Buildings; 
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -84,7 +84,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
                     if (currentPathIndex >= pathVectorList.Count)
                     {
                         pathVectorList = null; // Stop moving
-                        Transition((int)FSM_Flags.OnSaveMaterials);
+                        Transition((int)FSM_Villager_Flags.OnSaveMaterials);
                     }
                 }
             }

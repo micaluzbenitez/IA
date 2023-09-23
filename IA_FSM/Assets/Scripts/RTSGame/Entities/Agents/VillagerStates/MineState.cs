@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using System;
-using RTSGame.Entities.Buildings;
+using System.Collections.Generic;
 using Toolbox;
 using FiniteStateMachine;
+using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -55,13 +55,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
                 {
                     OnMine?.Invoke();
 
-                    if ((goldQuantity + 1) == maxGoldRecolected) Transition((int)FSM_Flags.OnGoSaveMaterials);
-                    else if ((goldQuantity + 1) % goldsPerFood == 0) Transition((int)FSM_Flags.OnGoEat);
+                    if ((goldQuantity + 1) == maxGoldRecolected) Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
+                    else if ((goldQuantity + 1) % goldsPerFood == 0) Transition((int)FSM_Villager_Flags.OnGoEat);
                     else mineTimer.ActiveTimer();
                 }
                 else
                 {
-                    Transition((int)FSM_Flags.OnGoMine);
+                    Transition((int)FSM_Villager_Flags.OnGoMine);
                 }
             }
         }

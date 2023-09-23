@@ -5,25 +5,21 @@ using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 
-namespace RTSGame.Entities.Agents.VillagerStates
+namespace RTSGame.Entities.Agents.CaravanStates
 {
-    public class GoingToMineState : State
+    public class GoingToTakeFoodState : State
     {
         private int currentPathIndex;
         private List<Vector3> pathVectorList;
 
-        private GoldMine goldMine;
-
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Transform transform = parameters[1] as Transform;
-            float speed = Convert.ToSingle(parameters[2]);
+            Transform transform = parameters[0] as Transform;
+            float speed = Convert.ToSingle(parameters[1]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                CheckForGoldMine(transform, agentPathNodes);
                 HandleMovement(transform, speed);
             });
 
@@ -32,18 +28,21 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
-            return new List<Action>();
+            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
+            Transform transform = parameters[1] as Transform;
+
+            List<Action> behaviours = new List<Action>();
+            behaviours.Add(() =>
+            {
+                SetTargetPosition(transform, FindUrbanCenter(), agentPathNodes);
+            });
+
+            return behaviours;
         }
 
         public override List<Action> GetExitBehaviours(params object[] parameters)
         {
-            List<Action> behaviours = new List<Action>();
-            behaviours.Add(() =>
-            {
-                goldMine = null;
-            });
-
-            return behaviours;
+            return new List<Action>();
         }
 
         public override void Transition(int flag)
@@ -51,22 +50,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes)
-        {
-            if (goldMine) return;
-
-            goldMine = FindNearestGoldMine();
-
-            if (goldMine)
-            {
-                SetTargetPosition(transform, goldMine, agentPathNodes);
-            }
-        }
-
-        private void SetTargetPosition(Transform transform, GoldMine goldMine, AgentPathNodes agentPathNodes)
+        private void SetTargetPosition(Transform transform, Vector3 targetPosition, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, goldMine.transform.position, agentPathNodes.pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
@@ -74,18 +61,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
             }
         }
 
-        private GoldMine FindNearestGoldMine()
+        private Vector3 FindUrbanCenter()
         {
-            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
-            int randomIndex;
-
-            do
-            {
-                randomIndex = UnityEngine.Random.Range(0, goldMines.Length);
-            }
-            while (!goldMines[randomIndex].HasGold());
-
-            return goldMines[randomIndex];
+            UrbanCenter urbanCenter = FindObjectOfType<UrbanCenter>();
+            return urbanCenter.gameObject.transform.position;
         }
 
         private void HandleMovement(Transform transform, float speed)
@@ -105,7 +84,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
                     if (currentPathIndex >= pathVectorList.Count)
                     {
                         pathVectorList = null; // Stop moving
-                        Transition((int)FSM_Villager_Flags.OnMining);
+                        Transition((int)FSM_Caravan_Flags.OnTakingFood);
                     }
                 }
             }

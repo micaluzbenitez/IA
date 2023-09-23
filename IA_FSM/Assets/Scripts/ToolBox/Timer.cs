@@ -120,28 +120,3 @@ namespace Toolbox
     }
 #endregion
 }
-
-/* Testeo timer:
-public class test : MonoBehaviour
-{
-    public Timer.TIMER_MODE timerMode = Timer.TIMER_MODE.DECREASE;
-    public float totalTime = 0;
-
-    private Timer timer = new Timer();
-
-    private void Awake()
-    {
-        timer.SetTimer(totalTime, timerMode);
-    }
-
-    private void Update()
-    {
-        if (timer.Active) timer.UpdateTimer();
-
-        if (Input.GetKeyDown(KeyCode.M)) timer.ActiveTimer();
-        if (Input.GetKeyDown(KeyCode.N)) timer.DesactiveTimer();
-
-        Debug.Log(timer.CurrentTime);
-    }
-}
-*/

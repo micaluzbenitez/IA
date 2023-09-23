@@ -1,109 +1,118 @@
+using System;
 using UnityEngine;
-using Toolbox;
+using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
-using UnityEngine.Assertions.Must;
-using System.Collections.Generic;
+using RTSGame.Entities.Agents.CaravanStates;
 
 namespace RTSGame.Entities.Agents
 {
-    public class Caravan : Agent
+    internal enum FSM_Caravan_States
     {
+        GoingToTakeFood,
+        TakeFood,
+        GoingToMine,
+        DeliverFood
+    }
+
+    internal enum FSM_Caravan_Flags
+    {
+        OnGoTakeFood,
+        OnTakingFood,
+        OnGoMine,
+        OnDeliveringFood
+    }
+
+    [RequireComponent(typeof(AgentPathNodes))]
+    public class Caravan : MonoBehaviour
+    {
+        [Header("Movement")]
+        [SerializeField] private float speed = 5f;
+
         [Header("Food")]
         [SerializeField] private int foodPerTravel;
 
         [Header("UI")]
         [SerializeField] private TextMesh foodText;
 
+        private AgentPathNodes agentPathNodes;
+
         // Food
         private int foodQuantity;
 
         // Gold mine
-        private bool waitingGoldMine = false;
-        private GoldMine actualGoldMine;
+        private GoldMine goldMine;
 
-        protected override void Awake()
+        private FSM fsm;
+
+        private void Awake()
         {
-            base.Awake();
+            agentPathNodes = GetComponent<AgentPathNodes>();
+            foodText.text = foodQuantity.ToString();
+            TakeFoodState.OnTakeFood += AddFood;
+            DeliverMineState.OnDeliverFood += EmptyFood;
+        }
+
+        private void Start()
+        {
+            fsm = new FSM(Enum.GetValues(typeof(FSM_Caravan_States)).Length, Enum.GetValues(typeof(FSM_Caravan_Flags)).Length);
+
+            // Set relations
+            fsm.SetRelation((int)FSM_Caravan_States.GoingToTakeFood, (int)FSM_Caravan_Flags.OnTakingFood, (int)FSM_Caravan_States.TakeFood);
+
+            fsm.SetRelation((int)FSM_Caravan_States.TakeFood, (int)FSM_Caravan_Flags.OnGoMine, (int)FSM_Caravan_States.GoingToMine);
+
+            fsm.SetRelation((int)FSM_Caravan_States.GoingToMine, (int)FSM_Caravan_Flags.OnDeliveringFood, (int)FSM_Caravan_States.DeliverFood);
+
+            fsm.SetRelation((int)FSM_Caravan_States.DeliverFood, (int)FSM_Caravan_Flags.OnGoTakeFood, (int)FSM_Caravan_States.GoingToTakeFood);
+
+            // Add states
+            fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood,
+                () => (new object[2] { transform, speed }),
+                () => (new object[2] { agentPathNodes, transform }));
+
+            fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood,
+                () => (new object[] { }));
+
+            fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine,
+                () => (new object[3] { agentPathNodes, transform, speed }));
+
+            fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood,
+                () => (new object[2] { goldMine, foodQuantity }));
+
+            // Start FSM
+            fsm.SetCurrentStateForced((int)FSM_Caravan_States.TakeFood);
+        }
+
+        private void Update()
+        {
+            fsm.Update();
+        }
+
+        private void AddFood()
+        {
             foodQuantity = foodPerTravel;
             foodText.text = foodQuantity.ToString();
-            waitingGoldMine = true;
         }
 
-        protected override void Update()
+        private void EmptyFood()
         {
-            base.Update();
-            CheckForGoldMine();
-            CheckActualGoldMine();
-        }
-
-        protected Vector3 FindNearestGoldMineBeingUsed()
-        {
-            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
-            List<GoldMine> goldMinesBeingUsed = new List<GoldMine>();
-
-            for (int i = 0; i < goldMines.Length; i++)
-            {
-                if (goldMines[i].WithVillagers) goldMinesBeingUsed.Add(goldMines[i]);
-            }
-
-            if (goldMinesBeingUsed.Count > 0)
-            {
-                int randomIndex = Random.Range(0, goldMinesBeingUsed.Count);
-                actualGoldMine = goldMinesBeingUsed[randomIndex];
-                return goldMinesBeingUsed[randomIndex].gameObject.transform.position;
-            }
-            else
-            {
-                return default;
-            }
-        }
-
-        private void CheckForGoldMine()
-        {
-            if (waitingGoldMine)
-            {
-                Vector3 target = FindNearestGoldMineBeingUsed();
-
-                if (target != default)
-                {
-                    SetTargetPosition(FindNearestGoldMineBeingUsed());
-                    waitingGoldMine = false;
-                }
-                else
-                {
-                    return;
-                }
-            }
-        }
-
-        private void CheckActualGoldMine()
-        {
-            if (actualGoldMine)
-            {
-                if (!actualGoldMine.WithVillagers) waitingGoldMine = true;
-            }
+            foodQuantity = 0;
+            foodText.text = foodQuantity.ToString();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.CompareTag("GoldMine"))
             {
-                GoldMine goldMine = collision.GetComponent<GoldMine>();
-                if (goldMine.WithVillagers)
-                {
-                    goldMine.DeliverFood(foodQuantity);
-                    foodQuantity = 0;
-                    foodText.text = foodQuantity.ToString();
-                    SetTargetPosition(FindUrbanCenter());
-                }
+                goldMine = collision.GetComponent<GoldMine>();
             }
+        }
 
-            if (collision.CompareTag("UrbanCenter"))
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (collision.CompareTag("GoldMine"))
             {
-                UrbanCenter urbanCenter = collision.GetComponent<UrbanCenter>();
-                foodQuantity = foodPerTravel;
-                foodText.text = foodQuantity.ToString();
-                waitingGoldMine = true;
+                goldMine = null;
             }
         }
     }

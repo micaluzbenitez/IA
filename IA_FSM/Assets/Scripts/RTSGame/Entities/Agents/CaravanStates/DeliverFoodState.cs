@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 
-namespace RTSGame.Entities.Agents.VillagerStates
+namespace RTSGame.Entities.Agents.CaravanStates
 {
-    public class SaveMaterialsState : State
+    public class DeliverMineState : State
     {
-        public static Action OnSaveMaterials;
+        public static Action OnDeliverFood;
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            UrbanCenter urbanCenter = parameters[0] as UrbanCenter;
-            int goldQuantity = Convert.ToInt32(parameters[1]);
+            GoldMine goldMine = parameters[0] as GoldMine;
+            int foodQuantity = Convert.ToInt32(parameters[1]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                urbanCenter.DeliverGold(goldQuantity);
-                OnSaveMaterials?.Invoke();
-                Transition((int)FSM_Villager_Flags.OnGoMine);
+                goldMine.DeliverFood(foodQuantity);
+                OnDeliverFood?.Invoke();
+                Transition((int)FSM_Caravan_Flags.OnGoTakeFood);
             });
 
             return behaviours;

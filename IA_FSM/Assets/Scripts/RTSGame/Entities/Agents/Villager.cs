@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using System;
 using UnityEngine;
+using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using RTSGame.Entities.Agents.VillagerStates;
-using FiniteStateMachine;
 
 namespace RTSGame.Entities.Agents
 {
-    internal enum FSM_States
+    internal enum FSM_Villager_States
     {
         GoingToMine,
         Mine,
@@ -16,7 +15,7 @@ namespace RTSGame.Entities.Agents
         SaveMaterials
     }
 
-    internal enum FSM_Flags
+    internal enum FSM_Villager_Flags
     {
         OnGoMine,
         OnMining,
@@ -42,8 +41,6 @@ namespace RTSGame.Entities.Agents
         [SerializeField] private TextMesh goldText;
 
         private AgentPathNodes agentPathNodes;
-        private int currentPathIndex;
-        private List<Vector3> pathVectorList;
 
         // Urban center
         private UrbanCenter urbanCenter;
@@ -64,42 +61,41 @@ namespace RTSGame.Entities.Agents
 
         private void Start()
         {
-            fsm = new FSM(Enum.GetValues(typeof(FSM_States)).Length, Enum.GetValues(typeof(FSM_Flags)).Length);
+            fsm = new FSM(Enum.GetValues(typeof(FSM_Villager_States)).Length, Enum.GetValues(typeof(FSM_Villager_Flags)).Length);
 
             // Set relations
-            fsm.SetRelation((int)FSM_States.GoingToMine, (int)FSM_Flags.OnMining, (int)FSM_States.Mine);
+            fsm.SetRelation((int)FSM_Villager_States.GoingToMine, (int)FSM_Villager_Flags.OnMining, (int)FSM_Villager_States.Mine);
 
-            fsm.SetRelation((int)FSM_States.Mine, (int)FSM_Flags.OnGoEat, (int)FSM_States.Eat);
-            fsm.SetRelation((int)FSM_States.Mine, (int)FSM_Flags.OnGoMine, (int)FSM_States.GoingToMine);
-            fsm.SetRelation((int)FSM_States.Mine, (int)FSM_Flags.OnGoSaveMaterials, (int)FSM_States.GoingToSaveMaterials);
+            fsm.SetRelation((int)FSM_Villager_States.Mine, (int)FSM_Villager_Flags.OnGoEat, (int)FSM_Villager_States.Eat);
+            fsm.SetRelation((int)FSM_Villager_States.Mine, (int)FSM_Villager_Flags.OnGoMine, (int)FSM_Villager_States.GoingToMine);
+            fsm.SetRelation((int)FSM_Villager_States.Mine, (int)FSM_Villager_Flags.OnGoSaveMaterials, (int)FSM_Villager_States.GoingToSaveMaterials);
 
-            fsm.SetRelation((int)FSM_States.Eat, (int)FSM_Flags.OnMining, (int)FSM_States.Mine);
+            fsm.SetRelation((int)FSM_Villager_States.Eat, (int)FSM_Villager_Flags.OnMining, (int)FSM_Villager_States.Mine);
 
-            fsm.SetRelation((int)FSM_States.GoingToSaveMaterials, (int)FSM_Flags.OnSaveMaterials, (int)FSM_States.SaveMaterials);
+            fsm.SetRelation((int)FSM_Villager_States.GoingToSaveMaterials, (int)FSM_Villager_Flags.OnSaveMaterials, (int)FSM_Villager_States.SaveMaterials);
 
-            fsm.SetRelation((int)FSM_States.SaveMaterials, (int)FSM_Flags.OnGoMine, (int)FSM_States.GoingToMine);
-            fsm.SetRelation((int)FSM_States.SaveMaterials, (int)FSM_Flags.OnGoEat, (int)FSM_States.Eat);
+            fsm.SetRelation((int)FSM_Villager_States.SaveMaterials, (int)FSM_Villager_Flags.OnGoMine, (int)FSM_Villager_States.GoingToMine);
+            fsm.SetRelation((int)FSM_Villager_States.SaveMaterials, (int)FSM_Villager_Flags.OnGoEat, (int)FSM_Villager_States.Eat);
 
             // Add states
-            fsm.AddState<GoingToMineState>((int)FSM_States.GoingToMine,
-                () => (new object[3] { agentPathNodes, transform, speed }),
-                () => (new object[2] { agentPathNodes, transform }));
+            fsm.AddState<VillagerStates.GoingToMineState>((int)FSM_Villager_States.GoingToMine,
+                () => (new object[3] { agentPathNodes, transform, speed }));
 
-            fsm.AddState<MineState>((int)FSM_States.Mine,
+            fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
                 () => (new object[5] { goldMine, timePerMine, goldQuantity, maxGoldRecolected, goldsPerFood }));
 
-            fsm.AddState<EatState>((int)FSM_States.Eat,
+            fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
                 () => (new object[1] { goldMine }));
 
-            fsm.AddState<GoingToSaveMaterialsState>((int)FSM_States.GoingToSaveMaterials,
+            fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
                 () => (new object[2] { transform, speed }),
                 () => (new object[2] { agentPathNodes, transform }));
 
-            fsm.AddState<SaveMaterialsState>((int)FSM_States.SaveMaterials,
+            fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials,
                 () => (new object[2] { urbanCenter, goldQuantity }));
 
             // Start FSM
-            fsm.SetCurrentStateForced((int)FSM_States.GoingToMine);
+            fsm.SetCurrentStateForced((int)FSM_Villager_States.GoingToMine);
         }
 
         private void Update()

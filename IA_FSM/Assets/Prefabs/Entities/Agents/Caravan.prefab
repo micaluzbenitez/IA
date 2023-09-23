@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -8279618761486543596}
   - component: {fileID: 6580488414411829319}
   - component: {fileID: 2187897219725719343}
-  - component: {fileID: 57882741749142888}
+  - component: {fileID: 713822752930896099}
   m_Layer: 0
   m_Name: Caravan
   m_TagString: Untagged
@@ -153,7 +153,7 @@ MonoBehaviour:
     cost: 1
   - pathNodeType: 1
     cost: 2
---- !u!114 &57882741749142888
+--- !u!114 &713822752930896099
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -162,11 +162,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2187897219725719350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5322ea60c7e2ee4095758fe85b722e8, type: 3}
+  m_Script: {fileID: 11500000, guid: 433ddac425078d24f9a2cb378bff4f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  distancePerObjetive: 4
   foodPerTravel: 10
   foodText: {fileID: 564786310125634920}
 --- !u!1 &2869382472546859457

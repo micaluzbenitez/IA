@@ -4,8 +4,9 @@ using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
+using Random = UnityEngine.Random;
 
-namespace RTSGame.Entities.Agents.VillagerStates
+namespace RTSGame.Entities.Agents.CaravanStates
 {
     public class GoingToMineState : State
     {
@@ -23,8 +24,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                CheckForGoldMine(transform, agentPathNodes);
-                HandleMovement(transform, speed);
+                if (!goldMine) CheckForGoldMine(transform, agentPathNodes);
+                else HandleMovement(transform, speed);
+
+                CheckActualGoldMine();
             });
 
             return behaviours;
@@ -53,9 +56,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes)
         {
-            if (goldMine) return;
-
-            goldMine = FindNearestGoldMine();
+            goldMine = FindNearestGoldMineBeingUsed();
 
             if (goldMine)
             {
@@ -63,7 +64,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             }
         }
 
-        private void SetTargetPosition(Transform transform, GoldMine goldMine, AgentPathNodes agentPathNodes)
+        protected void SetTargetPosition(Transform transform, GoldMine goldMine, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
             pathVectorList = Pathfinding.Instance.FindPath(transform.position, goldMine.transform.position, agentPathNodes.pathNodeWalkables);
@@ -74,21 +75,28 @@ namespace RTSGame.Entities.Agents.VillagerStates
             }
         }
 
-        private GoldMine FindNearestGoldMine()
+        private GoldMine FindNearestGoldMineBeingUsed()
         {
             GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
-            int randomIndex;
+            List<GoldMine> goldMinesBeingUsed = new List<GoldMine>();
 
-            do
+            for (int i = 0; i < goldMines.Length; i++)
             {
-                randomIndex = UnityEngine.Random.Range(0, goldMines.Length);
+                if (goldMines[i].WithVillagers) goldMinesBeingUsed.Add(goldMines[i]);
             }
-            while (!goldMines[randomIndex].HasGold());
 
-            return goldMines[randomIndex];
+            if (goldMinesBeingUsed.Count > 0)
+            {
+                int randomIndex = Random.Range(0, goldMinesBeingUsed.Count);
+                return goldMinesBeingUsed[randomIndex];
+            }
+            else
+            {
+                return default;
+            }
         }
 
-        private void HandleMovement(Transform transform, float speed)
+        protected void HandleMovement(Transform transform, float speed)
         {
             if (pathVectorList != null)
             {
@@ -105,9 +113,17 @@ namespace RTSGame.Entities.Agents.VillagerStates
                     if (currentPathIndex >= pathVectorList.Count)
                     {
                         pathVectorList = null; // Stop moving
-                        Transition((int)FSM_Villager_Flags.OnMining);
+                        Transition((int)FSM_Caravan_Flags.OnDeliveringFood);
                     }
                 }
+            }
+        }
+
+        private void CheckActualGoldMine()
+        {
+            if (goldMine)
+            {
+                if (!goldMine.WithVillagers) goldMine = null;
             }
         }
     }

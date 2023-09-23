@@ -33,8 +33,8 @@ namespace FiniteStateMachine
         {
             currentStateIndex = state;
 
-            //foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))
-            //    OnEnter?.Invoke();
+            foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))
+                OnEnter?.Invoke();
         }
 
         public void SetRelation(int sourceState, int flag, int destinationState)

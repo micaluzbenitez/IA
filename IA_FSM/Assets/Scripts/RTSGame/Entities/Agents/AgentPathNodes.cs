@@ -1,6 +1,6 @@
-using Pathfinder;
 using System;
 using UnityEngine;
+using Pathfinder;
 
 namespace RTSGame.Entities.Agents
 {

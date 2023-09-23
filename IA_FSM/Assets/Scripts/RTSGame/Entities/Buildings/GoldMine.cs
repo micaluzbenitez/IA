@@ -11,7 +11,7 @@ namespace RTSGame.Entities.Buildings
         [Header("Food")]
         [SerializeField] private TextMesh foodText;
 
-        private int foodQuantity = 5;
+        private int foodQuantity;
 
         private bool withVillagers = false;
         public bool WithVillagers => withVillagers;

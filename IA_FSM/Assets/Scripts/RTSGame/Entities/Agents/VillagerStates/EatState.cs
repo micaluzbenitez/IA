@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System;
-using RTSGame.Entities.Buildings;
+using System.Collections.Generic;
 using FiniteStateMachine;
+using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -16,7 +16,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             {
                 if (goldMine.ConsumeFood())
                 {
-                    Transition((int)FSM_Flags.OnMining);
+                    Transition((int)FSM_Villager_Flags.OnMining);
                 }
             });
 
