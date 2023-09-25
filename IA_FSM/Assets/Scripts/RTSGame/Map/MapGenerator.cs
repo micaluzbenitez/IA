@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
 using Pathfinder;
+using VoronoiDiagram;
 using RTSGame.Entities.Buildings;
+using System.Collections.Generic;
 
 namespace RTSGame.Map
 {
@@ -18,9 +20,10 @@ namespace RTSGame.Map
         [SerializeField] private int width;
         [SerializeField] private int height;
         [SerializeField, Tooltip("Distance between map nodes")] private float cellSize;
+        [SerializeField] private Vector2 originPosition;
 
         [Header("Path nodes")]
-        public PathNode_Visible[] pathNodeVisibles;
+        [SerializeField] private PathNode_Visible[] pathNodeVisibles;
 
         [Header("Gold mines")]
         [SerializeField] private GoldMine goldMinePrefab;
@@ -29,11 +32,23 @@ namespace RTSGame.Map
         [Header("Urban center")]
         [SerializeField] private UrbanCenter urbanCenterPrefab;
 
+        [Header("Voronoi diagram")]
+        [SerializeField] private Voronoi voronoi = null;
+
         private Pathfinding pathfinding;
+        private List<GoldMine> goldMines = new List<GoldMine>();
+
+        public static Vector2 MapDimensions;
+        public static float CellSize;
+        public static Vector2 OriginPosition;
 
         private void Start()
         {
-            pathfinding = new Pathfinding(width, height, cellSize);
+            MapDimensions = new Vector2Int(width, height);
+            CellSize = cellSize;
+            OriginPosition = originPosition;
+
+            pathfinding = new Pathfinding(width, height, cellSize, originPosition);
             CreateGoldMines();
             CreateUrbanCenter();
 
@@ -53,6 +68,9 @@ namespace RTSGame.Map
                     }
                 }
             }
+
+            voronoi.Init();
+            voronoi.SetVoronoi(goldMines);
         }
 
         private void CreateGoldMines()
@@ -61,7 +79,8 @@ namespace RTSGame.Map
 
             for (int i = 0; i < goldMinesQuantity; i++)
             {
-                CreateBuilding(goldMinePrefab.gameObject);
+                GameObject GO = CreateBuilding(goldMinePrefab.gameObject);
+                goldMines.Add(GO.GetComponent<GoldMine>());
             }
         }
 
@@ -70,7 +89,7 @@ namespace RTSGame.Map
             CreateBuilding(urbanCenterPrefab.gameObject);
         }
 
-        private void CreateBuilding(GameObject buildingPrefab)
+        private GameObject CreateBuilding(GameObject buildingPrefab)
         {
             Vector2Int coords;
 
@@ -84,6 +103,12 @@ namespace RTSGame.Map
             Vector2 position = pathfinding.GetGrid().GetWorldPosition(coords.x, coords.y) + (Vector3.one * (cellSize / 2));
             GameObject GO = Instantiate(buildingPrefab, position, Quaternion.identity, transform);
             GO.transform.localScale = Vector3.one * cellSize;
+            return GO;
+        }
+
+        public GoldMine GetMineCloser(Vector3 minerPos)
+        {
+            return voronoi.GetMineCloser(minerPos);
         }
     }
 }
