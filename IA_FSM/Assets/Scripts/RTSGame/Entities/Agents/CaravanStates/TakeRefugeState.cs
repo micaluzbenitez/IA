@@ -33,12 +33,13 @@ namespace RTSGame.Entities.Agents.CaravanStates
         {
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
             Transform transform = parameters[1] as Transform;
+            UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
-                SetTargetPosition(transform, FindUrbanCenter(), agentPathNodes);
+                SetTargetPosition(transform, urbanCenter.transform.position, agentPathNodes);
             });
 
             return behaviours;
@@ -69,12 +70,6 @@ namespace RTSGame.Entities.Agents.CaravanStates
             {
                 pathVectorList.RemoveAt(0);
             }
-        }
-
-        private Vector3 FindUrbanCenter()
-        {
-            UrbanCenter urbanCenter = FindObjectOfType<UrbanCenter>();
-            return urbanCenter.gameObject.transform.position;
         }
 
         private void HandleMovement(Transform transform, float speed)

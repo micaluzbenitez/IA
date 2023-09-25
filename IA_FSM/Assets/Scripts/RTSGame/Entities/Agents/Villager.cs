@@ -55,6 +55,7 @@ namespace RTSGame.Entities.Agents
 
         private void Awake()
         {
+            urbanCenter = FindObjectOfType<UrbanCenter>();
             agentPathNodes = GetComponent<AgentPathNodes>();
             goldText.text = "0";
         }
@@ -100,14 +101,14 @@ namespace RTSGame.Entities.Agents
 
             fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
                 () => (new object[2] { transform, speed }),
-                () => (new object[2] { agentPathNodes, transform }));
+                () => (new object[3] { agentPathNodes, transform, urbanCenter }));
 
             fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials,
                 () => (new object[3] { urbanCenter, maxGoldRecolected, goldText }));
 
             fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge,
                 () => (new object[3] { transform, speed, previousState }),
-                () => (new object[2] { agentPathNodes, transform }));
+                () => (new object[3] { agentPathNodes, transform, urbanCenter }));
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Villager_States.GoingToMine);

@@ -5,6 +5,7 @@ using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using Random = UnityEngine.Random;
+using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents.CaravanStates
 {
@@ -63,7 +64,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
 
         private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes)
         {
-            goldMine = FindNearestGoldMineBeingUsed();
+            goldMine = FindGoldMineBeingUsed();
 
             if (goldMine)
             {
@@ -82,14 +83,13 @@ namespace RTSGame.Entities.Agents.CaravanStates
             }
         }
 
-        private GoldMine FindNearestGoldMineBeingUsed()
+        private GoldMine FindGoldMineBeingUsed()
         {
-            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
             List<GoldMine> goldMinesBeingUsed = new List<GoldMine>();
 
-            for (int i = 0; i < goldMines.Length; i++)
+            for (int i = 0; i < MapGenerator.goldMines.Count; i++)
             {
-                if (goldMines[i].WithVillagers) goldMinesBeingUsed.Add(goldMines[i]);
+                if (MapGenerator.goldMines[i].WithVillagers) goldMinesBeingUsed.Add(MapGenerator.goldMines[i]);
             }
 
             if (goldMinesBeingUsed.Count > 0)

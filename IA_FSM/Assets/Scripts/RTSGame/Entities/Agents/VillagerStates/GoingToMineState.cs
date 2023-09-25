@@ -4,6 +4,7 @@ using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
+using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -62,7 +63,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
         {
             if (goldMine) return;
 
-            goldMine = FindNearestGoldMine();
+            goldMine = MapGenerator.Instance.GetMineCloser(transform.position);
 
             if (goldMine)
             {
@@ -79,20 +80,6 @@ namespace RTSGame.Entities.Agents.VillagerStates
             {
                 pathVectorList.RemoveAt(0);
             }
-        }
-
-        private GoldMine FindNearestGoldMine()
-        {
-            GoldMine[] goldMines = FindObjectsOfType<GoldMine>();
-            int randomIndex;
-
-            do
-            {
-                randomIndex = UnityEngine.Random.Range(0, goldMines.Length);
-            }
-            while (!goldMines[randomIndex].HasGold());
-
-            return goldMines[randomIndex];
         }
 
         private void HandleMovement(Transform transform, float speed)

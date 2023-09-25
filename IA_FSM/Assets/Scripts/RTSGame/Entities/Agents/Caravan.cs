@@ -41,6 +41,7 @@ namespace RTSGame.Entities.Agents
 
         private AgentPathNodes agentPathNodes;
 
+        private UrbanCenter urbanCenter;
         private GoldMine goldMine;
 
         private FSM fsm;
@@ -48,6 +49,7 @@ namespace RTSGame.Entities.Agents
 
         private void Awake()
         {
+            urbanCenter = FindObjectOfType<UrbanCenter>();
             agentPathNodes = GetComponent<AgentPathNodes>();
             foodText.text = "0";
         }
@@ -77,7 +79,7 @@ namespace RTSGame.Entities.Agents
             // Add states
             fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood,
                 () => (new object[2] { transform, speed }),
-                () => (new object[2] { agentPathNodes, transform }));
+                () => (new object[3] { agentPathNodes, transform, urbanCenter }));
 
             fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood,
                 () => (new object[2] { foodPerTravel, foodText}));
@@ -90,7 +92,7 @@ namespace RTSGame.Entities.Agents
 
             fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge,
                 () => (new object[3] { transform, speed, previousState }),
-                () => (new object[2] { agentPathNodes, transform }));
+                () => (new object[3] { agentPathNodes, transform, urbanCenter }));
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Caravan_States.TakeFood);

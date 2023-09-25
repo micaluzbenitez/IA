@@ -30,12 +30,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
         {
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
             Transform transform = parameters[1] as Transform;
+            UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                SetTargetPosition(transform, FindUrbanCenter(), agentPathNodes);
+                SetTargetPosition(transform, urbanCenter.transform.position, agentPathNodes);
             });
 
             return behaviours;
@@ -66,12 +67,6 @@ namespace RTSGame.Entities.Agents.VillagerStates
             {
                 pathVectorList.RemoveAt(0);
             }
-        }
-
-        private Vector3 FindUrbanCenter()
-        {
-            UrbanCenter urbanCenter = FindObjectOfType<UrbanCenter>();
-            return urbanCenter.gameObject.transform.position;
         }
 
         private void HandleMovement(Transform transform, float speed)

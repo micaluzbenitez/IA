@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Toolbox;
 using Pathfinder;
 using VoronoiDiagram;
 using RTSGame.Entities.Buildings;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 namespace RTSGame.Map
 {
-    public class MapGenerator : MonoBehaviour
+    public class MapGenerator : MonoBehaviourSingleton<MapGenerator>
     {
         [Serializable]
         public class PathNode_Visible
@@ -36,7 +37,7 @@ namespace RTSGame.Map
         [SerializeField] private Voronoi voronoi = null;
 
         private Pathfinding pathfinding;
-        private List<GoldMine> goldMines = new List<GoldMine>();
+        public static List<GoldMine> goldMines = new List<GoldMine>();
 
         public static Vector2 MapDimensions;
         public static float CellSize;

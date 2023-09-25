@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FiniteStateMachine
 {
-    public abstract class State : MonoBehaviour
+    public abstract class State
     {
         public Action<int> SetFlag;
         public abstract List<Action> GetOnEnterBehaviours(params object[] parameters);
