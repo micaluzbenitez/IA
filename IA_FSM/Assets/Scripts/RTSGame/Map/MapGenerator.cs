@@ -81,7 +81,9 @@ namespace RTSGame.Map
             for (int i = 0; i < goldMinesQuantity; i++)
             {
                 GameObject GO = CreateBuilding(goldMinePrefab.gameObject);
-                goldMines.Add(GO.GetComponent<GoldMine>());
+                GoldMine goldMine = GO.GetComponent<GoldMine>();
+                goldMine.OnGoldMineEmpty += RemoveEmptyMine;
+                goldMines.Add(goldMine);
             }
         }
 
@@ -105,6 +107,14 @@ namespace RTSGame.Map
             GameObject GO = Instantiate(buildingPrefab, position, Quaternion.identity, transform);
             GO.transform.localScale = Vector3.one * cellSize;
             return GO;
+        }
+
+        private void RemoveEmptyMine(GoldMine goldMine)
+        {
+            goldMines.Remove(goldMine);
+            goldMine.OnGoldMineEmpty -= RemoveEmptyMine;
+            goldMine.gameObject.SetActive(false);
+            voronoi.SetVoronoi(goldMines);
         }
 
         public GoldMine GetMineCloser(Vector3 minerPos)

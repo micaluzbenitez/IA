@@ -17,9 +17,16 @@ namespace RTSGame.Entities.Agents.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                goldMine.DeliverFood(foodPerTravel);
-                foodText.text = "0";
-                Transition((int)FSM_Caravan_Flags.OnGoTakeFood);
+                if (goldMine)
+                {
+                    goldMine.DeliverFood(foodPerTravel);
+                    foodText.text = "0";
+                    Transition((int)FSM_Caravan_Flags.OnGoTakeFood);
+                }
+                else
+                {
+                    Transition((int)FSM_Caravan_Flags.OnGoMine);
+                }
             });
 
             return behaviours;

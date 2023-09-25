@@ -48,7 +48,6 @@ namespace RTSGame.Entities.Agents
         private AgentPathNodes agentPathNodes;
 
         private UrbanCenter urbanCenter;
-        private GoldMine goldMine;
 
         private FSM fsm;
         private FSM_Caravan_States previousState;
@@ -94,10 +93,12 @@ namespace RTSGame.Entities.Agents
                 () => (new object[3] { agentPathNodes, transform, speed }));
 
             fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
-                () => (new object[5] { goldMine, timePerMine, maxGoldRecolected, goldsPerFood, goldText }));
+                () => (new object[] { timePerMine, maxGoldRecolected, goldsPerFood, goldText }),
+                () => (new object[1] { transform }));
 
             fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
-                () => (new object[1] { goldMine }));
+                () => (new object[] { }),
+                () => (new object[1] { transform }));
 
             fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
                 () => (new object[2] { transform, speed }),
@@ -120,30 +121,6 @@ namespace RTSGame.Entities.Agents
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
-        }
-
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (collision.CompareTag("GoldMine"))
-            {
-                goldMine = collision.GetComponent<GoldMine>();
-            }
-            if (collision.CompareTag("UrbanCenter"))
-            {
-                urbanCenter = collision.GetComponent<UrbanCenter>();
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            if (collision.CompareTag("GoldMine"))
-            {
-                goldMine = null;
-            }
-            if (collision.CompareTag("UrbanCenter"))
-            {
-                urbanCenter = null;
-            }
         }
     }
 }

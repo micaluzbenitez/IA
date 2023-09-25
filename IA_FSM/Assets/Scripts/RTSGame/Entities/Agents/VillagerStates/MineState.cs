@@ -4,6 +4,7 @@ using UnityEngine;
 using Toolbox;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
+using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -18,11 +19,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            goldMine = parameters[0] as GoldMine;
-            float timePerMine = Convert.ToSingle(parameters[1]);
-            int maxGoldRecolected = Convert.ToInt32(parameters[2]);
-            int goldsPerFood = Convert.ToInt32(parameters[3]);
-            goldText = parameters[4] as TextMesh;
+            float timePerMine = Convert.ToSingle(parameters[0]);
+            int maxGoldRecolected = Convert.ToInt32(parameters[1]);
+            int goldsPerFood = Convert.ToInt32(parameters[2]);
+            goldText = parameters[3] as TextMesh;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -36,10 +36,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
+            Transform transform = parameters[0] as Transform;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                goldMine = MapGenerator.Instance.GetMineCloser(transform.position);
             });
 
             return behaviours;
@@ -65,36 +68,37 @@ namespace RTSGame.Entities.Agents.VillagerStates
         private void UpdateMineTimer(GoldMine goldMine, int maxGoldRecolected, int goldsPerFood)
         {
             if (mineTimer.Active) mineTimer.UpdateTimer();
+            if (mineTimer.ReachedTimer()) Mine(goldMine, maxGoldRecolected, goldsPerFood);
+        }
 
-            if (mineTimer.ReachedTimer())
+        private void Mine(GoldMine goldMine, int maxGoldRecolected, int goldsPerFood)
+        {
+            if (goldMine && goldMine.ConsumeGold())
             {
-                if (goldMine.ConsumeGold())
-                {
-                    goldQuantity++;
-                    goldText.text = goldQuantity.ToString();
+                goldQuantity++;
+                goldText.text = goldQuantity.ToString();
 
-                    totalGoldsRecolected++;
+                totalGoldsRecolected++;
 
-                    if (goldQuantity == maxGoldRecolected) // Save golds
-                    {
-                        goldQuantity = 0;
-                        goldMine.RemoveVillager();
-                        Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
-                    }
-                    else if (totalGoldsRecolected % goldsPerFood == 0) // Eat
-                    {
-                        Transition((int)FSM_Villager_Flags.OnGoEat);
-                    }
-                    else // Continue mining
-                    {
-                        mineTimer.ActiveTimer();
-                    }
-                }
-                else
+                if (goldQuantity == maxGoldRecolected) // Save golds
                 {
+                    goldQuantity = 0;
                     goldMine.RemoveVillager();
-                    Transition((int)FSM_Villager_Flags.OnGoMine);
+                    Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
                 }
+                else if (totalGoldsRecolected % goldsPerFood == 0) // Eat
+                {
+                    Transition((int)FSM_Villager_Flags.OnGoEat);
+                }
+                else // Continue mining
+                {
+                    mineTimer.ActiveTimer();
+                }
+            }
+            else
+            {
+                if (goldMine) goldMine.RemoveVillager();
+                Transition((int)FSM_Villager_Flags.OnGoMine);
             }
         }
     }

@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
+using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
     public class EatState : State
     {
+        private GoldMine goldMine;
+
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            GoldMine goldMine = parameters[0] as GoldMine;
-
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (goldMine.ConsumeFood())
+                if (goldMine && goldMine.ConsumeFood())
                 {
                     Transition((int)FSM_Villager_Flags.OnMining);
                 }
@@ -25,10 +27,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
+            Transform transform = parameters[0] as Transform;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                goldMine = MapGenerator.Instance.GetMineCloser(transform.position);
             });
 
             return behaviours;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace RTSGame.Entities.Buildings
@@ -17,21 +18,12 @@ namespace RTSGame.Entities.Buildings
         private bool withVillagers = false;
         public bool WithVillagers => withVillagers;
 
+        public Action<GoldMine> OnGoldMineEmpty;
+
         private void Awake()
         {
             goldText.text = goldQuantity.ToString();
             foodText.text = foodQuantity.ToString();
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.L)) DeliverFood(1);
-        }
-
-        public bool HasGold()
-        {
-            if (goldQuantity > 0) return true;
-            else return false;
         }
 
         public bool ConsumeGold()
@@ -40,6 +32,13 @@ namespace RTSGame.Entities.Buildings
 
             goldQuantity--;
             goldText.text = goldQuantity.ToString();
+
+            if (goldQuantity <= 0)
+            {
+                OnGoldMineEmpty?.Invoke(this);
+                withVillagers = false;
+            }
+
             return true;
         }
 
