@@ -79,7 +79,7 @@ namespace VoronoiDiagram
             return null;
         }
 
-        private void OnDrawGizmos()
+        public void Draw()
         {
             if (sectors.Count <= 0) return;
 

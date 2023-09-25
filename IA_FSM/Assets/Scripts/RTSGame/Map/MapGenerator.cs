@@ -33,9 +33,6 @@ namespace RTSGame.Map
         [Header("Urban center")]
         [SerializeField] private UrbanCenter urbanCenterPrefab;
 
-        [Header("Voronoi diagram")]
-        [SerializeField] private Voronoi voronoi = null;
-
         private Pathfinding pathfinding;
         public static List<GoldMine> goldMines = new List<GoldMine>();
 
@@ -43,8 +40,10 @@ namespace RTSGame.Map
         public static float CellSize;
         public static Vector2 OriginPosition;
 
-        private void Start()
+        public override void Awake()
         {
+            base.Awake();
+
             MapDimensions = new Vector2Int(width, height);
             CellSize = cellSize;
             OriginPosition = originPosition;
@@ -69,9 +68,6 @@ namespace RTSGame.Map
                     }
                 }
             }
-
-            voronoi.Init();
-            voronoi.SetVoronoi(goldMines);
         }
 
         private void CreateGoldMines()
@@ -81,9 +77,7 @@ namespace RTSGame.Map
             for (int i = 0; i < goldMinesQuantity; i++)
             {
                 GameObject GO = CreateBuilding(goldMinePrefab.gameObject);
-                GoldMine goldMine = GO.GetComponent<GoldMine>();
-                goldMine.OnGoldMineEmpty += RemoveEmptyMine;
-                goldMines.Add(goldMine);
+                goldMines.Add(GO.GetComponent<GoldMine>());
             }
         }
 
@@ -109,17 +103,11 @@ namespace RTSGame.Map
             return GO;
         }
 
-        private void RemoveEmptyMine(GoldMine goldMine)
+        public void RemoveEmptyMine(GoldMine goldMine)
         {
             goldMines.Remove(goldMine);
             goldMine.OnGoldMineEmpty -= RemoveEmptyMine;
             goldMine.gameObject.SetActive(false);
-            voronoi.SetVoronoi(goldMines);
-        }
-
-        public GoldMine GetMineCloser(Vector3 minerPos)
-        {
-            return voronoi.GetMineCloser(minerPos);
         }
     }
 }

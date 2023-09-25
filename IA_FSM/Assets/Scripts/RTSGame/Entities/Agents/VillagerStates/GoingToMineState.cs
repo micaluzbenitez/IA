@@ -4,7 +4,7 @@ using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
-using RTSGame.Map;
+using VoronoiDiagram;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -20,11 +20,12 @@ namespace RTSGame.Entities.Agents.VillagerStates
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
             Transform transform = parameters[1] as Transform;
             float speed = Convert.ToSingle(parameters[2]);
+            Voronoi voronoi = parameters[3] as Voronoi;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                CheckForGoldMine(transform, agentPathNodes);
+                CheckForGoldMine(transform, agentPathNodes, voronoi);
                 HandleMovement(transform, speed);
             });
 
@@ -59,11 +60,11 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes)
+        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes, Voronoi voronoi)
         {
             if (goldMine) return;
 
-            goldMine = MapGenerator.Instance.GetMineCloser(transform.position);
+            goldMine = voronoi.GetMineCloser(transform.position);
 
             if (goldMine)
             {

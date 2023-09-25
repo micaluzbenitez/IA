@@ -3,6 +3,8 @@ using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using RTSGame.Entities.Agents.VillagerStates;
+using VoronoiDiagram;
+using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents
 {
@@ -45,7 +47,11 @@ namespace RTSGame.Entities.Agents
         [Header("UI")]
         [SerializeField] private TextMesh goldText;
 
+        [Header("Debug")]
+        [SerializeField] private bool drawVoronoi;
+
         private AgentPathNodes agentPathNodes;
+        private Voronoi voronoi = null;
 
         private UrbanCenter urbanCenter;
 
@@ -54,9 +60,16 @@ namespace RTSGame.Entities.Agents
 
         private void Awake()
         {
+            voronoi = FindObjectOfType<Voronoi>();
             urbanCenter = FindObjectOfType<UrbanCenter>();
             agentPathNodes = GetComponent<AgentPathNodes>();
             goldText.text = "0";
+
+            // Recalculate voronoi on changes
+            for (int i = 0; i < MapGenerator.goldMines.Count; i++)
+            {
+                MapGenerator.goldMines[i].OnGoldMineEmpty += RecalculateVoronoi;
+            }
         }
 
         private void Start()
@@ -89,16 +102,16 @@ namespace RTSGame.Entities.Agents
             fsm.SetRelation((int)FSM_Villager_States.TakeRefuge, (int)FSM_Villager_Flags.OnSaveMaterials, (int)FSM_Villager_States.SaveMaterials);
 
             // Add states
-            fsm.AddState<VillagerStates.GoingToMineState>((int)FSM_Villager_States.GoingToMine,
-                () => (new object[3] { agentPathNodes, transform, speed }));
+            fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine,
+                () => (new object[4] { agentPathNodes, transform, speed, voronoi }));
 
             fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
                 () => (new object[] { timePerMine, maxGoldRecolected, goldsPerFood, goldText }),
-                () => (new object[1] { transform }));
+                () => (new object[2] { transform, voronoi }));
 
             fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
                 () => (new object[] { }),
-                () => (new object[1] { transform }));
+                () => (new object[2] { transform, voronoi }));
 
             fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
                 () => (new object[2] { transform, speed }),
@@ -113,6 +126,10 @@ namespace RTSGame.Entities.Agents
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Villager_States.GoingToMine);
+
+            // Voronoi
+            voronoi.Init();
+            voronoi.SetVoronoi(MapGenerator.goldMines);
         }
 
         private void Update()
@@ -121,6 +138,17 @@ namespace RTSGame.Entities.Agents
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
+        }
+
+        private void RecalculateVoronoi(GoldMine goldMine)
+        {
+            MapGenerator.Instance.RemoveEmptyMine(goldMine);
+            voronoi.SetVoronoi(MapGenerator.goldMines);
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (drawVoronoi) voronoi.Draw();
         }
     }
 }

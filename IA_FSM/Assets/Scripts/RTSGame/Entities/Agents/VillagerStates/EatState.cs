@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
-using RTSGame.Map;
+using VoronoiDiagram;
 
 namespace RTSGame.Entities.Agents.VillagerStates
 {
@@ -28,12 +28,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
             Transform transform = parameters[0] as Transform;
+            Voronoi voronoi = parameters[1] as Voronoi;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                goldMine = MapGenerator.Instance.GetMineCloser(transform.position);
+                goldMine = voronoi.GetMineCloser(transform.position);
             });
 
             return behaviours;
