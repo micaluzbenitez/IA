@@ -17,6 +17,8 @@ namespace RTSGame.Entities.Buildings
         private int foodQuantity;
         private int villagersOn;
         private bool beingUsed = false;
+        private string goldQuantityText;
+        private string foodQuantityText;
 
         // Properties
         public Vector3 Position
@@ -34,13 +36,14 @@ namespace RTSGame.Entities.Buildings
         private void Start()
         {
             position = transform.position;
-            goldText.text = goldQuantity.ToString();
-            foodText.text = foodQuantity.ToString();
+            goldQuantityText = goldQuantity.ToString();
+            foodQuantityText = foodQuantity.ToString();
         }
 
-        private void UpdateText(TextMesh text, int quantity)
+        private void Update()
         {
-            text.text = quantity.ToString();
+            goldText.text = goldQuantityText;
+            foodText.text = foodQuantityText;
         }
 
         public bool ConsumeGold()
@@ -48,7 +51,7 @@ namespace RTSGame.Entities.Buildings
             if (goldQuantity <= 0) return false;
 
             goldQuantity--;
-            UpdateText(goldText, goldQuantity);            
+            goldQuantityText = goldQuantity.ToString();            
 
             if (goldQuantity <= 0)
             {
@@ -64,7 +67,7 @@ namespace RTSGame.Entities.Buildings
         public void DeliverFood(int foodQuantity)
         {
             this.foodQuantity += foodQuantity;
-            UpdateText(foodText, this.foodQuantity);
+            foodQuantityText = this.foodQuantity.ToString();
         }
         
         public bool ConsumeFood()
@@ -72,7 +75,7 @@ namespace RTSGame.Entities.Buildings
             if (foodQuantity <= 0) return false;
 
             foodQuantity--;
-            UpdateText(foodText, foodQuantity);
+            foodQuantityText = foodQuantity.ToString();
             return true;
         }
 

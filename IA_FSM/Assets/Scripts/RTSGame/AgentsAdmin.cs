@@ -3,26 +3,31 @@ using System.Threading.Tasks;
 using Toolbox;
 using RTSGame.Entities.Agents;
 
-public class AgentsAdmin : MonoBehaviourSingleton<AgentsAdmin>
+namespace RTSGame
 {
-    private ConcurrentBag<Agent> agents = new ConcurrentBag<Agent>();
-    private ParallelOptions options = null;
-
-    private void Start()
+    public class AgentsAdmin : MonoBehaviourSingleton<AgentsAdmin>
     {
-        options = new ParallelOptions { MaxDegreeOfParallelism = 1 };        
-    }
+        private ConcurrentBag<Agent> agents = new ConcurrentBag<Agent>();
+        private ParallelOptions options = null;
 
-    private void Update()
-    {
-        Parallel.ForEach(agents, options, currentItem =>
+        private const int maxDegreeOfParallelism = 5;
+
+        private void Start()
         {
-            currentItem.UpdateAgent();
-        });
-    }
+            options = new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
+        }
 
-    public void AddAgent(Agent agent)
-    {
-        agents.Add(agent);
+        private void Update()
+        {
+            Parallel.ForEach(agents, options, currentItem =>
+            {
+                currentItem.UpdateAgent();
+            });
+        }
+
+        public void AddAgent(Agent agent)
+        {
+            agents.Add(agent);
+        }
     }
 }
