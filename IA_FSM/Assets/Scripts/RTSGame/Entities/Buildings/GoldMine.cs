@@ -1,3 +1,4 @@
+using RTSGame.Map;
 using System;
 using UnityEngine;
 
@@ -15,9 +16,10 @@ namespace RTSGame.Entities.Buildings
         private int foodQuantity;
         private int villagersOn;
 
-        private bool withVillagers = false;
-        public bool WithVillagers => withVillagers;
+        private bool beingUsed = false;
+        public bool BeingUsed => beingUsed;
 
+        public Action OnGoldMineBeingUsed;
         public Action<GoldMine> OnGoldMineEmpty;
 
         private void Awake()
@@ -36,7 +38,9 @@ namespace RTSGame.Entities.Buildings
             if (goldQuantity <= 0)
             {
                 OnGoldMineEmpty?.Invoke(this);
-                withVillagers = false;
+                MapGenerator.goldMinesBeingUsed.Remove(this);
+                OnGoldMineBeingUsed?.Invoke();
+                beingUsed = false;
             }
 
             return true;
@@ -60,13 +64,25 @@ namespace RTSGame.Entities.Buildings
         public void AddVillager()
         {
             villagersOn++;
-            withVillagers = true;
+
+            if (!beingUsed)
+            {
+                MapGenerator.goldMinesBeingUsed.Add(this);
+                OnGoldMineBeingUsed?.Invoke();
+                beingUsed = true;
+            }
         }
 
         public void RemoveVillager()
         {
             villagersOn--;
-            if (villagersOn <= 0) withVillagers = false;
+
+            if (villagersOn <= 0 && beingUsed)
+            {
+                MapGenerator.goldMinesBeingUsed.Remove(this);
+                OnGoldMineBeingUsed?.Invoke();
+                beingUsed = false;
+            }
         }
     }
 }

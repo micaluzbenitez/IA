@@ -44,6 +44,9 @@ namespace RTSGame.Entities.Agents
         [Header("Food")]
         [SerializeField] private int goldsPerFood;
 
+        [Header("Voronoi")]
+        [SerializeField] private Voronoi voronoi = null;
+
         [Header("UI")]
         [SerializeField] private TextMesh goldText;
 
@@ -51,7 +54,6 @@ namespace RTSGame.Entities.Agents
         [SerializeField] private bool drawVoronoi;
 
         private AgentPathNodes agentPathNodes;
-        private Voronoi voronoi = null;
 
         private UrbanCenter urbanCenter;
 
@@ -60,7 +62,6 @@ namespace RTSGame.Entities.Agents
 
         private void Awake()
         {
-            voronoi = FindObjectOfType<Voronoi>();
             urbanCenter = FindObjectOfType<UrbanCenter>();
             agentPathNodes = GetComponent<AgentPathNodes>();
             goldText.text = "0";

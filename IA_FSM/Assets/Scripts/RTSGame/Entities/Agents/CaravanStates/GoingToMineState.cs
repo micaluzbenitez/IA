@@ -6,6 +6,7 @@ using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using Random = UnityEngine.Random;
 using RTSGame.Map;
+using VoronoiDiagram;
 
 namespace RTSGame.Entities.Agents.CaravanStates
 {
@@ -21,11 +22,12 @@ namespace RTSGame.Entities.Agents.CaravanStates
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
             Transform transform = parameters[1] as Transform;
             float speed = Convert.ToSingle(parameters[2]);
+            Voronoi voronoi = parameters[3] as Voronoi;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (!goldMine) CheckForGoldMine(transform, agentPathNodes);
+                if (!goldMine) CheckForGoldMine(transform, agentPathNodes, voronoi);
                 else HandleMovement(transform, speed);
 
                 CheckActualGoldMine();
@@ -62,9 +64,9 @@ namespace RTSGame.Entities.Agents.CaravanStates
             SetFlag?.Invoke(flag);
         }
 
-        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes)
+        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes, Voronoi voronoi)
         {
-            goldMine = FindGoldMineBeingUsed();
+            goldMine = voronoi.GetMineCloser(transform.position);
 
             if (goldMine)
             {
@@ -80,26 +82,6 @@ namespace RTSGame.Entities.Agents.CaravanStates
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
                 pathVectorList.RemoveAt(0);
-            }
-        }
-
-        private GoldMine FindGoldMineBeingUsed()
-        {
-            List<GoldMine> goldMinesBeingUsed = new List<GoldMine>();
-
-            for (int i = 0; i < MapGenerator.goldMines.Count; i++)
-            {
-                if (MapGenerator.goldMines[i].WithVillagers) goldMinesBeingUsed.Add(MapGenerator.goldMines[i]);
-            }
-
-            if (goldMinesBeingUsed.Count > 0)
-            {
-                int randomIndex = Random.Range(0, goldMinesBeingUsed.Count);
-                return goldMinesBeingUsed[randomIndex];
-            }
-            else
-            {
-                return default;
             }
         }
 
@@ -130,7 +112,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
         {
             if (goldMine)
             {
-                if (!goldMine.WithVillagers) goldMine = null;
+                if (!goldMine.BeingUsed) goldMine = null;
             }
         }
     }

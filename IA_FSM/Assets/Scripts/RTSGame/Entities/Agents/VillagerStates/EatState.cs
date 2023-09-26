@@ -33,7 +33,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                Alarm.OnStartAlarm += TakeRefuge;
                 goldMine = voronoi.GetMineCloser(transform.position);
 
                 // Check when returns to take refuge state
@@ -48,8 +48,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                goldMine = null;
+                Alarm.OnStartAlarm -= TakeRefuge;
             });
 
             return behaviours;
@@ -58,6 +57,12 @@ namespace RTSGame.Entities.Agents.VillagerStates
         public override void Transition(int flag)
         {
             SetFlag?.Invoke(flag);
+        }
+
+        private void TakeRefuge()
+        {
+            if (goldMine) goldMine.RemoveVillager();
+            Transition((int)FSM_Villager_Flags.OnTakingRefuge);
         }
     }
 }

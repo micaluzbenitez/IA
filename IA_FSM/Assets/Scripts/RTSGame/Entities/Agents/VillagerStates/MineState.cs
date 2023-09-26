@@ -28,7 +28,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             behaviours.Add(() =>
             {
                 if (!mineTimer.Active) mineTimer.SetTimer(timePerMine, Timer.TIMER_MODE.DECREASE, true);
-                UpdateMineTimer(goldMine, maxGoldRecolected, goldsPerFood);
+                UpdateMineTimer(maxGoldRecolected, goldsPerFood);
             });
 
             return behaviours;
@@ -43,7 +43,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                Alarm.OnStartAlarm += TakeRefuge;
                 goldMine = voronoi.GetMineCloser(transform.position);
 
                 // Checks when returns to take refuge state
@@ -63,9 +63,8 @@ namespace RTSGame.Entities.Agents.VillagerStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                Alarm.OnStartAlarm -= TakeRefuge;
                 mineTimer.DesactiveTimer();
-                goldMine = null;
             });
 
             return behaviours;
@@ -76,13 +75,13 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void UpdateMineTimer(GoldMine goldMine, int maxGoldRecolected, int goldsPerFood)
+        private void UpdateMineTimer(int maxGoldRecolected, int goldsPerFood)
         {
             if (mineTimer.Active) mineTimer.UpdateTimer();
-            if (mineTimer.ReachedTimer()) Mine(goldMine, maxGoldRecolected, goldsPerFood);
+            if (mineTimer.ReachedTimer()) Mine(maxGoldRecolected, goldsPerFood);
         }
 
-        private void Mine(GoldMine goldMine, int maxGoldRecolected, int goldsPerFood)
+        private void Mine(int maxGoldRecolected, int goldsPerFood)
         {
             if (goldMine && goldMine.ConsumeGold())
             {
@@ -111,6 +110,12 @@ namespace RTSGame.Entities.Agents.VillagerStates
                 if (goldMine) goldMine.RemoveVillager();
                 Transition((int)FSM_Villager_Flags.OnGoMine);
             }
+        }
+
+        private void TakeRefuge()
+        {
+            if (goldMine) goldMine.RemoveVillager();
+            Transition((int)FSM_Villager_Flags.OnTakingRefuge);
         }
     }
 }

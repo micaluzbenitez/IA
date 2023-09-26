@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
+using VoronoiDiagram;
 
 namespace RTSGame.Entities.Agents.CaravanStates
 {
     public class DeliverMineState : State
     {
+        private GoldMine goldMine;
+
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            GoldMine goldMine = parameters[0] as GoldMine;
-            int foodPerTravel = Convert.ToInt32(parameters[1]);
-            TextMesh foodText = parameters[2] as TextMesh;
+            int foodPerTravel = Convert.ToInt32(parameters[0]);
+            TextMesh foodText = parameters[1] as TextMesh;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (goldMine)
+                if (goldMine && goldMine.BeingUsed)
                 {
                     goldMine.DeliverFood(foodPerTravel);
                     foodText.text = "0";
@@ -34,10 +36,17 @@ namespace RTSGame.Entities.Agents.CaravanStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
+            Transform transform = parameters[0] as Transform;
+            Voronoi voronoi = parameters[1] as Voronoi;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+                goldMine = voronoi.GetMineCloser(transform.position);
+
+                // Check when returns to take refuge state
+                if (Vector2.Distance(transform.position, goldMine.transform.position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
             });
 
             return behaviours;

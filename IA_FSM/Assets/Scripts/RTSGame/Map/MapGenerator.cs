@@ -34,7 +34,9 @@ namespace RTSGame.Map
         [SerializeField] private UrbanCenter urbanCenterPrefab;
 
         private Pathfinding pathfinding;
+
         public static List<GoldMine> goldMines = new List<GoldMine>();
+        public static List<GoldMine> goldMinesBeingUsed = new List<GoldMine>();
 
         public static Vector2 MapDimensions;
         public static float CellSize;

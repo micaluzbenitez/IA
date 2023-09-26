@@ -3,6 +3,8 @@ using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using RTSGame.Entities.Agents.CaravanStates;
+using VoronoiDiagram;
+using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents
 {
@@ -36,13 +38,18 @@ namespace RTSGame.Entities.Agents
         [Header("Food")]
         [SerializeField] private int foodPerTravel;
 
+        [Header("Voronoi")]
+        [SerializeField] private Voronoi voronoi = null;
+
         [Header("UI")]
         [SerializeField] private TextMesh foodText;
+
+        [Header("Debug")]
+        [SerializeField] private bool drawVoronoi;
 
         private AgentPathNodes agentPathNodes;
 
         private UrbanCenter urbanCenter;
-        private GoldMine goldMine;
 
         private FSM fsm;
         private FSM_Caravan_States previousState;
@@ -52,6 +59,12 @@ namespace RTSGame.Entities.Agents
             urbanCenter = FindObjectOfType<UrbanCenter>();
             agentPathNodes = GetComponent<AgentPathNodes>();
             foodText.text = "0";
+
+            // Recalculate voronoi on changes
+            for (int i = 0; i < MapGenerator.goldMines.Count; i++)
+            {
+                MapGenerator.goldMines[i].OnGoldMineBeingUsed += RecalculateVoronoi;
+            }
         }
 
         private void Start()
@@ -86,10 +99,11 @@ namespace RTSGame.Entities.Agents
                 () => (new object[2] { foodPerTravel, foodText}));
 
             fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine,
-                () => (new object[3] { agentPathNodes, transform, speed }));
+                () => (new object[4] { agentPathNodes, transform, speed, voronoi }));
 
             fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood,
-                () => (new object[3] { goldMine, foodPerTravel, foodText }));
+                () => (new object[2] { foodPerTravel, foodText }),
+                () => (new object[2] { transform, voronoi }));
 
             fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge,
                 () => (new object[3] { transform, speed, previousState }),
@@ -97,6 +111,10 @@ namespace RTSGame.Entities.Agents
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Caravan_States.TakeFood);
+
+            // Voronoi
+            voronoi.Init();
+            voronoi.SetVoronoi(MapGenerator.goldMinesBeingUsed);
         }
 
         private void Update()
@@ -107,20 +125,14 @@ namespace RTSGame.Entities.Agents
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+        private void RecalculateVoronoi()
         {
-            if (collision.CompareTag("GoldMine"))
-            {
-                goldMine = collision.GetComponent<GoldMine>();
-            }
+            voronoi.SetVoronoi(MapGenerator.goldMinesBeingUsed);
         }
 
-        private void OnTriggerExit2D(Collider2D collision)
+        private void OnDrawGizmos()
         {
-            if (collision.CompareTag("GoldMine"))
-            {
-                goldMine = null;
-            }
+            if (drawVoronoi) voronoi.Draw();
         }
     }
 }
