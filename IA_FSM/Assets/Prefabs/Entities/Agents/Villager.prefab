@@ -251,11 +251,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2830917177ca1044b99cdbe089c1d4d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentState: 0
   speed: 10
   timePerMine: 1
   maxGoldRecolected: 15
   goldsPerFood: 3
   goldText: {fileID: 8265300257166732335}
+  drawVoronoi: 1
 --- !u!1 &8764433379537529910
 GameObject:
   m_ObjectHideFlags: 0

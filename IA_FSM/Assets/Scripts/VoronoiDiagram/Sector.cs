@@ -21,7 +21,7 @@ namespace VoronoiDiagram
         {
             this.mine = mine;
             color = Random.ColorHSV();
-            color.a = 0.35f;
+            color.a = 0.1f;
         }
 
         #region SEGMENTS

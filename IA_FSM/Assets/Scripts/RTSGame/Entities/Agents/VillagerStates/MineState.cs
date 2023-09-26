@@ -38,12 +38,21 @@ namespace RTSGame.Entities.Agents.VillagerStates
         {
             Transform transform = parameters[0] as Transform;
             Voronoi voronoi = parameters[1] as Voronoi;
+            int goldsPerFood = Convert.ToInt32(parameters[2]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
                 goldMine = voronoi.GetMineCloser(transform.position);
+
+                // Checks when returns to take refuge state
+                if (Vector2.Distance(transform.position, goldMine.transform.position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                if (totalGoldsRecolected != 0 && totalGoldsRecolected % goldsPerFood == 0)
+                {
+                    totalGoldsRecolected = 0;
+                    Transition((int)FSM_Villager_Flags.OnGoEat);
+                }
             });
 
             return behaviours;
@@ -56,6 +65,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
                 mineTimer.DesactiveTimer();
+                goldMine = null;
             });
 
             return behaviours;
@@ -81,17 +91,17 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
                 totalGoldsRecolected++;
 
-                if (goldQuantity == maxGoldRecolected) // Save golds
+                if (goldQuantity == maxGoldRecolected) // Guardar oro
                 {
                     goldQuantity = 0;
                     goldMine.RemoveVillager();
                     Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
                 }
-                else if (totalGoldsRecolected % goldsPerFood == 0) // Eat
+                else if (totalGoldsRecolected % goldsPerFood == 0) // Comer
                 {
                     Transition((int)FSM_Villager_Flags.OnGoEat);
                 }
-                else // Continue mining
+                else // Continuar minando
                 {
                     mineTimer.ActiveTimer();
                 }

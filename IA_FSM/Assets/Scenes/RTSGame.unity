@@ -179,9 +179,8 @@ MonoBehaviour:
   - pathNodeType: 2
     prefab: {fileID: 1027358623848706744, guid: d5862912bd02c6a42a91fedcb053d50f, type: 3}
   goldMinePrefab: {fileID: 8923739719065000373, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
-  goldMinesQuantity: 5
+  goldMinesQuantity: 2
   urbanCenterPrefab: {fileID: 2709057918239962356, guid: dcc865d27d84c4b4a9c94596d10c2aa1, type: 3}
-  voronoi: {fileID: 708202576}
 --- !u!1 &466390738
 GameObject:
   m_ObjectHideFlags: 0

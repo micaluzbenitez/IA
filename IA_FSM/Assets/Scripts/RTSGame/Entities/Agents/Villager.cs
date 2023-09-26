@@ -32,7 +32,7 @@ namespace RTSGame.Entities.Agents
     public class Villager : MonoBehaviour
     {
         [Header("FSM")]
-        [SerializeField] private FSM_Caravan_States currentState;
+        [SerializeField] private FSM_Villager_States currentState;
 
         [Header("Movement")]
         [SerializeField] private float speed = 5f;
@@ -56,7 +56,7 @@ namespace RTSGame.Entities.Agents
         private UrbanCenter urbanCenter;
 
         private FSM fsm;
-        private FSM_Caravan_States previousState;
+        private FSM_Villager_States previousState;
 
         private void Awake()
         {
@@ -86,6 +86,7 @@ namespace RTSGame.Entities.Agents
             fsm.SetRelation((int)FSM_Villager_States.Mine, (int)FSM_Villager_Flags.OnTakingRefuge, (int)FSM_Villager_States.TakeRefuge);
 
             fsm.SetRelation((int)FSM_Villager_States.Eat, (int)FSM_Villager_Flags.OnMining, (int)FSM_Villager_States.Mine);
+            fsm.SetRelation((int)FSM_Villager_States.Eat, (int)FSM_Villager_Flags.OnGoMine, (int)FSM_Villager_States.GoingToMine);
             fsm.SetRelation((int)FSM_Villager_States.Eat, (int)FSM_Villager_Flags.OnTakingRefuge, (int)FSM_Villager_States.TakeRefuge);
 
             fsm.SetRelation((int)FSM_Villager_States.GoingToSaveMaterials, (int)FSM_Villager_Flags.OnSaveMaterials, (int)FSM_Villager_States.SaveMaterials);
@@ -107,7 +108,7 @@ namespace RTSGame.Entities.Agents
 
             fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
                 () => (new object[] { timePerMine, maxGoldRecolected, goldsPerFood, goldText }),
-                () => (new object[2] { transform, voronoi }));
+                () => (new object[3] { transform, voronoi, goldsPerFood }));
 
             fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
                 () => (new object[] { }),
@@ -136,8 +137,8 @@ namespace RTSGame.Entities.Agents
         {
             fsm.Update();
 
-            previousState = (FSM_Caravan_States)fsm.previousStateIndex;
-            currentState = (FSM_Caravan_States)fsm.currentStateIndex;
+            previousState = (FSM_Villager_States)fsm.previousStateIndex;
+            currentState = (FSM_Villager_States)fsm.currentStateIndex;
         }
 
         private void RecalculateVoronoi(GoldMine goldMine)

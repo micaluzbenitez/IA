@@ -35,6 +35,9 @@ namespace RTSGame.Entities.Agents.VillagerStates
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
                 goldMine = voronoi.GetMineCloser(transform.position);
+
+                // Check when returns to take refuge state
+                if (Vector2.Distance(transform.position, goldMine.transform.position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
             });
 
             return behaviours;
@@ -46,6 +49,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                goldMine = null;
             });
 
             return behaviours;
