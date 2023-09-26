@@ -16,14 +16,15 @@ namespace RTSGame.Entities.Agents.CaravanStates
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            Transform transform = parameters[0] as Transform;
+            Caravan caravan = parameters[0] as Caravan;
             float speed = Convert.ToSingle(parameters[1]);
-            previousState = (FSM_Caravan_States)parameters[2];
+            float deltaTime = Convert.ToSingle(parameters[2]);
+            previousState = (FSM_Caravan_States)parameters[3];
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                HandleMovement(transform, speed);
+                HandleMovement(caravan, speed, deltaTime);
             });
 
             return behaviours;
@@ -32,14 +33,14 @@ namespace RTSGame.Entities.Agents.CaravanStates
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Transform transform = parameters[1] as Transform;
+            Caravan caravan = parameters[1] as Caravan;
             UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
-                SetTargetPosition(transform, urbanCenter.transform.position, agentPathNodes);
+                SetTargetPosition(caravan, urbanCenter.transform.position, agentPathNodes);
             });
 
             return behaviours;
@@ -61,10 +62,10 @@ namespace RTSGame.Entities.Agents.CaravanStates
             SetFlag?.Invoke(flag);
         }
 
-        private void SetTargetPosition(Transform transform, Vector3 targetPosition, AgentPathNodes agentPathNodes)
+        private void SetTargetPosition(Caravan caravan, Vector3 targetPosition, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, agentPathNodes.pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(caravan.Position, targetPosition, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
@@ -72,16 +73,16 @@ namespace RTSGame.Entities.Agents.CaravanStates
             }
         }
 
-        private void HandleMovement(Transform transform, float speed)
+        private void HandleMovement(Caravan caravan, float speed, float deltaTime)
         {
             if (pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
-                if (Vector3.Distance(transform.position, targetPosition) > 1f)
+                if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
                 {
-                    Vector3 moveDir = (targetPosition - transform.position).normalized;
-                    transform.position = transform.position + moveDir * speed * Time.deltaTime;
+                    Vector3 moveDir = (targetPosition - caravan.Position).normalized;
+                    caravan.Position = caravan.Position + moveDir * speed * deltaTime;
                 }
                 else
                 {

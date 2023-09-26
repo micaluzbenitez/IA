@@ -18,15 +18,16 @@ namespace RTSGame.Entities.Agents.VillagerStates
         public override List<Action> GetBehaviours(params object[] parameters)
         {
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Transform transform = parameters[1] as Transform;
-            float speed = Convert.ToSingle(parameters[2]);
-            Voronoi voronoi = parameters[3] as Voronoi;
+            Voronoi voronoi = parameters[1] as Voronoi;
+            Villager villager = parameters[2] as Villager;
+            float speed = Convert.ToSingle(parameters[3]);
+            float deltaTime = Convert.ToSingle(parameters[4]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                CheckForGoldMine(transform, agentPathNodes, voronoi);
-                HandleMovement(transform, speed);
+                CheckForGoldMine(villager, agentPathNodes, voronoi);
+                HandleMovement(villager, speed, deltaTime);
             });
 
             return behaviours;
@@ -60,22 +61,22 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes, Voronoi voronoi)
+        private void CheckForGoldMine(Villager villager, AgentPathNodes agentPathNodes, Voronoi voronoi)
         {
             if (goldMine) return;
 
-            goldMine = voronoi.GetMineCloser(transform.position);
+            goldMine = voronoi.GetMineCloser(villager.Position);
 
             if (goldMine)
             {
-                SetTargetPosition(transform, goldMine, agentPathNodes);
+                SetTargetPosition(villager, goldMine, agentPathNodes);
             }
         }
 
-        private void SetTargetPosition(Transform transform, GoldMine goldMine, AgentPathNodes agentPathNodes)
+        private void SetTargetPosition(Villager villager, GoldMine goldMine, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, goldMine.transform.position, agentPathNodes.pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(villager.Position, goldMine.Position, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
@@ -83,16 +84,16 @@ namespace RTSGame.Entities.Agents.VillagerStates
             }
         }
 
-        private void HandleMovement(Transform transform, float speed)
+        private void HandleMovement(Villager villager, float speed, float deltaTime)
         {
             if (pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
-                if (Vector3.Distance(transform.position, targetPosition) > 1f)
+                if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
-                    Vector3 moveDir = (targetPosition - transform.position).normalized;
-                    transform.position = transform.position + moveDir * speed * Time.deltaTime;
+                    Vector3 moveDir = (targetPosition - villager.Position).normalized;
+                    villager.Position = villager.Position + moveDir * speed * deltaTime;
                 }
                 else
                 {

@@ -14,13 +14,14 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            Transform transform = parameters[0] as Transform;
+            Villager villager = parameters[0] as Villager;
             float speed = Convert.ToSingle(parameters[1]);
+            float deltaTime = Convert.ToSingle(parameters[2]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                HandleMovement(transform, speed);
+                HandleMovement(villager, speed, deltaTime);
             });
 
             return behaviours;
@@ -29,14 +30,14 @@ namespace RTSGame.Entities.Agents.VillagerStates
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Transform transform = parameters[1] as Transform;
+            Villager villager = parameters[1] as Villager;
             UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                SetTargetPosition(transform, urbanCenter.transform.position, agentPathNodes);
+                SetTargetPosition(villager, urbanCenter.transform.position, agentPathNodes);
             });
 
             return behaviours;
@@ -58,10 +59,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void SetTargetPosition(Transform transform, Vector3 targetPosition, AgentPathNodes agentPathNodes)
+        private void SetTargetPosition(Villager villager, Vector3 targetPosition, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, targetPosition, agentPathNodes.pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(villager.Position, targetPosition, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
@@ -69,16 +70,16 @@ namespace RTSGame.Entities.Agents.VillagerStates
             }
         }
 
-        private void HandleMovement(Transform transform, float speed)
+        private void HandleMovement(Villager villager, float speed, float deltaTime)
         {
             if (pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
-                if (Vector3.Distance(transform.position, targetPosition) > 1f)
+                if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
-                    Vector3 moveDir = (targetPosition - transform.position).normalized;
-                    transform.position = transform.position + moveDir * speed * Time.deltaTime;
+                    Vector3 moveDir = (targetPosition - villager.Position).normalized;
+                    villager.Position = villager.Position + moveDir * speed * deltaTime;
                 }
                 else
                 {

@@ -9,13 +9,13 @@ namespace RTSGame.Entities.Agents.CaravanStates
     {
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            int foodPerTravel = Convert.ToInt32(parameters[0]);
-            TextMesh foodText = parameters[1] as TextMesh;
+            Caravan caravan = parameters[0] as Caravan;
+            int foodPerTravel = Convert.ToInt32(parameters[1]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                foodText.text = foodPerTravel.ToString();
+                caravan.FoodQuantityText = foodPerTravel.ToString();
                 Transition((int)FSM_Caravan_Flags.OnGoMine);
             });
 

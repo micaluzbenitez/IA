@@ -4,6 +4,7 @@ using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using VoronoiDiagram;
+using UnityEngine.UIElements;
 
 namespace RTSGame.Entities.Agents.CaravanStates
 {
@@ -13,8 +14,8 @@ namespace RTSGame.Entities.Agents.CaravanStates
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            int foodPerTravel = Convert.ToInt32(parameters[0]);
-            TextMesh foodText = parameters[1] as TextMesh;
+            Caravan caravan = parameters[0] as Caravan;
+            int foodPerTravel = Convert.ToInt32(parameters[1]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -22,7 +23,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
                 if (goldMine && goldMine.BeingUsed)
                 {
                     goldMine.DeliverFood(foodPerTravel);
-                    foodText.text = "0";
+                    caravan.FoodQuantityText = "0";
                     Transition((int)FSM_Caravan_Flags.OnGoTakeFood);
                 }
                 else
@@ -36,17 +37,17 @@ namespace RTSGame.Entities.Agents.CaravanStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
-            Transform transform = parameters[0] as Transform;
-            Voronoi voronoi = parameters[1] as Voronoi;
+            Voronoi voronoi = parameters[0] as Voronoi;
+            Caravan caravan = parameters[1] as Caravan;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
-                goldMine = voronoi.GetMineCloser(transform.position);
+                goldMine = voronoi.GetMineCloser(caravan.Position);
 
                 // Check when returns to take refuge state
-                if (Vector2.Distance(transform.position, goldMine.transform.position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                if (Vector2.Distance(caravan.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
             });
 
             return behaviours;

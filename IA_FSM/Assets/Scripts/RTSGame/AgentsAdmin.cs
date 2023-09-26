@@ -10,14 +10,14 @@ public class AgentsAdmin : MonoBehaviourSingleton<AgentsAdmin>
 
     private void Start()
     {
-        options = new ParallelOptions { MaxDegreeOfParallelism = 5 };        
+        options = new ParallelOptions { MaxDegreeOfParallelism = 1 };        
     }
 
     private void Update()
     {
         Parallel.ForEach(agents, options, currentItem =>
         {
-            //currentItem.UpdateAgent();
+            currentItem.UpdateAgent();
         });
     }
 

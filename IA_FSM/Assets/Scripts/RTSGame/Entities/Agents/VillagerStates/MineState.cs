@@ -15,20 +15,20 @@ namespace RTSGame.Entities.Agents.VillagerStates
         private GoldMine goldMine;
         private int goldQuantity;
         private int totalGoldsRecolected;
-        private TextMesh goldText;
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            float timePerMine = Convert.ToSingle(parameters[0]);
-            int maxGoldRecolected = Convert.ToInt32(parameters[1]);
-            int goldsPerFood = Convert.ToInt32(parameters[2]);
-            goldText = parameters[3] as TextMesh;
+            Villager villager = parameters[0] as Villager;
+            float timePerMine = Convert.ToSingle(parameters[1]);
+            int maxGoldRecolected = Convert.ToInt32(parameters[2]);
+            int goldsPerFood = Convert.ToInt32(parameters[3]);
+            float deltaTime = Convert.ToSingle(parameters[4]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 if (!mineTimer.Active) mineTimer.SetTimer(timePerMine, Timer.TIMER_MODE.DECREASE, true);
-                UpdateMineTimer(maxGoldRecolected, goldsPerFood);
+                UpdateMineTimer(villager, deltaTime, maxGoldRecolected, goldsPerFood);
             });
 
             return behaviours;
@@ -36,18 +36,18 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
-            Transform transform = parameters[0] as Transform;
-            Voronoi voronoi = parameters[1] as Voronoi;
+            Voronoi voronoi = parameters[0] as Voronoi;
+            Villager villager = parameters[1] as Villager;
             int goldsPerFood = Convert.ToInt32(parameters[2]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += TakeRefuge;
-                goldMine = voronoi.GetMineCloser(transform.position);
+                goldMine = voronoi.GetMineCloser(villager.Position);
 
                 // Checks when returns to take refuge state
-                if (Vector2.Distance(transform.position, goldMine.transform.position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                if (Vector2.Distance(villager.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
                 if (totalGoldsRecolected != 0 && totalGoldsRecolected % goldsPerFood == 0)
                 {
                     totalGoldsRecolected = 0;
@@ -75,18 +75,18 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void UpdateMineTimer(int maxGoldRecolected, int goldsPerFood)
+        private void UpdateMineTimer(Villager villager, float deltaTime, int maxGoldRecolected, int goldsPerFood)
         {
-            if (mineTimer.Active) mineTimer.UpdateTimer();
-            if (mineTimer.ReachedTimer()) Mine(maxGoldRecolected, goldsPerFood);
+            if (mineTimer.Active) mineTimer.UpdateTimer(deltaTime);
+            if (mineTimer.ReachedTimer()) Mine(villager, maxGoldRecolected, goldsPerFood);
         }
 
-        private void Mine(int maxGoldRecolected, int goldsPerFood)
+        private void Mine(Villager villager, int maxGoldRecolected, int goldsPerFood)
         {
             if (goldMine && goldMine.ConsumeGold())
             {
                 goldQuantity++;
-                goldText.text = goldQuantity.ToString();
+                villager.GoldQuantityText = goldQuantity.ToString();
 
                 totalGoldsRecolected++;
 

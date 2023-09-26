@@ -4,8 +4,6 @@ using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
-using Random = UnityEngine.Random;
-using RTSGame.Map;
 using VoronoiDiagram;
 
 namespace RTSGame.Entities.Agents.CaravanStates
@@ -20,15 +18,16 @@ namespace RTSGame.Entities.Agents.CaravanStates
         public override List<Action> GetBehaviours(params object[] parameters)
         {
             AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Transform transform = parameters[1] as Transform;
-            float speed = Convert.ToSingle(parameters[2]);
-            Voronoi voronoi = parameters[3] as Voronoi;
+            Voronoi voronoi = parameters[1] as Voronoi;
+            Caravan caravan = parameters[2] as Caravan;
+            float speed = Convert.ToSingle(parameters[3]);
+            float deltaTime = Convert.ToSingle(parameters[4]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (!goldMine) CheckForGoldMine(transform, agentPathNodes, voronoi);
-                else HandleMovement(transform, speed);
+                if (!goldMine) CheckForGoldMine(caravan, agentPathNodes, voronoi);
+                else HandleMovement(caravan, speed, deltaTime);
 
                 CheckActualGoldMine();
             });
@@ -64,20 +63,20 @@ namespace RTSGame.Entities.Agents.CaravanStates
             SetFlag?.Invoke(flag);
         }
 
-        private void CheckForGoldMine(Transform transform, AgentPathNodes agentPathNodes, Voronoi voronoi)
+        private void CheckForGoldMine(Caravan caravan, AgentPathNodes agentPathNodes, Voronoi voronoi)
         {
-            goldMine = voronoi.GetMineCloser(transform.position);
+            goldMine = voronoi.GetMineCloser(caravan.Position);
 
             if (goldMine)
             {
-                SetTargetPosition(transform, goldMine, agentPathNodes);
+                SetTargetPosition(caravan, goldMine, agentPathNodes);
             }
         }
 
-        protected void SetTargetPosition(Transform transform, GoldMine goldMine, AgentPathNodes agentPathNodes)
+        protected void SetTargetPosition(Caravan caravan, GoldMine goldMine, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(transform.position, goldMine.transform.position, agentPathNodes.pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(caravan.Position, goldMine.Position, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
@@ -85,16 +84,16 @@ namespace RTSGame.Entities.Agents.CaravanStates
             }
         }
 
-        protected void HandleMovement(Transform transform, float speed)
+        protected void HandleMovement(Caravan caravan, float speed, float deltaTime)
         {
             if (pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
-                if (Vector3.Distance(transform.position, targetPosition) > 1f)
+                if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
                 {
-                    Vector3 moveDir = (targetPosition - transform.position).normalized;
-                    transform.position = transform.position + moveDir * speed * Time.deltaTime;
+                    Vector3 moveDir = (targetPosition - caravan.Position).normalized;
+                    caravan.Position = caravan.Position + moveDir * speed * deltaTime;
                 }
                 else
                 {

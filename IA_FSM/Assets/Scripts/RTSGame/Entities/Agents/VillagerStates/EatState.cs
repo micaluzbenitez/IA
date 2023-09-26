@@ -27,17 +27,17 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
-            Transform transform = parameters[0] as Transform;
-            Voronoi voronoi = parameters[1] as Voronoi;
+            Voronoi voronoi = parameters[0] as Voronoi;
+            Villager villager = parameters[1] as Villager;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += TakeRefuge;
-                goldMine = voronoi.GetMineCloser(transform.position);
+                goldMine = voronoi.GetMineCloser(villager.Position);
 
                 // Check when returns to take refuge state
-                if (Vector2.Distance(transform.position, goldMine.transform.position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                if (Vector2.Distance(villager.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
             });
 
             return behaviours;

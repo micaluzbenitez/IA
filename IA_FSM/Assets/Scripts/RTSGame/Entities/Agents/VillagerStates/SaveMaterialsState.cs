@@ -10,15 +10,15 @@ namespace RTSGame.Entities.Agents.VillagerStates
     {
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            UrbanCenter urbanCenter = parameters[0] as UrbanCenter;
-            int goldRecolected = Convert.ToInt32(parameters[1]);
-            TextMesh goldText = parameters[2] as TextMesh;
+            Villager villager = parameters[0] as Villager;
+            UrbanCenter urbanCenter = parameters[1] as UrbanCenter;
+            int goldRecolected = Convert.ToInt32(parameters[2]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 urbanCenter.DeliverGold(goldRecolected);
-                goldText.text = "0";
+                villager.GoldQuantityText = "0";
                 Transition((int)FSM_Villager_Flags.OnGoMine);
             });
 

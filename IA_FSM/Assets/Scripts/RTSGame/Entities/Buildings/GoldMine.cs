@@ -13,19 +13,34 @@ namespace RTSGame.Entities.Buildings
         [Header("Food")]
         [SerializeField] private TextMesh foodText;
 
+        private Vector3 position;
         private int foodQuantity;
         private int villagersOn;
-
         private bool beingUsed = false;
+
+        // Properties
+        public Vector3 Position
+        {
+            get { return position; }
+            set { position = value; }
+        }
+
         public bool BeingUsed => beingUsed;
 
+        // Actions
         public Action OnGoldMineBeingUsed;
         public Action<GoldMine> OnGoldMineEmpty;
 
-        private void Awake()
+        private void Start()
         {
+            position = transform.position;
             goldText.text = goldQuantity.ToString();
             foodText.text = foodQuantity.ToString();
+        }
+
+        private void UpdateText(TextMesh text, int quantity)
+        {
+            text.text = quantity.ToString();
         }
 
         public bool ConsumeGold()
@@ -33,7 +48,7 @@ namespace RTSGame.Entities.Buildings
             if (goldQuantity <= 0) return false;
 
             goldQuantity--;
-            goldText.text = goldQuantity.ToString();
+            UpdateText(goldText, goldQuantity);            
 
             if (goldQuantity <= 0)
             {
@@ -49,7 +64,7 @@ namespace RTSGame.Entities.Buildings
         public void DeliverFood(int foodQuantity)
         {
             this.foodQuantity += foodQuantity;
-            foodText.text = this.foodQuantity.ToString();
+            UpdateText(foodText, this.foodQuantity);
         }
         
         public bool ConsumeFood()
@@ -57,7 +72,7 @@ namespace RTSGame.Entities.Buildings
             if (foodQuantity <= 0) return false;
 
             foodQuantity--;
-            foodText.text = foodQuantity.ToString();
+            UpdateText(foodText, foodQuantity);
             return true;
         }
 

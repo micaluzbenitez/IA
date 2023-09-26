@@ -53,10 +53,26 @@ namespace RTSGame.Entities.Agents
 
         private AgentPathNodes agentPathNodes;
 
-        private UrbanCenter urbanCenter;
-
         private FSM fsm;
         private FSM_Villager_States previousState;
+
+        private UrbanCenter urbanCenter;
+        private Vector3 position;
+        private float deltaTime;
+        private string goldQuantityText;
+
+        // Properties
+        public Vector3 Position 
+        { 
+            get { return position; } 
+            set { position = value; } 
+        }
+        
+        public string GoldQuantityText
+        {
+            get { return goldQuantityText; }
+            set { goldQuantityText = value; }
+        }
 
         private void Awake()
         {
@@ -73,6 +89,9 @@ namespace RTSGame.Entities.Agents
 
         private void Start()
         {
+            position = transform.position;
+            goldQuantityText = goldText.text;
+
             fsm = new FSM(Enum.GetValues(typeof(FSM_Villager_States)).Length, Enum.GetValues(typeof(FSM_Villager_Flags)).Length);
 
             // Set relations
@@ -103,26 +122,26 @@ namespace RTSGame.Entities.Agents
 
             // Add states
             fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine,
-                () => (new object[4] { agentPathNodes, transform, speed, voronoi }));
+                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }));
 
             fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
-                () => (new object[] { timePerMine, maxGoldRecolected, goldsPerFood, goldText }),
-                () => (new object[3] { transform, voronoi, goldsPerFood }));
+                () => (new object[5] { this, timePerMine, maxGoldRecolected, goldsPerFood, deltaTime }),
+                () => (new object[3] { voronoi, this, goldsPerFood }));
 
             fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
                 () => (new object[] { }),
-                () => (new object[2] { transform, voronoi }));
+                () => (new object[2] { voronoi, this }));
 
             fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
-                () => (new object[2] { transform, speed }),
-                () => (new object[3] { agentPathNodes, transform, urbanCenter }));
+                () => (new object[3] { this, speed, deltaTime }),
+                () => (new object[3] { agentPathNodes, this, urbanCenter }));
 
             fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials,
-                () => (new object[3] { urbanCenter, maxGoldRecolected, goldText }));
+                () => (new object[3] { this, urbanCenter, maxGoldRecolected }));
 
             fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge,
-                () => (new object[3] { transform, speed, previousState }),
-                () => (new object[3] { agentPathNodes, transform, urbanCenter }));
+                () => (new object[4] { this, speed, deltaTime, previousState }),
+                () => (new object[3] { agentPathNodes, this, urbanCenter }));
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Villager_States.GoingToMine);
@@ -134,15 +153,17 @@ namespace RTSGame.Entities.Agents
 
         private void Update()
         {
-            UpdateAgent();
+            transform.position = position;
+            deltaTime = Time.deltaTime;
+            goldText.text = goldQuantityText;
+
+            previousState = (FSM_Villager_States)fsm.previousStateIndex;
+            currentState = (FSM_Villager_States)fsm.currentStateIndex;
         }
 
         public override void UpdateAgent()
         {
             fsm.Update();
-
-            previousState = (FSM_Villager_States)fsm.previousStateIndex;
-            currentState = (FSM_Villager_States)fsm.currentStateIndex;
         }
 
         private void RecalculateVoronoi(GoldMine goldMine)

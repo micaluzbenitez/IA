@@ -47,12 +47,12 @@ namespace Toolbox
         /// <summary>
         /// Call this every time the timer is active
         /// </summary>
-        public void UpdateTimer(float speed = 1)
+        public void UpdateTimer(float deltaTime, float speed = 1)
         {
             if (!active) return;
 
-            if (timerMode == TIMER_MODE.DECREASE) CheckTimer(-speed, currentTime <= 0, totalTime);
-            else CheckTimer(speed, currentTime >= totalTime, 0);
+            if (timerMode == TIMER_MODE.DECREASE) CheckTimer(deltaTime, -speed, currentTime <= 0, totalTime);
+            else CheckTimer(deltaTime, speed, currentTime >= totalTime, 0);
         }
         
         /// <summary>
@@ -96,9 +96,9 @@ namespace Toolbox
         /// <summary>
         /// Check timer state
         /// </summary>
-        private void CheckTimer(float speed, bool condition, float initialTime)
+        private void CheckTimer(float deltaTime, float speed, bool condition, float initialTime)
         {
-            currentTime += Time.deltaTime * speed;
+            currentTime += deltaTime * speed;
 
             if (condition)
             {
