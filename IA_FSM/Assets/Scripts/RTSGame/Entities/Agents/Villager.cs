@@ -44,13 +44,11 @@ namespace RTSGame.Entities.Agents
         [Header("Food")]
         [SerializeField] private int goldsPerFood;
 
-        [Header("Voronoi")]
-        [SerializeField] private Voronoi voronoi = null;
-
         [Header("UI")]
         [SerializeField] private TextMesh goldText;
 
-        [Header("Debug")]
+        [Header("Voronoi")]
+        [SerializeField] private Voronoi voronoi = null;
         [SerializeField] private bool drawVoronoi;
 
         private AgentPathNodes agentPathNodes;
