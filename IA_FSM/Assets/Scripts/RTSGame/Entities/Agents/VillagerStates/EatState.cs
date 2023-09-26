@@ -13,11 +13,14 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
+            Villager villager = parameters[0] as Villager;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 if (goldMine && goldMine.ConsumeFood())
                 {
+                    villager.NeedsFood = false;
                     Transition((int)FSM_Villager_Flags.OnMining);
                 }
             });

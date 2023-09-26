@@ -40,7 +40,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
-                SetTargetPosition(villager, urbanCenter.transform.position, agentPathNodes);
+                SetTargetPosition(villager, urbanCenter.Position, agentPathNodes);
             });
 
             return behaviours;

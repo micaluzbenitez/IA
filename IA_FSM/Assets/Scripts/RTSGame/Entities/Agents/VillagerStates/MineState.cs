@@ -48,11 +48,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
                 // Checks when returns to take refuge state
                 if (Vector2.Distance(villager.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
-                if (totalGoldsRecolected != 0 && totalGoldsRecolected % goldsPerFood == 0)
-                {
-                    totalGoldsRecolected = 0;
-                    Transition((int)FSM_Villager_Flags.OnGoEat);
-                }
+                if (villager.NeedsFood) Transition((int)FSM_Villager_Flags.OnGoEat);
             });
 
             return behaviours;
@@ -98,6 +94,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
                 }
                 else if (totalGoldsRecolected % goldsPerFood == 0) // Comer
                 {
+                    villager.NeedsFood = true;
                     Transition((int)FSM_Villager_Flags.OnGoEat);
                 }
                 else // Continuar minando

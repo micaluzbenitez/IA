@@ -37,7 +37,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
-                SetTargetPosition(caravan, urbanCenter.transform.position, agentPathNodes);
+                SetTargetPosition(caravan, urbanCenter.Position, agentPathNodes);
             });
 
             return behaviours;

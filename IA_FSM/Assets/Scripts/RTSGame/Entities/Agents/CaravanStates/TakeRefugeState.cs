@@ -40,7 +40,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
-                SetTargetPosition(caravan, urbanCenter.transform.position, agentPathNodes);
+                SetTargetPosition(caravan, urbanCenter.Position, agentPathNodes);
             });
 
             return behaviours;

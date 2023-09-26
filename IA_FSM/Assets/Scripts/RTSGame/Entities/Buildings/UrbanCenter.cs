@@ -21,16 +21,27 @@ namespace RTSGame.Entities.Buildings
         [Header("Gold")]
         [SerializeField] private TextMesh goldText;
 
+        private Vector3 position;
         private int goldQuantity;
+        private string goldQuantityText;
 
-        private void Awake()
+        // Properties
+        public Vector3 Position
         {
-            goldText.text = goldQuantity.ToString();
+            get { return position; }
+            set { position = value; }
         }
 
         private void Start()
         {
+            position = transform.position;
+            goldQuantityText = goldQuantity.ToString();
             StartCoroutine(SpawnAgents());
+        }
+
+        private void Update()
+        {
+            goldText.text = goldQuantityText;
         }
 
         private IEnumerator SpawnAgents()
@@ -52,7 +63,7 @@ namespace RTSGame.Entities.Buildings
         public void DeliverGold(int goldQuantity)
         {
             this.goldQuantity += goldQuantity;
-            goldText.text = this.goldQuantity.ToString();
+            goldQuantityText = this.goldQuantity.ToString();
         }
     }
 }

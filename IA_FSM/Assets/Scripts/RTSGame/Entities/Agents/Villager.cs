@@ -46,12 +46,18 @@ namespace RTSGame.Entities.Agents
         private FSM_Villager_States previousState;
 
         private string goldQuantityText;
+        private bool needsFood = false;
 
         // Properties
         public string GoldQuantityText
         {
             get { return goldQuantityText; }
             set { goldQuantityText = value; }
+        }
+        public bool NeedsFood
+        {
+            get { return needsFood; }
+            set { needsFood = value; }
         }
 
         protected override void Awake()
@@ -108,7 +114,7 @@ namespace RTSGame.Entities.Agents
                 () => (new object[3] { voronoi, this, goldsPerFood }));
 
             fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
-                () => (new object[] { }),
+                () => (new object[1] { this }),
                 () => (new object[2] { voronoi, this }));
 
             fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
