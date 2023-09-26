@@ -3,7 +3,6 @@ using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using RTSGame.Entities.Agents.VillagerStates;
-using VoronoiDiagram;
 using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents
@@ -34,9 +33,6 @@ namespace RTSGame.Entities.Agents
         [Header("FSM")]
         [SerializeField] private FSM_Villager_States currentState;
 
-        [Header("Movement")]
-        [SerializeField] private float speed = 5f;
-
         [Header("Gold mine")]
         [SerializeField] private float timePerMine;
         [SerializeField] private int maxGoldRecolected;
@@ -47,37 +43,20 @@ namespace RTSGame.Entities.Agents
         [Header("UI")]
         [SerializeField] private TextMesh goldText;
 
-        [Header("Voronoi")]
-        [SerializeField] private Voronoi voronoi = null;
-        [SerializeField] private bool drawVoronoi;
-
-        private AgentPathNodes agentPathNodes;
-
-        private FSM fsm;
         private FSM_Villager_States previousState;
 
-        private UrbanCenter urbanCenter;
-        private Vector3 position;
-        private float deltaTime;
         private string goldQuantityText;
 
         // Properties
-        public Vector3 Position 
-        { 
-            get { return position; } 
-            set { position = value; } 
-        }
-        
         public string GoldQuantityText
         {
             get { return goldQuantityText; }
             set { goldQuantityText = value; }
         }
 
-        private void Awake()
+        protected override void Awake()
         {
-            urbanCenter = FindObjectOfType<UrbanCenter>();
-            agentPathNodes = GetComponent<AgentPathNodes>();
+            base.Awake();
             goldText.text = "0";
 
             // Recalculate voronoi on changes
@@ -87,11 +66,11 @@ namespace RTSGame.Entities.Agents
             }
         }
 
-        private void Start()
+        protected override void Start()
         {
-            position = transform.position;
-            goldQuantityText = goldText.text;
+            base.Start();
 
+            goldQuantityText = goldText.text;
             fsm = new FSM(Enum.GetValues(typeof(FSM_Villager_States)).Length, Enum.GetValues(typeof(FSM_Villager_Flags)).Length);
 
             // Set relations
@@ -151,30 +130,19 @@ namespace RTSGame.Entities.Agents
             voronoi.SetVoronoi(MapGenerator.goldMines);
         }
 
-        private void Update()
+        protected override void Update()
         {
-            transform.position = position;
-            deltaTime = Time.deltaTime;
+            base.Update();
             goldText.text = goldQuantityText;
 
             previousState = (FSM_Villager_States)fsm.previousStateIndex;
             currentState = (FSM_Villager_States)fsm.currentStateIndex;
         }
 
-        public override void UpdateAgent()
-        {
-            fsm.Update();
-        }
-
         private void RecalculateVoronoi(GoldMine goldMine)
         {
             MapGenerator.Instance.RemoveEmptyMine(goldMine);
             voronoi.SetVoronoi(MapGenerator.goldMines);
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (drawVoronoi) voronoi.Draw();
         }
     }
 }

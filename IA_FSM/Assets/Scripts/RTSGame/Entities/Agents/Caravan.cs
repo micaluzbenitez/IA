@@ -1,9 +1,7 @@
 using System;
 using UnityEngine;
 using FiniteStateMachine;
-using RTSGame.Entities.Buildings;
 using RTSGame.Entities.Agents.CaravanStates;
-using VoronoiDiagram;
 using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents
@@ -32,46 +30,26 @@ namespace RTSGame.Entities.Agents
         [Header("FSM")]
         [SerializeField] private FSM_Caravan_States currentState;
 
-        [Header("Movement")]
-        [SerializeField] private float speed = 5f;
-
         [Header("Food")]
         [SerializeField] private int foodPerTravel;
 
         [Header("UI")]
         [SerializeField] private TextMesh foodText;
 
-        [Header("Voronoi")]
-        [SerializeField] private Voronoi voronoi = null;
-        [SerializeField] private bool drawVoronoi;
-
-        private AgentPathNodes agentPathNodes;
-
-        private FSM fsm;
         private FSM_Caravan_States previousState;
 
-        private UrbanCenter urbanCenter;
-        private Vector3 position;
-        private float deltaTime;
         private string foodQuantityText;
 
         // Properties
-        public Vector3 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
-
         public string FoodQuantityText
         {
             get { return foodQuantityText; }
             set { foodQuantityText = value; }
         }
 
-        private void Awake()
+        protected override void Awake()
         {
-            urbanCenter = FindObjectOfType<UrbanCenter>();
-            agentPathNodes = GetComponent<AgentPathNodes>();
+            base.Awake();
             foodText.text = "0";
 
             // Recalculate voronoi on changes
@@ -81,11 +59,11 @@ namespace RTSGame.Entities.Agents
             }
         }
 
-        private void Start()
+        protected override void Start()
         {
-            position = transform.position;
-            foodQuantityText = foodText.text;
+            base.Start();
 
+            foodQuantityText = foodText.text;
             fsm = new FSM(Enum.GetValues(typeof(FSM_Caravan_States)).Length, Enum.GetValues(typeof(FSM_Caravan_Flags)).Length);
 
             // Set relations
@@ -134,29 +112,18 @@ namespace RTSGame.Entities.Agents
             voronoi.SetVoronoi(MapGenerator.goldMinesBeingUsed);
         }
 
-        private void Update()
+        protected override void Update()
         {
-            transform.position = position;
-            deltaTime = Time.deltaTime;
+            base.Update();
             foodText.text = foodQuantityText;
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
         }
 
-        public override void UpdateAgent()
-        {
-            fsm.Update();
-        }
-
         private void RecalculateVoronoi()
         {
             voronoi.SetVoronoi(MapGenerator.goldMinesBeingUsed);
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (drawVoronoi) voronoi.Draw();
         }
     }
 }
