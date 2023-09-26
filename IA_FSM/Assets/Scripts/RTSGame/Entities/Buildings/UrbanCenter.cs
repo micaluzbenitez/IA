@@ -41,7 +41,9 @@ namespace RTSGame.Entities.Buildings
             {
                 for (int j = 0; j < agents[i].quantity; j++)
                 {
-                    Instantiate(agents[i].prefab, transform.position + positionOffset, Quaternion.identity);
+                    GameObject GO = Instantiate(agents[i].prefab, transform.position + positionOffset, Quaternion.identity);
+                    Agents.Agent agent = GO.GetComponent<Agents.Agent>();
+                    if (agent) AgentsAdmin.Instance.AddAgent(agent);
                     yield return new WaitForSeconds(0.2f);
                 }
             }

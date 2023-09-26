@@ -29,7 +29,7 @@ namespace RTSGame.Entities.Agents
     }
 
     [RequireComponent(typeof(AgentPathNodes))]
-    public class Villager : MonoBehaviour
+    public class Villager : Agent
     {
         [Header("FSM")]
         [SerializeField] private FSM_Villager_States currentState;
@@ -133,6 +133,11 @@ namespace RTSGame.Entities.Agents
         }
 
         private void Update()
+        {
+            UpdateAgent();
+        }
+
+        public override void UpdateAgent()
         {
             fsm.Update();
 

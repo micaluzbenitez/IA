@@ -27,7 +27,7 @@ namespace RTSGame.Entities.Agents
     }
 
     [RequireComponent(typeof(AgentPathNodes))]
-    public class Caravan : MonoBehaviour
+    public class Caravan : Agent
     {
         [Header("FSM")]
         [SerializeField] private FSM_Caravan_States currentState;
@@ -116,6 +116,11 @@ namespace RTSGame.Entities.Agents
         }
 
         private void Update()
+        {
+            UpdateAgent();
+        }
+
+        public override void UpdateAgent()
         {
             fsm.Update();
 

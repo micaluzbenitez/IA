@@ -169,9 +169,9 @@ MonoBehaviour:
   currentState: 0
   speed: 10
   foodPerTravel: 10
-  voronoi: {fileID: 444826504569258449}
   foodText: {fileID: 564786310125634920}
-  drawVoronoi: 1
+  voronoi: {fileID: 444826504569258449}
+  drawVoronoi: 0
 --- !u!1 &2869382472546859457
 GameObject:
   m_ObjectHideFlags: 0
