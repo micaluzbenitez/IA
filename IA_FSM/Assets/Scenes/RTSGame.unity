@@ -178,6 +178,8 @@ MonoBehaviour:
     prefab: {fileID: 1027358623848706744, guid: 4911baaf5bdca904a8af3bd3616483a2, type: 3}
   - pathNodeType: 2
     prefab: {fileID: 1027358623848706744, guid: d5862912bd02c6a42a91fedcb053d50f, type: 3}
+  obstaclePrefab: {fileID: 1027358623848706744, guid: fbf4e4ed9e0ca3f43a538d78c9700ba2, type: 3}
+  obstaclesQuantity: 2
   goldMinePrefab: {fileID: 8923739719065000373, guid: 9fbc064cbba2b09449d06b0555732f95, type: 3}
   goldMinesQuantity: 5
   urbanCenterPrefab: {fileID: 2709057918239962356, guid: dcc865d27d84c4b4a9c94596d10c2aa1, type: 3}

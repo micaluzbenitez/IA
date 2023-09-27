@@ -25,6 +25,10 @@ namespace RTSGame.Map
         [Header("Path nodes")]
         [SerializeField] private PathNode_Visible[] pathNodeVisibles;
 
+        [Header("Obstacles")]
+        [SerializeField] private GameObject obstaclePrefab;
+        [SerializeField] private int obstaclesQuantity;
+
         [Header("Gold mines")]
         [SerializeField] private GoldMine goldMinePrefab;
         [SerializeField] private int goldMinesQuantity;
@@ -50,6 +54,7 @@ namespace RTSGame.Map
             OriginPosition = originPosition;
 
             pathfinding = new Pathfinding(width, height, cellSize, originPosition);
+            CreateObstacles();
             CreateGoldMines();
             CreateUrbanCenter();
 
@@ -71,23 +76,33 @@ namespace RTSGame.Map
             }
         }
 
+        private void CreateObstacles()
+        {
+            if (obstaclesQuantity <= 0) return;
+
+            for (int i = 0; i < obstaclesQuantity; i++)
+            {
+                CreateEntity(obstaclePrefab, false);
+            }
+        }
+
         private void CreateGoldMines()
         {
             if (goldMinesQuantity <= 0) return;
 
             for (int i = 0; i < goldMinesQuantity; i++)
             {
-                GameObject GO = CreateBuilding(goldMinePrefab.gameObject);
+                GameObject GO = CreateEntity(goldMinePrefab.gameObject);
                 goldMines.Add(GO.GetComponent<GoldMine>());
             }
         }
 
         private void CreateUrbanCenter()
         {
-            CreateBuilding(urbanCenterPrefab.gameObject);
+            CreateEntity(urbanCenterPrefab.gameObject);
         }
 
-        private GameObject CreateBuilding(GameObject buildingPrefab)
+        private GameObject CreateEntity(GameObject buildingPrefab, bool walkable = true)
         {
             Vector2Int coords;
 
@@ -100,6 +115,7 @@ namespace RTSGame.Map
             // Create building
             Vector2 position = pathfinding.GetGrid().GetWorldPosition(coords.x, coords.y) + (Vector3.one * (cellSize / 2));
             GameObject GO = Instantiate(buildingPrefab, position, Quaternion.identity, transform);
+            if (!walkable) pathfinding.GetNode(coords.x, coords.y).SetIsWalkable(!pathfinding.GetNode(coords.x, coords.y).isWalkable);
             GO.transform.localScale = Vector3.one * cellSize;
             return GO;
         }

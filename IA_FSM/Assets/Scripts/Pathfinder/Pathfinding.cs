@@ -212,7 +212,7 @@ namespace Pathfinder
         {
             PathNode pathNode = grid.GetGridObject(x, y);
 
-            if (pathNode.available)
+            if (pathNode.available && pathNode.isWalkable)
             {
                 pathNode.available = false;
                 return true;
