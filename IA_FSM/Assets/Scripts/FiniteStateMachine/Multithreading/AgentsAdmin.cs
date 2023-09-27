@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Toolbox;
 using RTSGame.Entities.Agents;
 
-namespace RTSGame
+namespace FiniteStateMachine.Multithreading
 {
     // Cuando tengo procesos muy pesados puedo partir los subprocesos en procesos paralelos
     public class AgentsAdmin : MonoBehaviourSingleton<AgentsAdmin>

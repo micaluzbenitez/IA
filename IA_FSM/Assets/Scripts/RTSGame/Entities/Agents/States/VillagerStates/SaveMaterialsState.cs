@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 
-namespace RTSGame.Entities.Agents.VillagerStates
+namespace RTSGame.Entities.Agents.States.VillagerStates
 {
     public class SaveMaterialsState : State
     {

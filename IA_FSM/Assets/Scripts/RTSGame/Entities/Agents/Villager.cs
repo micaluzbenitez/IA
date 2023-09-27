@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
-using RTSGame.Entities.Agents.VillagerStates;
+using RTSGame.Entities.Agents.States.VillagerStates;
 using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents

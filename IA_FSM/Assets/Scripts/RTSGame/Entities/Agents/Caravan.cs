@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using FiniteStateMachine;
-using RTSGame.Entities.Agents.CaravanStates;
+using RTSGame.Entities.Agents.States.CaravanStates;
 using RTSGame.Map;
 
 namespace RTSGame.Entities.Agents

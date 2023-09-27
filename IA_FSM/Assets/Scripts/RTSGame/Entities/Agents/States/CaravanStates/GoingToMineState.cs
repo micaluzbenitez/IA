@@ -6,7 +6,7 @@ using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using VoronoiDiagram;
 
-namespace RTSGame.Entities.Agents.CaravanStates
+namespace RTSGame.Entities.Agents.States.CaravanStates
 {
     public class GoingToMineState : State
     {

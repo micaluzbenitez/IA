@@ -3,24 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
-using RTSGame.Entities.Buildings; 
+using RTSGame.Entities.Buildings;
+using VoronoiDiagram;
 
-namespace RTSGame.Entities.Agents.VillagerStates
+namespace RTSGame.Entities.Agents.States.VillagerStates
 {
-    public class GoingToSaveMaterialsState : State
+    public class GoingToMineState : State
     {
         private int currentPathIndex;
         private List<Vector3> pathVectorList = new List<Vector3>();
 
+        private GoldMine goldMine;
+
         public override List<Action> GetBehaviours(params object[] parameters)
         {
-            Villager villager = parameters[0] as Villager;
-            float speed = Convert.ToSingle(parameters[1]);
-            float deltaTime = Convert.ToSingle(parameters[2]);
+            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
+            Voronoi voronoi = parameters[1] as Voronoi;
+            Villager villager = parameters[2] as Villager;
+            float speed = Convert.ToSingle(parameters[3]);
+            float deltaTime = Convert.ToSingle(parameters[4]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
+                CheckForGoldMine(villager, agentPathNodes, voronoi);
                 HandleMovement(villager, speed, deltaTime);
             });
 
@@ -29,15 +35,10 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
-            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Villager villager = parameters[1] as Villager;
-            UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
-
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                SetTargetPosition(villager, urbanCenter.Position, agentPathNodes);
             });
 
             return behaviours;
@@ -49,6 +50,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                goldMine = null;
                 pathVectorList = null;
             });
 
@@ -60,10 +62,22 @@ namespace RTSGame.Entities.Agents.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void SetTargetPosition(Villager villager, Vector3 targetPosition, AgentPathNodes agentPathNodes)
+        private void CheckForGoldMine(Villager villager, AgentPathNodes agentPathNodes, Voronoi voronoi)
+        {
+            if (goldMine) return;
+
+            goldMine = voronoi.GetMineCloser(villager.Position);
+
+            if (goldMine)
+            {
+                SetTargetPosition(villager, goldMine, agentPathNodes);
+            }
+        }
+
+        private void SetTargetPosition(Villager villager, GoldMine goldMine, AgentPathNodes agentPathNodes)
         {
             currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(villager.Position, targetPosition, agentPathNodes.pathNodeWalkables);
+            pathVectorList = Pathfinding.Instance.FindPath(villager.Position, goldMine.Position, agentPathNodes.pathNodeWalkables);
 
             if (pathVectorList != null && pathVectorList.Count > 1)
             {
@@ -73,7 +87,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         private void HandleMovement(Villager villager, float speed, float deltaTime)
         {
-            if (pathVectorList != null)
+            if (pathVectorList.Count > 0)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
@@ -87,8 +101,9 @@ namespace RTSGame.Entities.Agents.VillagerStates
                     currentPathIndex++;
                     if (currentPathIndex >= pathVectorList.Count)
                     {
+                        goldMine.AddVillager();
                         pathVectorList = null; // Stop moving
-                        Transition((int)FSM_Villager_Flags.OnSaveMaterials);
+                        Transition((int)FSM_Villager_Flags.OnMining);
                     }
                 }
             }

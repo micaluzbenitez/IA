@@ -6,7 +6,7 @@ using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 using VoronoiDiagram;
 
-namespace RTSGame.Entities.Agents.VillagerStates
+namespace RTSGame.Entities.Agents.States.VillagerStates
 {
     public class MineState : State
     {

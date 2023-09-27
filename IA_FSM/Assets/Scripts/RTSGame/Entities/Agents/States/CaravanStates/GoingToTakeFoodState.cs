@@ -5,7 +5,7 @@ using Pathfinder;
 using FiniteStateMachine;
 using RTSGame.Entities.Buildings;
 
-namespace RTSGame.Entities.Agents.CaravanStates
+namespace RTSGame.Entities.Agents.States.CaravanStates
 {
     public class GoingToTakeFoodState : State
     {
