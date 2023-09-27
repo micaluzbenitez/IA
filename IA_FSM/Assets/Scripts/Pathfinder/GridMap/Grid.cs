@@ -80,12 +80,14 @@ namespace Pathfinder.GridMap
 
         public void GetXY(Vector3 worldPosition, out int x, out int y)
         {
+            // ("FloorToInt" redondea siempre para abajo)
             x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
             y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
         }
 
         public void TriggerGridObjectChanged(int x, int y, string text)
         {
+            // Si cambia el texto de la celda
             OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs { x = x, y = y, text = text });
         }
 

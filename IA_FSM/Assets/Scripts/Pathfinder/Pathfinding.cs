@@ -10,8 +10,8 @@ namespace Pathfinder
         private const int MOVE_STRAIGHT_COST = 10;
 
         private Grid<PathNode> grid;
-        private List<PathNode> openList;    // Nodes queued up for searching
-        private List<PathNode> closedList;  // Nodes that have already been searched
+        private List<PathNode> openList;    // Nodos para buscar
+        private List<PathNode> closedList;  // Nodos que ya fueron buscados
 
         public static Pathfinding Instance { get; private set; }
         public Pathfinding(int width, int height, float cellSize = 10f, Vector3 originPosition = default)
@@ -19,6 +19,7 @@ namespace Pathfinder
             Instance = this;
             grid = new Grid<PathNode>(width, height, cellSize, originPosition, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
 
+            // Seteo los tipos de nodos de manera random
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -38,7 +39,7 @@ namespace Pathfinder
             return grid.GetGridObject(x, y);
         }
 
-        // Return vector3 path for the player
+        // Retorna el vector3 path para el jugador
         public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition, AgentPathNodes.PathNode_Walkable[] agentPathNodeWalkables)
         {
             grid.GetXY(startWorldPosition, out int startX, out int startY);
@@ -63,12 +64,14 @@ namespace Pathfinder
 
         public List<PathNode> FindPath(int startX, int startY, int endX, int endY, AgentPathNodes.PathNode_Walkable[] agentPathNodeWalkables)
         {
+            // Busco el nodo inicial y final
             PathNode startNode = grid.GetGridObject(startX, startY);
             PathNode endNode = grid.GetGridObject(endX, endY);
 
-            openList = new List<PathNode> { startNode };
+            openList = new List<PathNode> { startNode }; // Empiezo con el nodo inicial
             closedList = new List<PathNode>();
 
+            // Inicializo la grid recorriendo todos los nodos
             for (int x = 0; x < grid.GetWidth(); x++)
             {
                 for (int y = 0; y < grid.GetHeight(); y++)
@@ -84,37 +87,45 @@ namespace Pathfinder
             startNode.hCost = CalculateDistanceCost(startNode, endNode);            
             startNode.CalculateFCost(GetAgentPathNodeCost(agentPathNodeWalkables, startNode));
 
-            while (openList.Count > 0)
-            {
+            while (openList.Count > 0) // Mientras todavia tengamos nodos por recorrer
+            { 
+                // Obtengo el nodo actual
                 PathNode currentNode = GetLowestFCostNode(openList);
+
                 if (currentNode == endNode)
                 {
-                    // Reached final node
+                    // Nodo final alcanzado
                     return CalculatePath(endNode);
                 }
 
                 openList.Remove(currentNode);
                 closedList.Add(currentNode);
 
+                // Recorremos los vecinos del nodo en cuestion
                 foreach (PathNode neighbourNode in GetNeightbourList(currentNode))
                 {
+                    // Si el vecino esta en la lista de los que ya fueron buscados, saltamos al siguiente
                     if (closedList.Contains(neighbourNode)) continue;
 
-                    // Check if is an agent walkable node
+                    // Compruebe si es un nodo transitable por el agente
                     bool notAgentWalkable = true;
                     for (int i = 0; i < agentPathNodeWalkables.Length; i++)
                     {
                         if (neighbourNode.pathNodeType == agentPathNodeWalkables[i].pathNodeType) notAgentWalkable = false;
                     }
 
-                    // Check if is a walkable node
+                    // Compruebe si es un nodo transitable (si no es un obstaculo)
                     if (!neighbourNode.isWalkable || notAgentWalkable)
                     {
                         closedList.Add(neighbourNode);
                         continue;
                     }
 
+                    // "tentativeGCost" es el G valor del nodo actual + la distancia del nodo actual al vecino en cuestion
                     int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
+
+                    // Chequeamos si es menor al actual G valor almacenado en el nodo vecino
+                    // Esto es para ver si hay un camino mas rapido desde el nodo actual al nodo vecino del que tuvimos en el chequeo anterior
                     if (tentativeGCost < neighbourNode.gCost)
                     {
                         neighbourNode.cameFromNode = currentNode;
@@ -127,7 +138,7 @@ namespace Pathfinder
                 }
             }
 
-            // Out of nodes on the openList
+            // Fuera de nodos en openList
             return null;
         }
 
@@ -172,6 +183,7 @@ namespace Pathfinder
             return path;
         }
 
+        // Calculo la distancia hasta el nodo final * un costo
         private int CalculateDistanceCost(PathNode a, PathNode b)
         {
             int xDistance = Mathf.Abs(a.x - b.x);
@@ -182,6 +194,7 @@ namespace Pathfinder
 
         private PathNode GetLowestFCostNode(List<PathNode> pathNodeList)
         {
+            // El nodo actual es el que tiene menor F valor
             PathNode lowestFCostNode = pathNodeList[0];
 
             for (int i = 1; i < pathNodeList.Count; i++)

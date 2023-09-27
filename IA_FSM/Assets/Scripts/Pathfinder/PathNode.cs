@@ -11,8 +11,8 @@ namespace Pathfinder
         public int x;
         public int y;
 
-        public int gCost;  // Walking cost from the start node
-        public int hCost;  // Heuristic cost to reach end node
+        public int gCost;  // Costo de caminar desde el nodo de inicio
+        public int hCost;  // Costo sumado (heuristico) para llegar al nodo final
         public int fCost;  // gCost + hCost
 
         public bool available;
@@ -48,10 +48,10 @@ namespace Pathfinder
 
         public void SetRandomType()
         {            
-            float[] nodeTypePercentages = { 80f, 10f, 10f }; // Defines the percentages for each type of node
+            float[] nodeTypePercentages = { 80f, 10f, 10f }; // Define los porcentajes para cada tipo de nodo.
             float randomValue = Random.Range(0f, 100f);
 
-            // Find node type based on random value
+            // Encuentra el tipo de nodo según el valor aleatorio
             int nodeTypeIndex = 0;
             foreach (float percentage in nodeTypePercentages)
             {
@@ -64,7 +64,7 @@ namespace Pathfinder
                 nodeTypeIndex++;
             }
 
-            // Notifies the change
+            // Notifica el cambio
             grid.TriggerGridObjectChanged(x, y, pathNodeType.ToString());
 
         }
