@@ -10,7 +10,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
     public class TakeRefugeState : State
     {
         private int currentPathIndex;
-        private List<Vector3> pathVectorList;
+        private List<Vector3> pathVectorList = new List<Vector3>();
 
         private FSM_Caravan_States previousState;
 
@@ -52,6 +52,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm -= ReturnPreviousState;
+                pathVectorList = null;
             });
 
             return behaviours;

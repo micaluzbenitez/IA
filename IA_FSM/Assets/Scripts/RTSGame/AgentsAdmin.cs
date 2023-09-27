@@ -10,7 +10,7 @@ namespace RTSGame
         private ConcurrentBag<Agent> agents = new ConcurrentBag<Agent>();
         private ParallelOptions options = null;
 
-        private const int maxDegreeOfParallelism = 5;
+        private const int maxDegreeOfParallelism = 1;
 
         private void Start()
         {

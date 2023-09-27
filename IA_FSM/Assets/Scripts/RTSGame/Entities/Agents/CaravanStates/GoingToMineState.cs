@@ -11,7 +11,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
     public class GoingToMineState : State
     {
         private int currentPathIndex;
-        private List<Vector3> pathVectorList;
+        private List<Vector3> pathVectorList = new List<Vector3>();
 
         private GoldMine goldMine;
 
@@ -53,6 +53,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
                 goldMine = null;
+                pathVectorList = null;
             });
 
             return behaviours;

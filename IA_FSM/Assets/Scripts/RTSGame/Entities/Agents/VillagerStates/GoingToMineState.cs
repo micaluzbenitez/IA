@@ -11,7 +11,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
     public class GoingToMineState : State
     {
         private int currentPathIndex;
-        private List<Vector3> pathVectorList;
+        private List<Vector3> pathVectorList = new List<Vector3>();
 
         private GoldMine goldMine;
 
@@ -51,6 +51,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
                 goldMine = null;
+                pathVectorList = null;
             });
 
             return behaviours;
@@ -86,7 +87,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
 
         private void HandleMovement(Villager villager, float speed, float deltaTime)
         {
-            if (pathVectorList != null)
+            if (pathVectorList.Count > 0)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 

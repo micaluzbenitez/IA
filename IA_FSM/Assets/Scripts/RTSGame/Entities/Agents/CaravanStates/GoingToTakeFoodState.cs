@@ -10,7 +10,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
     public class GoingToTakeFoodState : State
     {
         private int currentPathIndex;
-        private List<Vector3> pathVectorList;
+        private List<Vector3> pathVectorList = new List<Vector3>();
 
         public override List<Action> GetBehaviours(params object[] parameters)
         {
@@ -49,6 +49,7 @@ namespace RTSGame.Entities.Agents.CaravanStates
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+                pathVectorList = null;
             });
 
             return behaviours;

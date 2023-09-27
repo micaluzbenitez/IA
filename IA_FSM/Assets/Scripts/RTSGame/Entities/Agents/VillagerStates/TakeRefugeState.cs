@@ -10,7 +10,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
     public class TakeRefugeState : State
     {
         private int currentPathIndex;
-        private List<Vector3> pathVectorList;
+        private List<Vector3> pathVectorList = new List<Vector3>();
 
         private FSM_Villager_States previousState;
 
@@ -52,6 +52,7 @@ namespace RTSGame.Entities.Agents.VillagerStates
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm -= ReturnPreviousState;
+                pathVectorList = null;
             });
 
             return behaviours;
