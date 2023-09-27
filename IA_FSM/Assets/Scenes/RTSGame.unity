@@ -170,7 +170,7 @@ MonoBehaviour:
   width: 10
   height: 10
   cellSize: 10
-  originPosition: {x: 0, y: 0}
+  originPosition: {x: 1, y: 1}
   pathNodeVisibles:
   - pathNodeType: 0
     prefab: {fileID: 1027358623848706744, guid: d80b61f6918717a4491a2b8f3af6a950, type: 3}
