@@ -1,33 +1,33 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
+[System.Serializable]
 public class Genome
 {
-	public float[] genome;
-	public float fitness = 0;
+    public float[] genome = null;
+    public float fitness = 0;
 
-	public Genome(float[] genes)
-	{
-		this.genome = genes;
-		fitness = 0;
-	}
-
-	public Genome(int genesCount)
-	{
-        genome = new float[genesCount];
-
-        for (int j = 0; j < genesCount; j++)
-            genome[j] = Random.Range(-1.0f, 1.0f);
-
-        fitness = 0;
-	}
-
-    public Genome()
+    public Genome(float[] genes)
     {
+        this.genome = genes;
         fitness = 0;
     }
 
+    public Genome(int genesCount)
+    {
+        genome = new float[genesCount];
+
+        for (int i = 0; i < genesCount; i++)
+            genome[i] = Random.Range(-1.0f, 1.0f);
+
+        fitness = 0;
+    }
+
+    public Genome()
+    {
+        genome = null;
+        fitness = 0;
+    }
 }
 
 public class GeneticAlgorithm 
@@ -35,7 +35,7 @@ public class GeneticAlgorithm
 	List<Genome> population = new List<Genome>();
 	List<Genome> newPopulation = new List<Genome>();
 
-	float totalFitness;
+	float totalFitness = 0f;
 
 	int eliteCount = 0;
 	float mutationChance = 0.0f;
@@ -48,22 +48,21 @@ public class GeneticAlgorithm
 		this.mutationRate = mutationRate;
 	}
 
-    public Genome[] GetRandomGenomes(int count, int genesCount)
-    {
-        Genome[] genomes = new Genome[count];
+	public Genome[] GetRandomGenomes(int count, int genesCount)
+	{
+		Genome[] genomes = new Genome[count];
 
-        for (int i = 0; i < count; i++)
-        {
-            genomes[i] = new Genome(genesCount);
-        }
+		for (int i = 0; i < count; i++)
+		{
+			genomes[i] = new Genome(genesCount);
+		}
 
-        return genomes;
-    }
-
+		return genomes;
+	}
 
 	public Genome[] Epoch(Genome[] oldGenomes)
 	{
-		totalFitness = 0;
+		totalFitness = 0f;
 
 		population.Clear();
 		newPopulation.Clear();
@@ -86,7 +85,7 @@ public class GeneticAlgorithm
 		return newPopulation.ToArray();
 	}
 
-	void SelectElite()
+	private void SelectElite()
 	{
 		for (int i = 0; i < eliteCount && newPopulation.Count < population.Count; i++)
 		{
@@ -94,21 +93,21 @@ public class GeneticAlgorithm
 		}
 	}
 
-	void Crossover()
+	private void Crossover()
 	{
 		Genome mom = RouletteSelection();
 		Genome dad = RouletteSelection();
 
-		Genome child1;
-		Genome child2;
+        Genome child1;
+        Genome child2;
 
-		Crossover(mom, dad, out child1, out child2);
+        Crossover(mom, dad, out child1, out child2);
 
-		newPopulation.Add(child1);
+        newPopulation.Add(child1);
 		newPopulation.Add(child2);
 	}
 
-	void Crossover(Genome mom, Genome dad, out Genome child1, out Genome child2)
+	private void Crossover(Genome mom, Genome dad, out Genome child1, out Genome child2)
 	{
 		child1 = new Genome();
 		child2 = new Genome();
@@ -137,7 +136,7 @@ public class GeneticAlgorithm
 
 			if (ShouldMutate())
 				child2.genome[i] += Random.Range(-mutationRate, mutationRate);
-			
+
 			child1.genome[i] = dad.genome[i];
 
 			if (ShouldMutate())
@@ -145,31 +144,29 @@ public class GeneticAlgorithm
 		}
 	}
 
-	bool ShouldMutate()
+	private bool ShouldMutate()
 	{
 		return Random.Range(0.0f, 1.0f) < mutationChance;
 	}
 
-	int HandleComparison(Genome x, Genome y)
+	private int HandleComparison(Genome x, Genome y)
 	{
 		return x.fitness > y.fitness ? 1 : x.fitness < y.fitness ? -1 : 0;
-	}
+    }
 
+    public Genome RouletteSelection()
+    {
+        float rnd = Random.Range(0, Mathf.Max(totalFitness, 0));
 
-	public Genome RouletteSelection()
-	{
-		float rnd = Random.Range(0, Mathf.Max(totalFitness, 0));
+        float fitness = 0;
 
-		float fitness = 0;
-
-		for (int i = 0; i < population.Count; i++)
-		{
-			fitness += Mathf.Max(population[i].fitness, 0);
-			if (fitness >= rnd)
+        for (int i = 0; i < population.Count; i++)
+        {
+            fitness += Mathf.Max(population[i].fitness, 0);
+            if (fitness >= rnd) 
 				return population[i];
-		}
+        }
 
-		return null;
-	}
-
+        return null;
+    }
 }
