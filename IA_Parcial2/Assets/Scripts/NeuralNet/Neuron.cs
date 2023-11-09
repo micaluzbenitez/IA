@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 
+[System.Serializable]
 public class Neuron
 {
-	private float[] weights;
-	private float bias;
-	private float p; 
+	public float[] weights = null;
+	public float bias = 0f;
+	public float p = 0f;
 
 	public int WeightsCount
 	{
@@ -43,7 +43,7 @@ public class Neuron
 	{
 		for (int i = 0; i < weights.Length; i++)
 		{
-			this.weights[i] = newWeights[i + fromId];
+            this.weights[i] = newWeights[i + fromId];
 		}
 
 		return fromId + weights.Length;

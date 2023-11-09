@@ -1,23 +1,23 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
+[System.Serializable]
 public class NeuralNetwork
 {
-	List<NeuronLayer> layers = new List<NeuronLayer>();
-	int totalWeightsCount = 0;
-    int inputsCount = 0;
+	public List<NeuronLayer> layers = new List<NeuronLayer>();
+	public int totalWeightsCount = 0;
+	public int inputsCount = 0;
 
-    public int InputsCount
-    {
-        get { return inputsCount; }
+	public int InputsCount
+	{
+		get { return inputsCount; }
     }
 
-	public NeuralNetwork()
-	{
-	}
+    public NeuralNetwork()
+    {
+    }
 
-	public bool AddNeuronLayer(int neuronsCount, float bias, float p)
+    public bool AddNeuronLayer(int neuronsCount, float bias, float p)
 	{
 		if (layers.Count == 0)
 		{
@@ -28,14 +28,14 @@ public class NeuralNetwork
 		return AddNeuronLayer(layers[layers.Count - 1].OutputsCount, neuronsCount, bias, p);
 	}
 
- 	public bool AddFirstNeuronLayer(int inputsCount, float bias, float p)
+	public bool AddFirstNeuronLayer(int inputsCount, float bias, float p)
 	{
 		if (layers.Count != 0)
 		{
 			Debug.LogError("Call AddNeuronLayer(int neuronCount, float bias, float p) for the rest of the layers.");
 			return false;
 		}
-		
+
 		this.inputsCount = inputsCount;
 
 		return AddNeuronLayer(inputsCount, inputsCount, bias, p);
@@ -58,10 +58,10 @@ public class NeuralNetwork
 		return true;
 	}
 
-    public int GetTotalWeightsCount()
-    {
-        return totalWeightsCount;
-    }
+	public int GetTotalWeightsCount()
+	{
+		return totalWeightsCount;
+	}
 
 	public void SetWeights(float[] newWeights)
 	{
@@ -69,7 +69,7 @@ public class NeuralNetwork
 
 		for (int i = 0; i < layers.Count; i++)
 		{
-			fromId = layers[i].SetWeights(newWeights, fromId);		
+			fromId = layers[i].SetWeights(newWeights, fromId);
 		}
 	}
 
