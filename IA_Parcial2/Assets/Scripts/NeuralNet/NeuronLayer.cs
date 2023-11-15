@@ -74,9 +74,11 @@ public class NeuronLayer
 		return weights;
 	}
 
-	public float[] Synapsis(float[] inputs)
-	{
-		for (int j = 0; j < neurons.Length; j++)
+	public float[] Synapsis(float[] inputs) // Metodo synapsis de layer
+    {
+        // (8) Recibo los inputs y segun la cantidad de neuronas, voy modificando los outputs respectivos de cada neurona
+
+        for (int j = 0; j < neurons.Length; j++)
 		{
 			outputs[j] = neurons[j].Synapsis(inputs);
 		}

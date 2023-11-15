@@ -92,9 +92,16 @@ public class NeuralNetwork
 		return weights;
 	}
 
-	public float[] Synapsis(float[] inputs)
-	{
-		float[] outputs = null;
+    // (5) Para que todo ocurra hay mas de una neurona = "redes neuronales"
+    // Una red neuronal es un conjunto de neuronas que recibe un input, lo procesa, lo manda a otra neurona,
+    // lo procesa, y asi cuantas veces se quieran hasta devolverlo como un ouput
+    public float[] Synapsis(float[] inputs) // Metodo synapsis de brain
+    {
+        // (6) Recibo los inputs y segun la cantidad de layers, me guardo el output del layer en cuestion,
+        // lo convierto en input para la siguiente, y se lo paso al siguiente layer
+        // Haciendo asi que los inputs se sumen y se promedien
+
+        float[] outputs = null;
 
 		for (int i = 0; i < layers.Count; i++)
 		{
@@ -104,4 +111,8 @@ public class NeuralNetwork
 
 		return outputs;
 	}
+
+	// (7) Hay una cantidad de neurones como inputs haya
+	// Luego estan los layers (cantidad de neuronas entre medio del input y output), puede haber la cantidad que se quiera con la cantidad de neurones que se quieran
+	// Y por ultimo hay una cantidad de neuronas como outputs haya
 }

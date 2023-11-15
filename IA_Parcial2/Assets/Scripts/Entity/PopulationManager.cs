@@ -6,6 +6,8 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+// (15) La populaciones son conjuntos de agentes que tienen que podes cumplir una tarea en un entorno
+
 public class PopulationManager : MonoBehaviour
 {
     [Serializable]
@@ -351,7 +353,6 @@ public class PopulationManager : MonoBehaviour
         return brain;
     }
 
-    // Evolve!!!
     public void Epoch(List<Agent> agents, Action<Genome[], NeuralNetwork[], TEAM> onCreateNewAgents)
     {
         generation++;  // Increment generation counter

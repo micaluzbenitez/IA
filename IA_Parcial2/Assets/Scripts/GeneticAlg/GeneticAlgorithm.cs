@@ -60,7 +60,15 @@ public class GeneticAlgorithm
 		return genomes;
 	}
 
-	public Genome[] Epoch(Genome[] oldGenomes)
+    // (11)
+    /*
+	Entre todos estos cálculos se realiza el Epoch(), mediante un Crossover() con una mama y un papa, con RouletteSelection() se elige un punto donde cortar el genoma de uno y arrancar el del otro 
+	y generar una cría; esto es mediante un pivote, contas de un punto a otro para calcular el genoma de mama y papa, y cada genoma tiene una probabilidad de mutar ShouldMutate(), esto es porque 
+	si solamente promediamos genomas llega un punto donde no se puede avanzar más, porque si nadie llega a la solución o está cerca en el primer random que hicimos, nunca se va a resolver el 
+	problema, pero si cada tanto uno de los genes del genoma de uno de nuestros agentes muta, puede que esa mutación sea la que pueda resolver el problema, ya que esa mutación cambiaria un valor 
+	flotante de su genoma, que va a hacer que cambie el peso de una neurona en específico, que va a hacer que el output en una mutación pueda dar de una u otra manera.
+	*/
+    public Genome[] Epoch(Genome[] oldGenomes)
 	{
 		totalFitness = 0f;
 
