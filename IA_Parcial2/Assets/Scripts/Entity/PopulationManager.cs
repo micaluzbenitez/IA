@@ -594,21 +594,21 @@ public class PopulationManager : MonoBehaviour
                             eatingAgents.RemoveAll(c => c.Team == executeTeam);
                         }
 
-                        int chaimbotEatingIndex = 0;
+                        int agentEatingIndex = 0;
                         if (eatingAgents.Count > 1)
                         {
-                            chaimbotEatingIndex = Random.Range(0, eatingAgents.Count);
+                            agentEatingIndex = Random.Range(0, eatingAgents.Count);
 
                             for (int i = 0; i < eatingAgents.Count; i++)
                             {
-                                if (i != chaimbotEatingIndex)
+                                if (i != agentEatingIndex)
                                 {
                                     eatingAgents[i].ToStay = false;
                                 }
                             }
                         }
 
-                        eatingAgents[chaimbotEatingIndex].ConsumeFood();
+                        eatingAgents[agentEatingIndex].ConsumeFood();
                         foodConsumed = true;
                     }
                 }
@@ -630,30 +630,30 @@ public class PopulationManager : MonoBehaviour
             }
             else
             {
-                List<Agent> chaimbotsInSameIndex = entry.Value;
-                List<Agent> chaimbotsCowards = chaimbotsInSameIndex.FindAll(c => !c.ToStay);
-                if (!CheckSameTeamsInList(chaimbotsCowards) && chaimbotsCowards.Count != chaimbotsInSameIndex.Count)
+                List<Agent> agentsInSameIndex = entry.Value;
+                List<Agent> agentsCowards = agentsInSameIndex.FindAll(c => !c.ToStay);
+                if (!CheckSameTeamsInList(agentsCowards) && agentsCowards.Count != agentsInSameIndex.Count)
                 {
-                    for (int i = 0; i < chaimbotsCowards.Count; i++)
+                    for (int i = 0; i < agentsCowards.Count; i++)
                     {
                         int prob = Random.Range(0, 101);
                         if (prob < DeathChance)
                         {
-                            chaimbotsCowards[i].Death();
+                            agentsCowards[i].Death();
                         }
                     }
                 }
 
-                chaimbotsInSameIndex.RemoveAll(c => !c.ToStay);
-                if (chaimbotsInSameIndex.Count > 1 && !CheckSameTeamsInList(chaimbotsInSameIndex))
+                agentsInSameIndex.RemoveAll(c => !c.ToStay);
+                if (agentsInSameIndex.Count > 1 && !CheckSameTeamsInList(agentsInSameIndex))
                 {
                     TEAM executeTeam = (TEAM)Random.Range((int)TEAM.A, (int)TEAM.B + 1) + 1;
 
-                    for (int i = 0; i < chaimbotsInSameIndex.Count; i++)
+                    for (int i = 0; i < agentsInSameIndex.Count; i++)
                     {
-                        if (chaimbotsInSameIndex[i].Team == executeTeam)
+                        if (agentsInSameIndex[i].Team == executeTeam)
                         {
-                            chaimbotsInSameIndex[i].Death();
+                            agentsInSameIndex[i].Death();
                         }
                     }
                 }

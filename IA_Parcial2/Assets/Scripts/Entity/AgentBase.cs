@@ -37,7 +37,6 @@ public abstract class AgentBase : MonoBehaviour
     public void UpdateFitness(float fitness)
     {
         this.fitness *= fitness;
-        if (this.fitness < 1f) this.fitness = 1f;
         SetGenomeFitness();
     }
 

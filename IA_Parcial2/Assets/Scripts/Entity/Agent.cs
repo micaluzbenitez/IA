@@ -44,6 +44,7 @@ public class Agent : AgentBase
         if (dead || toStay) return;
 
         transform.position = Vector3.Lerp(startPosition, movePosition, lerp);
+        if (startPosition != movePosition) UpdateFitness(5);
     }
 
     public void SetNearFood(Food nearFood)
@@ -101,7 +102,7 @@ public class Agent : AgentBase
 
         if (outputs != null && outputs.Length >= 3)
         {
-            bool vertical = outputs[0] < 0.5f;
+            bool vertical = outputs[0] < 0.1f;
             float positive = outputs[1] < 0.5f ? -1f : 1f;
 
             Vector3 dir = new Vector3(vertical ? positive : 0f, 0f, !vertical ? positive : 0f);
@@ -110,7 +111,7 @@ public class Agent : AgentBase
 
             moveIndex = index + new Vector2Int((int)dir.x, (int)dir.z);
 
-            toStay = outputs[2] < 0.5f;
+            toStay = outputs[2] < 0.1f;
 
             UpdatePositionLimit();
             UpdateIndexLimit();
