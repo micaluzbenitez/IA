@@ -129,15 +129,10 @@ public class Agent : AgentBase
 
             if (moveIndex.y < 0 || moveIndex.y > maxIndex) // Check limit Y
             {
-                UpdateFitness(outLimitYFitness);
+                SetFitness(outLimitYFitness);
                 inOutLimit = true;
             }
         }
-    }
-
-    private Vector3 GetDirToFood(Vector3 foodPosition)
-    {
-        return (foodPosition - transform.position).normalized;
     }
 
     private void UpdatePositionLimit()
