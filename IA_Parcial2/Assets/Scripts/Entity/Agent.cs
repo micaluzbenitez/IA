@@ -7,26 +7,46 @@ public class Agent : AgentBase
     public float consumeFoodFitness = 0f;
     public float outLimitYFitness = 0f;
 
+    Vector2Int index = Vector2Int.zero;
+    Vector2Int moveIndex = Vector2Int.zero;
     Vector3 startPosition = Vector3.zero;
     Vector3 movePosition = Vector3.zero;
-    Vector2Int moveIndex = Vector2Int.zero;
-    Vector2Int index = Vector2Int.zero;
 
     float unit = 0f;
+
+    bool process = false;
     bool dead = false;
+    bool stop = false;
     bool toStay = false;
+    bool inOutLimit = false;
+    int steps = 0;
+
     int generationCount = 0;
+
     Food nearFood = null;
     int foodsConsumed = 0;
+
     float limitX = 0f;
     int maxIndex = 0;
 
     public Vector2Int Index { get => index; set => index = value; }
-    public int GenerationCount { get => generationCount; set => generationCount = value; }
+    public Vector2Int MoveIndex { get => moveIndex; set => moveIndex = value; }
+    public Vector3 StartPosition { get => startPosition; set => startPosition = value; }
+    public Vector3 MovePosition { get => movePosition; set => movePosition = value; }
+
     public bool ToStay { get => toStay; set => toStay = value; }
-    public int FoodsConsumed { get => foodsConsumed; }
+    public bool InOutLimit { get => inOutLimit; set => inOutLimit = value; }
+    public int GenerationCount { get => generationCount; set => generationCount = value; }
+    public bool Process { get => process; set => process = value; }
+    public bool Dead { get => dead; set => dead = value; }
+    public int Steps { get => steps; set => steps = value; }
+
+    public bool Stop { get => stop; }
+    public float Unit { get => unit; }
     public TEAM Team { get => team; }
-    public bool Dead { get => dead; }
+
+    public int FoodsConsumed { get => foodsConsumed; set => foodsConsumed = value; }
+    public Food NearFood { get => nearFood; }
 
     public void Init(float unit, int size, TEAM team)
     {
@@ -36,7 +56,7 @@ public class Agent : AgentBase
         limitX = size / 2f * unit;
         maxIndex = size;
 
-        generationCount = 0;
+        generationCount = 1;
     }
 
     public void Move(float lerp)
@@ -44,7 +64,6 @@ public class Agent : AgentBase
         if (dead || toStay) return;
 
         transform.position = Vector3.Lerp(startPosition, movePosition, lerp);
-        if (startPosition != movePosition) UpdateFitness(5);
     }
 
     public void SetNearFood(Food nearFood)
@@ -64,30 +83,38 @@ public class Agent : AgentBase
         startPosition = transform.position;
         movePosition = transform.position;
 
-        generationCount++;
+        foodsConsumed = 0;
+        process = true;
         toStay = false;
+        inOutLimit = false;
+        steps = 0;
+
+        //generationCount++;
 
         OnReset();
     }
 
     public void ConsumeFood()
     {
-        UpdateFitness(nearFood != null && index == nearFood.Index ? consumeNearFoodFitness : consumeFoodFitness);
+        bool isNearFood = nearFood != null && index == nearFood.Index;
+        UpdateFitness(isNearFood ? consumeNearFoodFitness : consumeFoodFitness);
         foodsConsumed++;
+        steps = 0;
         PopulationManager.Instance.AddFoodsConsumed(team);
     }
 
     protected override void ProcessInputs()
     {
+        inputs[0] = index.x;
+        inputs[1] = index.y;
+        inputs[2] = steps;
+
         if (nearFood != null)
         {
-            Vector3 foodPosition = nearFood.transform.position;
-            Vector3 foodDirection = GetDirToFood(foodPosition);
-
-            inputs[0] = foodPosition.x;
-            inputs[1] = foodPosition.z;
-            inputs[2] = foodDirection.x;
-            inputs[3] = foodDirection.z;
+            inputs[3] = nearFood.Index.x;
+            inputs[4] = nearFood.Index.y;
+            inputs[5] = index.x == nearFood.Index.x ? 1f : -1f;
+            inputs[6] = index.y == nearFood.Index.y ? 1f : -1f;
         }
     }
 
@@ -98,20 +125,23 @@ public class Agent : AgentBase
             transform.position = movePosition;
             startPosition = transform.position;
             index = moveIndex;
+            steps++;
         }
 
         if (outputs != null && outputs.Length >= 3)
         {
-            bool vertical = outputs[0] < 0.1f;
+            bool vertical = outputs[0] < 0.5f;
             float positive = outputs[1] < 0.5f ? -1f : 1f;
+            bool stay = outputs[2] < 0.5f;
 
             Vector3 dir = new Vector3(vertical ? positive : 0f, 0f, !vertical ? positive : 0f);
-            movePosition = transform.position + dir * unit;
-            transform.forward = dir;
 
+            transform.forward = dir;
+            movePosition = transform.position + dir * unit;
             moveIndex = index + new Vector2Int((int)dir.x, (int)dir.z);
 
-            toStay = outputs[2] < 0.1f;
+            toStay = stay;
+            process = false;
 
             UpdatePositionLimit();
             UpdateIndexLimit();
@@ -119,14 +149,9 @@ public class Agent : AgentBase
             if (moveIndex.y < 0 || moveIndex.y > maxIndex) // Check limit Y
             {
                 UpdateFitness(outLimitYFitness);
+                inOutLimit = true;
             }
         }
-    }
-
-    protected override void OnReset()
-    {
-        base.OnReset();
-        foodsConsumed = 0;
     }
 
     private Vector3 GetDirToFood(Vector3 foodPosition)
@@ -136,20 +161,22 @@ public class Agent : AgentBase
 
     private void UpdatePositionLimit()
     {
-        Vector3 pos = movePosition;
+        Vector3 startPos = startPosition;
+        Vector3 movePos = movePosition;
 
-        if (pos.x > limitX)
+        if (movePos.x > limitX)
         {
-            pos.x -= limitX * 2;
-            startPosition = pos - new Vector3(unit, 0f, 0f);
+            movePos.x -= limitX * 2;
+            startPos = movePos - new Vector3(unit, 0f, 0f);
         }
-        else if (pos.x < -limitX)
+        else if (movePos.x < -limitX)
         {
-            pos.x += limitX * 2;
-            startPosition = pos + new Vector3(unit, 0f, 0f);
+            movePos.x += limitX * 2;
+            startPos = movePos + new Vector3(unit, 0f, 0f);
         }
 
-        movePosition = pos;
+        startPosition = startPos;
+        movePosition = movePos;
     }
 
     private void UpdateIndexLimit()

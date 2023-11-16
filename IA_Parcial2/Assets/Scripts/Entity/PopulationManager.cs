@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-// (15) La populaciones son conjuntos de agentes que tienen que podes cumplir una tarea en un entorno
+// (15) La populaciones son conjuntos de agentes que tienen que poder cumplir una tarea en un entorno
 
 public class PopulationManager : MonoBehaviour
 {
@@ -184,7 +184,7 @@ public class PopulationManager : MonoBehaviour
 
     public void StartSimulation(List<Agent> agents, bool dataLoaded)
     {
-        // Create and confiugre the Genetic Algorithm
+        // Create and configure the Genetic Algorithm
         genAlgA = new GeneticAlgorithm(teams[0].EliteCount, teams[0].MutationChance, teams[0].MutationRate);
         genAlgB = new GeneticAlgorithm(teams[1].EliteCount, teams[1].MutationChance, teams[1].MutationRate);
 
@@ -210,12 +210,17 @@ public class PopulationManager : MonoBehaviour
 
         teams[0].foods = 0;
         teams[0].deaths = 0;
-        teams[0].extincts = 0;
 
         teams[1].foods = 0;
         teams[1].deaths = 0;
-        teams[1].extincts = 0;
+
+        if (!dataLoaded)
+        {
+            teams[0].extincts = 0;
+            teams[1].extincts = 0;
+        }
     }
+
     private void StartGame(bool dataLoaded)
     {
         startConfigurationScreen.Active(false);
@@ -229,8 +234,8 @@ public class PopulationManager : MonoBehaviour
 
         StartSimulation(agents, dataLoaded);
 
+        SetNearFoodInAgents();
         SetAgentsPositions();
-        ProcessAgents();
 
         isRunning = true;
     }
@@ -403,12 +408,18 @@ public class PopulationManager : MonoBehaviour
             {
                 turnsTimer = 0f;
 
-                ProcessAgents();
+                SetNearFoodInAgents();
                 ProcessAgentsInSameIndex();
 
-                turnsLeft--;
-
-                if (turnsLeft <= 0) ResetSimulation();
+                if (agents.Count == 0 || foods.Count == 0)
+                {
+                    isRunning = false; // End game
+                }
+                else
+                {
+                    turnsLeft--;
+                    if (turnsLeft <= 0) ResetSimulation();
+                }
             }
         }
     }
@@ -528,7 +539,7 @@ public class PopulationManager : MonoBehaviour
         }
     }
 
-    private void ProcessAgents()
+    private void SetNearFoodInAgents()
     {
         for (int i = 0; i < agents.Count; i++)
         {
@@ -545,12 +556,12 @@ public class PopulationManager : MonoBehaviour
         Dictionary<Vector2Int, List<Agent>> indexAgents = new Dictionary<Vector2Int, List<Agent>>();
         for (int i = 0; i < agents.Count; i++)
         {
-            if (agents[i].Dead || indexAgents.ContainsKey(agents[i].Index)) continue;
+            if (agents[i].Dead || agents[i].InOutLimit || indexAgents.ContainsKey(agents[i].Index)) continue;
             bool inFoodIndex = CheckIndexInFood(agents[i].Index);
 
             for (int j = 0; j < agents.Count; j++)
             {
-                if (i == j || agents[j].Dead) continue;
+                if (i == j || agents[j].Dead || agents[i].InOutLimit) continue;
 
                 if (agents[i].Index == agents[j].Index || inFoodIndex)
                 {
@@ -662,7 +673,7 @@ public class PopulationManager : MonoBehaviour
         }
     }
 
-    private void ProcessAgentsNextGeneration()
+    private void UpdateAgentsGeneration()
     {
         for (int i = 0; i < agents.Count; i++)
         {
@@ -943,12 +954,11 @@ public class PopulationManager : MonoBehaviour
         DestroyFoods();
         SpawnFoods();
 
-        ProcessAgentsNextGeneration();
-
+        UpdateAgentsGeneration();
         Epoch(agents, SpawnNewAgents);
 
+        SetNearFoodInAgents();
         SetAgentsPositions();
-        ProcessAgents();
     }
 
     private Vector2Int GetRandomIndex(params Vector2Int[] usedIndexs)
