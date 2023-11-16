@@ -397,7 +397,7 @@ public class PopulationManager : MonoBehaviour
     {
         if (!isRunning) return;
 
-        if (agents.Count == 0 || foods.Count == 0) isRunning = false; // End game
+        if (agents.Count == 0) isRunning = false; // End game
 
         for (int i = 0; i < Mathf.Clamp(IterationCount / 100.0f * 50f, 1f, 50f); i++)
         {
@@ -411,7 +411,7 @@ public class PopulationManager : MonoBehaviour
                 SetNearFoodInAgents();
                 ProcessAgentsInSameIndex();
 
-                if (agents.Count == 0 || foods.Count == 0)
+                if (agents.Count == 0)
                 {
                     isRunning = false; // End game
                 }
