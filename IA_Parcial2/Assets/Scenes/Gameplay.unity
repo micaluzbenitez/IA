@@ -2191,7 +2191,7 @@ MonoBehaviour:
     foods: 0
     deaths: 0
     extincts: 0
-  brainDataJson: {fileID: 4900000, guid: 330d373c83651324d8affc19b3fbbcab, type: 3}
+  brainDataJson: {fileID: 4900000, guid: a6d062b38afbe7d4eace90d871bf5599, type: 3}
   agentNro: 0
   agentTeam: 
   agentFitness: 0
