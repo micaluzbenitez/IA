@@ -13,14 +13,10 @@ public class Agent : AgentBase
     Vector3 movePosition = Vector3.zero;
 
     float unit = 0f;
-
-    bool process = false;
     bool dead = false;
-    bool stop = false;
     bool toStay = false;
     bool inOutLimit = false;
     int steps = 0;
-
     int generationCount = 0;
 
     Food nearFood = null;
@@ -30,23 +26,12 @@ public class Agent : AgentBase
     int maxIndex = 0;
 
     public Vector2Int Index { get => index; set => index = value; }
-    public Vector2Int MoveIndex { get => moveIndex; set => moveIndex = value; }
-    public Vector3 StartPosition { get => startPosition; set => startPosition = value; }
-    public Vector3 MovePosition { get => movePosition; set => movePosition = value; }
-
     public bool ToStay { get => toStay; set => toStay = value; }
     public bool InOutLimit { get => inOutLimit; set => inOutLimit = value; }
     public int GenerationCount { get => generationCount; set => generationCount = value; }
-    public bool Process { get => process; set => process = value; }
     public bool Dead { get => dead; set => dead = value; }
-    public int Steps { get => steps; set => steps = value; }
-
-    public bool Stop { get => stop; }
-    public float Unit { get => unit; }
     public TEAM Team { get => team; }
-
     public int FoodsConsumed { get => foodsConsumed; set => foodsConsumed = value; }
-    public Food NearFood { get => nearFood; }
 
     public void Init(float unit, int size, TEAM team)
     {
@@ -84,12 +69,9 @@ public class Agent : AgentBase
         movePosition = transform.position;
 
         foodsConsumed = 0;
-        process = true;
         toStay = false;
         inOutLimit = false;
         steps = 0;
-
-        //generationCount++;
 
         OnReset();
     }
@@ -141,7 +123,6 @@ public class Agent : AgentBase
             moveIndex = index + new Vector2Int((int)dir.x, (int)dir.z);
 
             toStay = stay;
-            process = false;
 
             UpdatePositionLimit();
             UpdateIndexLimit();
