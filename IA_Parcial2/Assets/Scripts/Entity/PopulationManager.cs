@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using GridMap;
 
 // (15) La populaciones son conjuntos de agentes que tienen que poder cumplir una tarea en un entorno
 
@@ -55,6 +56,9 @@ public class PopulationManager : MonoBehaviour
     [Header("Data")]
     public TextAsset brainDataJson = null;
 
+    [Header("Terrain")]
+    public GameObject floor = null;
+
     GeneticAlgorithm genAlgA = null;
     GeneticAlgorithm genAlgB = null;
 
@@ -88,6 +92,8 @@ public class PopulationManager : MonoBehaviour
 
     private string dataPath = "";
     private string fileName = "/Data/brain_data.json";
+
+    private Grid<int> grid;
 
     private float getBestFitness()
     {
@@ -174,6 +180,28 @@ public class PopulationManager : MonoBehaviour
         teams[1].deaths = 0;
 
         dataPath = Application.dataPath;
+
+        CreateGrid();
+    }
+
+    private void CreateGrid()
+    {
+        int width = PopulationCount;
+        int height = PopulationCount;
+        int cellsize = (int)Unit;
+
+        grid = new Grid<int>(width, height, cellsize, new Vector3(-width * cellsize / 2, 0, -height * cellsize / 2), (Grid<int> grid, int x, int y) => new int());
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < height; z++)
+            {
+                Vector3 position = grid.GetWorldPosition(x, z) + (Vector3.one * cellsize / 2);
+                GameObject GO = Instantiate(floor, position, Quaternion.identity);
+                GO.transform.localScale = new Vector3(cellsize, 0.01f, cellsize);
+                GO.transform.SetParent(transform);
+            }
+        }
     }
 
     private void Start()
@@ -465,7 +493,7 @@ public class PopulationManager : MonoBehaviour
             if (team == TEAM.A) agentGO = Instantiate(agent1Prefab);
             else agentGO = Instantiate(agent2Prefab);
 
-            agentGO.transform.SetParent(this.transform);
+            agentGO.transform.SetParent(transform);
             Agent agent = agentGO.GetComponent<Agent>();
             agent.Init(Unit, size, team);
 
