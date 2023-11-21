@@ -2051,14 +2051,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59c897ce579df0a489d5e4501656ac13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent1Prefab: {fileID: 30823603432617951, guid: 26ae0efa2750154428b30b357e611e15, type: 3}
-  agent2Prefab: {fileID: 30823603432617951, guid: a4183ade10eee4a479138ab603de56b4, type: 3}
-  foodPrefab: {fileID: 3623620552971743550, guid: f3b5628689079484395e1612d7480f9c, type: 3}
-  startConfigurationScreen: {fileID: 1643980755}
-  simulationScreen: {fileID: 1924502376}
+  Size: 100
   Unit: 2
-  TurnsDelay: 1
   PopulationCount: 100
+  TurnsDelay: 1
   Turns: 100
   IterationCount: 1
   AgentMaxGeneration: 3
@@ -2093,8 +2089,13 @@ MonoBehaviour:
     foods: 0
     deaths: 0
     extincts: 0
-  brainDataJson: {fileID: 4900000, guid: 5cc83678ac7ab3a4ea26b1f64f961576, type: 3}
+  agent1Prefab: {fileID: 30823603432617951, guid: 26ae0efa2750154428b30b357e611e15, type: 3}
+  agent2Prefab: {fileID: 30823603432617951, guid: a4183ade10eee4a479138ab603de56b4, type: 3}
+  foodPrefab: {fileID: 3623620552971743550, guid: f3b5628689079484395e1612d7480f9c, type: 3}
   floor: {fileID: 1317002514306631273, guid: 83a4062fc7f21434b9f70e07710d7706, type: 3}
+  startConfigurationScreen: {fileID: 1643980755}
+  simulationScreen: {fileID: 1924502376}
+  brainDataJson: {fileID: 4900000, guid: 5cc83678ac7ab3a4ea26b1f64f961576, type: 3}
   agentNro: 0
   agentTeam: 
   agentFitness: 0

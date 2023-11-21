@@ -31,19 +31,13 @@ public class PopulationManager : MonoBehaviour
         [HideInInspector] public int extincts = 0;
     }
 
-    [Header("Prefabs")]
-    public GameObject agent1Prefab = null;
-    public GameObject agent2Prefab = null;
-    public GameObject foodPrefab = null;
+    [Header("Grid")]
+    [Range(100, 200)] public int Size = 100;
+    public float Unit = 1f; // Cellsize
 
-    [Header("UI")]
-    public StartConfigurationScreen startConfigurationScreen = null;
-    public SimulationScreen simulationScreen = null;
-
-    [Header("General Settings")]
-    public float Unit = 0f;
+    [Header("Settings")]
+    [Tooltip("Less than or equal to the width of the grid")] public int PopulationCount = 0; // Cantidad de agentes
     public float TurnsDelay = 0f;
-    public int PopulationCount = 0; // Cantidad de agentes
     public int Turns = 0;
     public int IterationCount = 0;
     public int AgentMaxGeneration = 0;
@@ -53,11 +47,18 @@ public class PopulationManager : MonoBehaviour
     [Header("Teams")]
     public Team[] teams = null;
 
+    [Header("Prefabs")]
+    public GameObject agent1Prefab = null;
+    public GameObject agent2Prefab = null;
+    public GameObject foodPrefab = null;
+    public GameObject floor = null;
+
+    [Header("UI")]
+    public StartConfigurationScreen startConfigurationScreen = null;
+    public SimulationScreen simulationScreen = null;
+
     [Header("Data")]
     public TextAsset brainDataJson = null;
-
-    [Header("Terrain")]
-    public GameObject floor = null;
 
     GeneticAlgorithm genAlgA = null;
     GeneticAlgorithm genAlgB = null;
@@ -152,6 +153,8 @@ public class PopulationManager : MonoBehaviour
     {
         instance = this;
 
+        if (PopulationCount > Size) PopulationCount = Size;
+
         generation = 0;
         turnsLeft = 0;
 
@@ -186,19 +189,18 @@ public class PopulationManager : MonoBehaviour
 
     private void CreateGrid()
     {
-        int width = PopulationCount;
-        int height = PopulationCount;
-        int cellsize = (int)Unit;
+        int width = Size;
+        int height = Size;
 
-        grid = new Grid<int>(width, height, cellsize, new Vector3(-width * cellsize / 2, 0, -height * cellsize / 2), (Grid<int> grid, int x, int y) => new int());
+        grid = new Grid<int>(width, height, Unit, new Vector3(-width * Unit / 2, 0, -height * Unit / 2), (Grid<int> grid, int x, int y) => new int());
 
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
             {
-                Vector3 position = grid.GetWorldPosition(x, z) + (Vector3.one * cellsize / 2);
+                Vector3 position = grid.GetWorldPosition(x, z) + (Vector3.one * Unit / 2);
                 GameObject GO = Instantiate(floor, position, Quaternion.identity);
-                GO.transform.localScale = new Vector3(cellsize, 0.01f, cellsize);
+                GO.transform.localScale = new Vector3(Unit, 0.01f, Unit);
                 GO.transform.SetParent(transform);
             }
         }
