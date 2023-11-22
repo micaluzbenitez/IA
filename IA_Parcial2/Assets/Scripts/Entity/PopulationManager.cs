@@ -411,10 +411,7 @@ public class PopulationManager : MonoBehaviour
         teams[1].agents = populationsB.Count;
 
         teams[0].foods = 0;
-        teams[0].deaths = 0;
-
         teams[1].foods = 0;
-        teams[1].deaths = 0;
 
         /*
         Este método es el responsable de la selección natural en el sistema de selección de reproducción, 
@@ -849,6 +846,7 @@ public class PopulationManager : MonoBehaviour
 
         for (int i = 0; i < extinctAgents.Count; i++)
         {
+            extinctAgents[i].Death();
             Destroy(extinctAgents[i].gameObject);
             agents.Remove(extinctAgents[i]);
         }
