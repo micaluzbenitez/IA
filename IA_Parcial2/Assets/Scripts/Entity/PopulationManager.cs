@@ -214,7 +214,7 @@ public class PopulationManager : MonoBehaviour
 
     public void StartSimulation(List<Agent> agents, bool dataLoaded)
     {
-        // Create and configure the Genetic Algorithm
+        // Creo y configuro el algoritmo genético
         genAlgA = new GeneticAlgorithm(teams[0].EliteCount, teams[0].MutationChance, teams[0].MutationRate);
         genAlgB = new GeneticAlgorithm(teams[1].EliteCount, teams[1].MutationChance, teams[1].MutationRate);
 
@@ -286,36 +286,32 @@ public class PopulationManager : MonoBehaviour
         simulationScreen.Active(false);
     }
 
-    // Generate initial population with load data
+    // Genero la población inicial con datos de carga
     private void GenerateInitialPopulationWithLoadData(List<Agent> agents)
     {
+        // Lista de agentes del equipo correspondiente
         List<Agent> agentsA = agents.FindAll(c => c.Team == TEAM.A);
         List<Agent> agentsB = agents.FindAll(c => c.Team == TEAM.B);
 
-        // Set the new genomes as each NeuralNetwork weights
+        // Establezco los nuevos genomas según el peso de cada NeuralNetwork
         for (int i = 0; i < agentsA.Count; i++)
         {
             NeuralNetwork brain = CreateBrainA();
             Genome genome = populationsA[i];
-
             brain.SetWeights(genome.genome);
-
             agentsA[i].SetBrain(genome, brain);
         }
 
-        // Set the new genomes as each NeuralNetwork weights
         for (int i = 0; i < agentsB.Count; i++)
         {
             NeuralNetwork brain = CreateBrainB();
             Genome genome = populationsB[i];
-
             brain.SetWeights(genome.genome);
-
             agentsB[i].SetBrain(genome, brain);
         }
     }
 
-    // Generate the random initial population
+    // Genero la población inicial sin datos de carga
     private void GenerateInitialPopulation(List<Agent> agents)
     {
         populationsA.Clear();
@@ -326,12 +322,11 @@ public class PopulationManager : MonoBehaviour
             NeuralNetwork brain = null;
             Genome genome = null;
 
-            // Set the new genomes as each NeuralNetwork weights
+            // Establezco los nuevos genomas según el peso de cada NeuralNetwork
             if (agents[i].Team == TEAM.A)
             {
                 brain = CreateBrainA();
                 genome = new Genome(brain.GetTotalWeightsCount());
-
                 brain.SetWeights(genome.genome);
                 populationsA.Add(genome);
             }
@@ -339,7 +334,6 @@ public class PopulationManager : MonoBehaviour
             {
                 brain = CreateBrainB();
                 genome = new Genome(brain.GetTotalWeightsCount());
-
                 brain.SetWeights(genome.genome);
                 populationsB.Add(genome);
             }
@@ -348,41 +342,41 @@ public class PopulationManager : MonoBehaviour
         }
     }
 
-    // Creates a new NeuralNetwork
+    // Creo una nueva red neuronal
     NeuralNetwork CreateBrainA()
     {
         NeuralNetwork brain = new NeuralNetwork();
 
-        // Add first neuron layer that has as many neurons as inputs
+        // Agrego la primera neuron layer que tenga tantas neuronas como entradas
         brain.AddFirstNeuronLayer(teams[0].InputsCount, teams[0].Bias, teams[0].P);
 
         for (int i = 0; i < teams[0].HiddenLayers; i++)
         {
-            // Add each hidden layer with custom neurons count
+            // Agrego cada hidden layer con un recuento de neuronas personalizado
             brain.AddNeuronLayer(teams[0].NeuronsCountPerHL, teams[0].Bias, teams[0].P);
         }
 
-        // Add the output layer with as many neurons as outputs
+        // Agrego la output layer con tantas neuronas como salidas
         brain.AddNeuronLayer(teams[0].OutputsCount, teams[0].Bias, teams[0].P);
 
         return brain;
     }
 
-    // Creates a new NeuralNetwork
+    // Creo una nueva red neuronal
     NeuralNetwork CreateBrainB()
     {
         NeuralNetwork brain = new NeuralNetwork();
 
-        // Add first neuron layer that has as many neurons as inputs
+        // Agrego la primera neuron layer que tenga tantas neuronas como entradas
         brain.AddFirstNeuronLayer(teams[1].InputsCount, teams[1].Bias, teams[1].P);
 
         for (int i = 0; i < teams[1].HiddenLayers; i++)
         {
-            // Add each hidden layer with custom neurons count
+            // Agrego cada hidden layer con un recuento de neuronas personalizado
             brain.AddNeuronLayer(teams[1].NeuronsCountPerHL, teams[1].Bias, teams[1].P);
         }
 
-        // Add the output layer with as many neurons as outputs
+        // Agrego la output layer con tantas neuronas como salidas
         brain.AddNeuronLayer(teams[1].OutputsCount, teams[1].Bias, teams[1].P);
 
         return brain;
@@ -390,25 +384,25 @@ public class PopulationManager : MonoBehaviour
 
     public void Epoch(List<Agent> agents, Action<Genome[], NeuralNetwork[], TEAM> onCreateNewAgents)
     {
-        generation++;  // Increment generation counter
+        generation++;  // Incremento el contador de generacion
         turnsLeft = Turns;
 
-        // Calculate best, average and worst fitness
+        // Calculo las puntuaciones del fitness (best, average and worst) de la poblacion actual
         bestFitness = getBestFitness();
         avgFitness = getAvgFitness();
         worstFitness = getWorstFitness();
 
-        // Clear current population
+        // Limpio la poblacion actual
         populations.Clear();
         populationsA.Clear();
         populationsB.Clear();
 
-        ExtinctAgents(agents);
-        SurvivingAgents(agents);
-        BreeadingAgents(agents, onCreateNewAgents);
-        CreateNewTeamAgents(agents, onCreateNewAgents);
+        ExtinctAgents(agents); // Agentes extintos
+        SurvivingAgents(agents); // Agentes sobrevivientes
+        BreeadingAgents(agents, onCreateNewAgents); // Creo nuevos agentes a partir de los agentes de reproduccion seleccionados
+        CreateNewTeamAgents(agents, onCreateNewAgents); // Creo nuevos agentes para el otro equipo
 
-        // Add new population
+        // Agrego una nueva poblacion
         populations.AddRange(populationsA);
         populations.AddRange(populationsB);
 
@@ -421,34 +415,42 @@ public class PopulationManager : MonoBehaviour
 
         teams[1].foods = 0;
         teams[1].deaths = 0;
+
+        /*
+        Este método es el responsable de la selección natural en el sistema de selección de reproducción, 
+        donde los agentes con mejor fitness tienen una mayor probabilidad de sobrevivir y reproducirse. 
+        Además, crea nuevos agentes a partir de los agentes seleccionados.
+        */
     }
 
     void FixedUpdate()
     {
         if (!isRunning) return;
+        if (agents.Count == 0) isRunning = false; // Si no hay agentes, se termina el juego
 
-        if (agents.Count == 0) isRunning = false; // End game
-
+        // El bucle se ejecuta varias veces en función del valor de "IterationCount"
+        // "Mathf.Clamp(IterationCount / 100.0f * 50f, 1f, 50f)" se conoce como un: cálculo por pasos (step calculation)
+        // Es para garantizar que el juego no se ejecute demasiado rápido, evitanto un rendimiento inadecuado o imprecisión en las actualizaciones
         for (int i = 0; i < Mathf.Clamp(IterationCount / 100.0f * 50f, 1f, 50f); i++)
         {
             turnsTimer += Time.fixedDeltaTime;
-            UpdateMoveChaimbots(turnsTimer / TurnsDelay);
+            UpdateMoveChaimbots(turnsTimer / TurnsDelay); // Actualizo la posición y dirección de los agentes
 
             if (turnsTimer > TurnsDelay)
             {
                 turnsTimer = 0f;
 
-                SetNearFoodInAgents();
-                ProcessAgentsInSameIndex();
+                SetNearFoodInAgents(); // Establezco la comida cercana a cada agente
+                ProcessAgentsInSameIndex(); // Proceso a los agentes que están en la misma posición
 
                 if (agents.Count == 0)
                 {
-                    isRunning = false; // End game
+                    isRunning = false; // Si no hay agentes, se termina el juego
                 }
                 else
                 {
-                    turnsLeft--;
-                    if (turnsLeft <= 0) ResetSimulation();
+                    turnsLeft--; // Disminuye el número de turnos restantes
+                    if (turnsLeft <= 0) ResetSimulation(); // Si no quedan turnos, reinicia la simulación
                 }
             }
         }
@@ -457,15 +459,19 @@ public class PopulationManager : MonoBehaviour
     #region Helpers
     private void SpawnAgents(bool dataLoaded)
     {
+        // Obtengo la cantidad total de agentes
         int totalAgentsA = PopulationCount;
         int totalAgentsB = PopulationCount;
 
+        // Si "dataLoaded" es verdadero, actualizo los valores
         if (dataLoaded)
         {
             totalAgentsA = GetPopulationACount();
             totalAgentsB = GetPopulationBCount();
         }
 
+        // Creo e inicializo los agentes
+        // Creo una nueva instancia del agente correspondiente y lo aniado a la lista
         for (int i = 0; i < totalAgentsA; i++)
         {
             GameObject agentGO = Instantiate(agent1Prefab);
@@ -489,8 +495,11 @@ public class PopulationManager : MonoBehaviour
 
     private void SpawnNewAgents(Genome[] newGenomes, NeuralNetwork[] brains, TEAM team)
     {
+        // Se itera por cada genoma recibido
         for (int i = 0; i < newGenomes.Length; i++)
         {
+            // Se crea un nuevo agente utilizando la informacion proporcionada por el genoma
+            // y la red neuronal correspondiente
             GameObject agentGO = null;
             if (team == TEAM.A) agentGO = Instantiate(agent1Prefab);
             else agentGO = Instantiate(agent2Prefab);
@@ -499,16 +508,20 @@ public class PopulationManager : MonoBehaviour
             Agent agent = agentGO.GetComponent<Agent>();
             agent.Init(Unit, size, team);
 
+            // Se configura la red neuronal del agente
+            // Se obtiene la red neuronal correspodiente al indice actual del bucle
             NeuralNetwork brain = brains[i];
             brain.SetWeights(newGenomes[i].genome);
             agent.SetBrain(newGenomes[i], brain);
 
+            // Se agrega el agente al conjunto de agentes existentes
             agents.Add(agent);
         }
     }
 
     private void SpawnFoods()
     {
+        // Lista de comida
         List<Vector2Int> foodUsedIndexs = new List<Vector2Int>();
 
         for (int i = 0; i < foodSize; i++)
@@ -519,6 +532,7 @@ public class PopulationManager : MonoBehaviour
 
             Vector2Int foodIndex = GetRandomIndex(foodUsedIndexs.ToArray());
 
+            // Se posiciona la comida en funcion del tamanio del terreno y la unidad
             Vector3 startPosition = new Vector3(-size / 2f, 0.5f, -size / 2f);
             food.transform.position = (startPosition + new Vector3(foodIndex.x, 0f, foodIndex.y)) * Unit;
             food.Init(foodIndex);
@@ -530,7 +544,7 @@ public class PopulationManager : MonoBehaviour
 
     private void SetAgentsPositions()
     {
-        Vector3 startPosition = new Vector3(-size / 2f, 0f, -size / 2f);
+        Vector3 startPosition = new Vector3(-size / 2f, 0f, -size / 2f); // Centro del terreno
         int aIndexX = 0;
         int aIndexY = 0;
         int bIndexX = size;
@@ -540,6 +554,7 @@ public class PopulationManager : MonoBehaviour
         {
             Vector2Int index;
 
+            // Los posiciona dependiendo el equipo
             if (agents[i].Team == TEAM.A)
             {
                 index = new Vector2Int(aIndexX, aIndexY);
@@ -563,6 +578,7 @@ public class PopulationManager : MonoBehaviour
                 }
             }
 
+            // Se actualiza la posicion del agente
             agents[i].Index = index;
             agents[i].transform.position = (startPosition + new Vector3(index.x, 0f, index.y)) * Unit;
             agents[i].ResetData();
@@ -573,28 +589,33 @@ public class PopulationManager : MonoBehaviour
     {
         for (int i = 0; i < agents.Count; i++)
         {
-            // Check limit Y or dead
+            // Chequeo si el agente esta dentro del limite Y, y si no esta muerto
             if (!(agents[i].Index.y >= 0 && agents[i].Index.y <= size) || agents[i].Dead) continue;
 
-            agents[i].SetNearFood(GetNearFood(agents[i].transform.position));
+            agents[i].SetNearFood(GetNearFood(agents[i].transform.position)); // Le mando la comida mas cercana
             agents[i].Think();
         }
     }
 
     private void ProcessAgentsInSameIndex()
     {
+        // Guardo los agentes por indice
         Dictionary<Vector2Int, List<Agent>> indexAgents = new Dictionary<Vector2Int, List<Agent>>();
         for (int i = 0; i < agents.Count; i++)
         {
+            // Si esta muerto, fuera del limite o si ya esta en la lista, continuo
             if (agents[i].Dead || agents[i].InOutLimit || indexAgents.ContainsKey(agents[i].Index)) continue;
-            bool inFoodIndex = CheckIndexInFood(agents[i].Index);
 
-            for (int j = 0; j < agents.Count; j++)
+            bool inFoodIndex = CheckIndexInFood(agents[i].Index); // Chequeo si hay comida en ese indice
+
+            for (int j = 0; j < agents.Count; j++) // Busco agentes en el mismo indice
             {
                 if (i == j || agents[j].Dead || agents[i].InOutLimit) continue;
 
+                // Si esta en el mismo indice o hay comida
                 if (agents[i].Index == agents[j].Index || inFoodIndex)
                 {
+                    // Actualizo el diccionario con el agente
                     if (!indexAgents.ContainsKey(agents[i].Index))
                     {
                         indexAgents.Add(agents[i].Index, new List<Agent>() { agents[i] });
@@ -608,60 +629,63 @@ public class PopulationManager : MonoBehaviour
             }
         }
 
+        // Recorro el diccionario y chequeo si en ese indice hay comida
         foreach (KeyValuePair<Vector2Int, List<Agent>> entry in indexAgents)
         {
             if (CheckIndexInFood(entry.Key))
             {
-                List<Agent> eatingAgents = entry.Value;
-                bool foodConsumed = false;
+                List<Agent> eatingAgents = entry.Value; // Obtengo la lista de agentes en el indice actual
+                bool foodConsumed = false; // Si se consumio comida o no
 
-                if (eatingAgents.Count > 1)
+                if (eatingAgents.Count > 1) // Si hay mas de un agente en la posicion actual
                 {
-                    eatingAgents.RemoveAll(c => !c.ToStay);
+                    eatingAgents.RemoveAll(c => !c.ToStay); // Elimino los agentes que no se quedan
 
-                    if (eatingAgents.Count > 0)
+                    if (eatingAgents.Count > 0) // Si quedan agentes
                     {
-                        if (!CheckSameTeamsInList(eatingAgents))
+                        if (!CheckSameTeamsInList(eatingAgents)) // Si los agentes en la lista no pertenecen al mismo equipo
                         {
+                            // Elijo un equipo aleatorio
                             TEAM executeTeam = (TEAM)Random.Range((int)TEAM.A, (int)TEAM.B + 1) + 1;
 
                             for (int i = 0; i < eatingAgents.Count; i++)
                             {
-                                if (eatingAgents[i].Team == executeTeam)
-                                {
-                                    eatingAgents[i].Death();
-                                }
+                                // Si el equipo del agente es igual al equipo aleatorio, muere el agente
+                                if (eatingAgents[i].Team == executeTeam)eatingAgents[i].Death();
                             }
 
                             eatingAgents.RemoveAll(c => c.Team == executeTeam);
                         }
 
-                        int agentEatingIndex = 0;
+                        int agentEatingIndex = 0; // Indice del agente que consume comida
+
                         if (eatingAgents.Count > 1)
                         {
+                            // Elijo un indice de agente aleatorio para consumir comida
                             agentEatingIndex = Random.Range(0, eatingAgents.Count);
 
                             for (int i = 0; i < eatingAgents.Count; i++)
                             {
-                                if (i != agentEatingIndex)
-                                {
-                                    eatingAgents[i].ToStay = false;
-                                }
+                                // Si el indice actual es distinto al indice del agente aleatorio, no se queda quieto
+                                if (i != agentEatingIndex) eatingAgents[i].ToStay = false;
                             }
                         }
 
+                        // El agente consume comida
                         eatingAgents[agentEatingIndex].ConsumeFood();
                         foodConsumed = true;
                     }
                 }
                 else
                 {
+                    // Si solo hay una agente en el indice actual, consume comida
                     eatingAgents[0].ConsumeFood();
                     foodConsumed = true;
                 }
 
                 if (foodConsumed)
                 {
+                    // Elimino la comida consumida
                     Food food = foods.Find(f => f.Index == entry.Key);
                     if (food != null)
                     {
@@ -670,33 +694,34 @@ public class PopulationManager : MonoBehaviour
                     }
                 }
             }
-            else
+            else // Si la posicion actual no esta asociada con comida
             {
-                List<Agent> agentsInSameIndex = entry.Value;
-                List<Agent> agentsCowards = agentsInSameIndex.FindAll(c => !c.ToStay);
+                List<Agent> agentsInSameIndex = entry.Value; // Obtengo una lista de agentes en el indice actual
+                List<Agent> agentsCowards = agentsInSameIndex.FindAll(c => !c.ToStay); // Obtengo lista de agentes no se deben quedarse
+
+                // Si hay agentes que no deben quedarse y pertenecen al distinto grupo, y si hay agentes que no deben quedarse
                 if (!CheckSameTeamsInList(agentsCowards) && agentsCowards.Count != agentsInSameIndex.Count)
                 {
                     for (int i = 0; i < agentsCowards.Count; i++)
                     {
+                        // Si la probabilidad es menor que "DeathChance", el agente muere
                         int prob = Random.Range(0, 101);
-                        if (prob < DeathChance)
-                        {
-                            agentsCowards[i].Death();
-                        }
+                        if (prob < DeathChance) agentsCowards[i].Death();
                     }
                 }
 
                 agentsInSameIndex.RemoveAll(c => !c.ToStay);
+
+                // Si hay mas de un agente en el indice actual y no todos son del mismo equipo
                 if (agentsInSameIndex.Count > 1 && !CheckSameTeamsInList(agentsInSameIndex))
                 {
+                    // Elijo un equipo aleatorio
                     TEAM executeTeam = (TEAM)Random.Range((int)TEAM.A, (int)TEAM.B + 1) + 1;
 
                     for (int i = 0; i < agentsInSameIndex.Count; i++)
                     {
-                        if (agentsInSameIndex[i].Team == executeTeam)
-                        {
-                            agentsInSameIndex[i].Death();
-                        }
+                        // Si el equipo del agente es igual al equipo aleatorio, muere el agente
+                        if (agentsInSameIndex[i].Team == executeTeam) agentsInSameIndex[i].Death();
                     }
                 }
             }
@@ -705,6 +730,7 @@ public class PopulationManager : MonoBehaviour
 
     private void UpdateAgentsGeneration()
     {
+        // Aumento la generacion de los agentes
         for (int i = 0; i < agents.Count; i++)
         {
             agents[i].GenerationCount++;
@@ -715,7 +741,7 @@ public class PopulationManager : MonoBehaviour
     {
         foreach (Agent agent in agents)
         {
-            if (!(agent.Index.y >= 0 && agent.Index.y <= size)) continue; // Check limit Y
+            if (!(agent.Index.y >= 0 && agent.Index.y <= size)) continue; // Chequeo el limite Y
 
             agent.Move(lerp);
         }
@@ -733,6 +759,7 @@ public class PopulationManager : MonoBehaviour
 
     private void DestroyFoods()
     {
+        // Destruyo toda la comida actual
         for (int i = 0; i < foods.Count; i++)
         {
             Destroy(foods[i].gameObject);
@@ -745,10 +772,7 @@ public class PopulationManager : MonoBehaviour
     {
         for (int i = 0; i < foods.Count; i++)
         {
-            if (foods[i].Index == checkIndex)
-            {
-                return true;
-            }
+            if (foods[i].Index == checkIndex) return true;
         }
 
         return false;
@@ -762,10 +786,7 @@ public class PopulationManager : MonoBehaviour
 
             for (int i = 1; i < auxAgents.Count; i++)
             {
-                if (auxAgents[i].Team != team)
-                {
-                    return false;
-                }
+                if (auxAgents[i].Team != team) return false;
             }
         }
 
@@ -823,6 +844,7 @@ public class PopulationManager : MonoBehaviour
 
     private void ExtinctAgents(List<Agent> agents)
     {
+        // Lista con agentes que su comida sea = 0, este muerto o su generacion es mayor al limite maximo de generaciones
         List<Agent> extinctAgents = agents.FindAll(c => c.FoodsConsumed == 0 || c.Dead || c.GenerationCount > AgentMaxGeneration);
 
         for (int i = 0; i < extinctAgents.Count; i++)
@@ -834,62 +856,64 @@ public class PopulationManager : MonoBehaviour
 
     private void SurvivingAgents(List<Agent> agents)
     {
+        // Lista con agentes si consumio al menos 1 comida
         List<Agent> survivingAgents = agents.FindAll(c => c.FoodsConsumed >= 1);
+        // Lista de agentes sobrevivientes del equipo correspondiente
         List<Agent> survivingAgentsA = survivingAgents.FindAll(c => c.Team == TEAM.A);
         List<Agent> survivingAgentsB = survivingAgents.FindAll(c => c.Team == TEAM.B);
-
+        // Lista con genomas de los agentes sobrevivientes del equipo correspondiente
         List<Genome> survivingGenomesA = new List<Genome>();
+        List<Genome> survivingGenomesB = new List<Genome>();
 
         for (int i = 0; i < survivingAgentsA.Count; i++)
         {
             survivingGenomesA.Add(survivingAgentsA[i].Genome);
         }
 
-        List<Genome> survivingGenomesB = new List<Genome>();
-
         for (int i = 0; i < survivingAgentsB.Count; i++)
         {
             survivingGenomesB.Add(survivingAgentsB[i].Genome);
         }
 
+        // Se agregan los genomas de los agentes sobrevivientes a la poblacion del equipo correspondiente
         populationsA.AddRange(survivingGenomesA);
         populationsB.AddRange(survivingGenomesB);
     }
 
     private void BreeadingAgents(List<Agent> agents, Action<Genome[], NeuralNetwork[], TEAM> onCreateNewAgents)
     {
+        // Lista con agentes si consumio al menos 2 de comida
         List<Agent> breedingAgents = agents.FindAll(c => c.FoodsConsumed >= 2);
+        // Lista de agentes de reproduccion del equipo correspondiente
         List<Agent> breedingAgentsA = breedingAgents.FindAll(c => c.Team == TEAM.A);
         List<Agent> breedingAgentsB = breedingAgents.FindAll(c => c.Team == TEAM.B);
-
+        // Lista con genomas de los agentes de reproduccion del equipo correspondiente
         List<Genome> breedingGenomesA = new List<Genome>();
+        List<Genome> breedingGenomesB = new List<Genome>();
 
         for (int i = 0; i < breedingAgentsA.Count; i++)
         {
             breedingGenomesA.Add(breedingAgentsA[i].Genome);
         }
 
-        List<Genome> breedingGenomesB = new List<Genome>();
-
         for (int i = 0; i < breedingAgentsB.Count; i++)
         {
             breedingGenomesB.Add(breedingAgentsB[i].Genome);
         }
 
+        // Evoluciona cada genoma resultando nuevos genomas de cada equipo correspondiente
         Genome[] newGenomesA = null;
+        Genome[] newGenomesB = null;
 
+        // La evolucion se realiza mediante el metodo "Epoch()"
         if (breedingGenomesA.Count >= 2)
         {
             if (breedingAgentsA.Count % 2 != 0)
             {
                 breedingAgentsA.RemoveAt(breedingAgentsA.Count - 1);
             }
-
-            // Evolve each genome and create a new array of genomes
             newGenomesA = genAlgA.Epoch(breedingGenomesA.ToArray());
         }
-
-        Genome[] newGenomesB = null;
 
         if (breedingGenomesB.Count >= 2)
         {
@@ -897,11 +921,10 @@ public class PopulationManager : MonoBehaviour
             {
                 breedingGenomesB.RemoveAt(breedingGenomesB.Count - 1);
             }
-
-            // Evolve each genome and create a new array of genomes
             newGenomesB = genAlgB.Epoch(breedingGenomesB.ToArray());
         }
 
+        // Si se crearon nuevos genomas se crean nuevas brains y se llama a "onCreateNewAgents()"
         if (newGenomesA != null)
         {
             NeuralNetwork[] brainsA = new NeuralNetwork[newGenomesA.Length];
@@ -927,22 +950,31 @@ public class PopulationManager : MonoBehaviour
 
     private void CreateNewTeamAgents(List<Agent> agents, Action<Genome[], NeuralNetwork[], TEAM> onCreateNewAgents)
     {
+        // Crea nuevos agentes en caso de que alguno de los dos equipos desaparezca
+
+        // Lista de agentes del equipo correspondiente
         List<Agent> agentsA = agents.FindAll(c => c.Team == TEAM.A);
         List<Agent> agentsB = agents.FindAll(c => c.Team == TEAM.B);
 
+        // Si no quedan mas agentes del equipo A
         if (agentsA.Count == 0 && agentsB.Count > 0)
         {
             List<Genome> genomesB = new List<Genome>();
 
             for (int i = 0; i < agentsB.Count; i++)
             {
+                // Reinicio el fitness de cada genoma
                 genomesB.Add(agentsB[i].Genome);
                 genomesB[i].fitness = 0f;
             }
 
+            // Creo un nuevo algoritmo genetico
             GeneticAlgorithm genAlgPlusA = new GeneticAlgorithm(teams[0].EliteCount, teams[0].MutationChance, teams[0].MutationRate * PlusMutationRate);
 
-            // Evolve each genome and create a new array of genomes
+            // Evoluciona cada genoma y crea una nueva serie de genomas:
+            // Realizo un proceso de evolucion en la poblacion de genomas, incluyendo la seleccion de
+            // invividuos de aptitud alta, cruzando entre estos individuos para crear nuevos con
+            // caracteristicas mixtas, logrando una mutacion aleatoria para introducir variacion en la poblacion
             Genome[] newGenomesA = genAlgPlusA.Epoch(genomesB.ToArray());
             NeuralNetwork[] brainsA = new NeuralNetwork[newGenomesA.Length];
             for (int i = 0; i < brainsA.Length; i++)
@@ -950,10 +982,11 @@ public class PopulationManager : MonoBehaviour
                 brainsA[i] = CreateBrainA();
             }
             onCreateNewAgents?.Invoke(newGenomesA, brainsA, TEAM.A);
-            populationsA.AddRange(newGenomesA);
+            populationsA.AddRange(newGenomesA); // Se agregan a la poblacion correspondiente
             teams[0].extincts++;
         }
 
+        // Si no quedan mas agentes del equipo B
         if (agentsB.Count == 0 && agentsA.Count > 0)
         {
             List<Genome> genomesA = new List<Genome>();
@@ -965,8 +998,7 @@ public class PopulationManager : MonoBehaviour
             }
 
             GeneticAlgorithm genAlgPlusB = new GeneticAlgorithm(teams[1].EliteCount, teams[1].MutationChance, teams[1].MutationRate * PlusMutationRate);
-            
-            // Evolve each genome and create a new array of genomes
+
             Genome[] newGenomesB = genAlgPlusB.Epoch(genomesA.ToArray());
             NeuralNetwork[] brainsB = new NeuralNetwork[newGenomesB.Length];
             for (int i = 0; i < brainsB.Length; i++)
@@ -1016,7 +1048,6 @@ public class PopulationManager : MonoBehaviour
     #endregion
 
     #region Data
-
     public void SaveData()
     {
         string path = null;

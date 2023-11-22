@@ -17,8 +17,10 @@ public class Genome
     {
         genome = new float[genesCount];
 
-        for (int i = 0; i < genesCount; i++)
-            genome[i] = Random.Range(-1.0f, 1.0f);
+		for (int i = 0; i < genesCount; i++)
+		{
+			genome[i] = Random.Range(-1.0f, 1.0f);
+		}
 
         fitness = 0;
     }
@@ -128,27 +130,19 @@ public class GeneticAlgorithm
 		for (int i = 0; i < pivot; i++)
 		{
 			child1.genome[i] = mom.genome[i];
-
-			if (ShouldMutate())
-				child1.genome[i] += Random.Range(-mutationRate, mutationRate);
+			if (ShouldMutate()) child1.genome[i] += Random.Range(-mutationRate, mutationRate);
 
 			child2.genome[i] = dad.genome[i];
-
-			if (ShouldMutate())
-				child2.genome[i] += Random.Range(-mutationRate, mutationRate);
+			if (ShouldMutate()) child2.genome[i] += Random.Range(-mutationRate, mutationRate);
 		}
 
 		for (int i = pivot; i < mom.genome.Length; i++)
 		{
 			child2.genome[i] = mom.genome[i];
-
-			if (ShouldMutate())
-				child2.genome[i] += Random.Range(-mutationRate, mutationRate);
+			if (ShouldMutate()) child2.genome[i] += Random.Range(-mutationRate, mutationRate);
 
 			child1.genome[i] = dad.genome[i];
-
-			if (ShouldMutate())
-				child1.genome[i] += Random.Range(-mutationRate, mutationRate);
+			if (ShouldMutate()) child1.genome[i] += Random.Range(-mutationRate, mutationRate);
 		}
 	}
 
@@ -165,14 +159,12 @@ public class GeneticAlgorithm
     public Genome RouletteSelection()
     {
         float rnd = Random.Range(0, Mathf.Max(totalFitness, 0));
-
         float fitness = 0;
 
         for (int i = 0; i < population.Count; i++)
         {
             fitness += Mathf.Max(population[i].fitness, 0);
-            if (fitness >= rnd) 
-				return population[i];
+            if (fitness >= rnd) return population[i];
         }
 
         return null;

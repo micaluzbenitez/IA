@@ -127,7 +127,7 @@ public class Agent : AgentBase
             UpdatePositionLimit();
             UpdateIndexLimit();
 
-            if (moveIndex.y < 0 || moveIndex.y > maxIndex) // Check limit Y
+            if (moveIndex.y < 0 || moveIndex.y > maxIndex) // Chequeo el limite Y
             {
                 SetFitness(outLimitYFitness);
                 inOutLimit = true;
