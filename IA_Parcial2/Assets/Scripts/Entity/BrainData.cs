@@ -13,22 +13,24 @@ public class BrainData
     public int A_EliteCount = 0;
     public float A_MutationChance = 0f;
     public float A_MutationRate = 0f;
-
     public int A_InputsCount = 0;
     public int A_HiddenLayers = 0;
     public int A_OutputsCount = 0;
     public int A_NeuronsCountPerHL = 0;
     public float A_Bias = 0;
     public float A_P = 0f;
+    public int A_Deaths = 0;
+    public int A_Extincts = 0;
 
     public int B_EliteCount = 0;
     public float B_MutationChance = 0f;
     public float B_MutationRate = 0f;
-
     public int B_InputsCount = 0;
     public int B_HiddenLayers = 0;
     public int B_OutputsCount = 0;
     public int B_NeuronsCountPerHL = 0;
     public float B_Bias = 0;
     public float B_P = 0f;
+    public int B_Deaths = 0;
+    public int B_Extincts = 0;
 }

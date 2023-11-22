@@ -1073,6 +1073,8 @@ public class PopulationManager : MonoBehaviour
         data.A_NeuronsCountPerHL = teams[0].NeuronsCountPerHL;
         data.A_Bias = teams[0].Bias;
         data.A_P = teams[0].P;
+        data.A_Deaths = teams[0].deaths;
+        data.A_Extincts = teams[0].extincts;
 
         data.B_EliteCount = teams[1].EliteCount;
         data.B_MutationChance = teams[1].MutationChance;
@@ -1083,6 +1085,8 @@ public class PopulationManager : MonoBehaviour
         data.B_NeuronsCountPerHL = teams[1].NeuronsCountPerHL;
         data.B_Bias = teams[1].Bias;
         data.B_P = teams[1].P;
+        data.B_Deaths = teams[1].deaths;
+        data.B_Extincts = teams[1].extincts;
 
         string dataJson = JsonUtility.ToJson(data, true);
         File.WriteAllText(path, dataJson);
@@ -1125,6 +1129,8 @@ public class PopulationManager : MonoBehaviour
         teams[0].NeuronsCountPerHL = data.A_NeuronsCountPerHL;
         teams[0].Bias = data.A_Bias;
         teams[0].P = data.A_P;
+        teams[0].deaths = data.A_Deaths;
+        teams[0].extincts = data.A_Extincts;
 
         teams[1].EliteCount = data.B_EliteCount;
         teams[1].MutationChance = data.B_MutationChance;
@@ -1135,6 +1141,8 @@ public class PopulationManager : MonoBehaviour
         teams[1].NeuronsCountPerHL = data.B_NeuronsCountPerHL;
         teams[1].Bias = data.B_Bias;
         teams[1].P = data.B_P;
+        teams[1].deaths = data.B_Deaths;
+        teams[1].extincts = data.B_Extincts;
 
         onStartGame?.Invoke(true);
     }
