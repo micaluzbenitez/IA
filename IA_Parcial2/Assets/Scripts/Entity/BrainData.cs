@@ -19,7 +19,6 @@ public class BrainData
     public int A_NeuronsCountPerHL = 0;
     public float A_Bias = 0;
     public float A_P = 0f;
-    public int A_Deaths = 0;
     public int A_Extincts = 0;
 
     public int B_EliteCount = 0;
@@ -31,6 +30,5 @@ public class BrainData
     public int B_NeuronsCountPerHL = 0;
     public float B_Bias = 0;
     public float B_P = 0f;
-    public int B_Deaths = 0;
     public int B_Extincts = 0;
 }

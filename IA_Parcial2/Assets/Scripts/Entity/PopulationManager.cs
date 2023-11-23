@@ -410,6 +410,7 @@ public class PopulationManager : MonoBehaviour
         teams[0].agents = populationsA.Count;
         teams[1].agents = populationsB.Count;
 
+        totalFoodsConsumed = 0;
         teams[0].foods = 0;
         teams[1].foods = 0;
 
@@ -834,7 +835,6 @@ public class PopulationManager : MonoBehaviour
     public void AddDeaths(TEAM team)
     {
         totalDeaths++;
-
         if (team == TEAM.A) teams[0].deaths++;
         else teams[1].deaths++;
     }
@@ -1011,6 +1011,10 @@ public class PopulationManager : MonoBehaviour
 
     private void ResetSimulation()
     {
+        totalDeaths = 0;
+        teams[0].deaths = 0;
+        teams[1].deaths = 0;
+
         DestroyFoods();
         SpawnFoods();
 
@@ -1073,7 +1077,6 @@ public class PopulationManager : MonoBehaviour
         data.A_NeuronsCountPerHL = teams[0].NeuronsCountPerHL;
         data.A_Bias = teams[0].Bias;
         data.A_P = teams[0].P;
-        data.A_Deaths = teams[0].deaths;
         data.A_Extincts = teams[0].extincts;
 
         data.B_EliteCount = teams[1].EliteCount;
@@ -1085,7 +1088,6 @@ public class PopulationManager : MonoBehaviour
         data.B_NeuronsCountPerHL = teams[1].NeuronsCountPerHL;
         data.B_Bias = teams[1].Bias;
         data.B_P = teams[1].P;
-        data.B_Deaths = teams[1].deaths;
         data.B_Extincts = teams[1].extincts;
 
         string dataJson = JsonUtility.ToJson(data, true);
@@ -1129,7 +1131,6 @@ public class PopulationManager : MonoBehaviour
         teams[0].NeuronsCountPerHL = data.A_NeuronsCountPerHL;
         teams[0].Bias = data.A_Bias;
         teams[0].P = data.A_P;
-        teams[0].deaths = data.A_Deaths;
         teams[0].extincts = data.A_Extincts;
 
         teams[1].EliteCount = data.B_EliteCount;
@@ -1141,7 +1142,6 @@ public class PopulationManager : MonoBehaviour
         teams[1].NeuronsCountPerHL = data.B_NeuronsCountPerHL;
         teams[1].Bias = data.B_Bias;
         teams[1].P = data.B_P;
-        teams[1].deaths = data.B_Deaths;
         teams[1].extincts = data.B_Extincts;
 
         onStartGame?.Invoke(true);
