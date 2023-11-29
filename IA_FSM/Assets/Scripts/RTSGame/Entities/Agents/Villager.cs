@@ -153,9 +153,8 @@ namespace RTSGame.Entities.Agents
             currentState = (FSM_Villager_States)fsm.currentStateIndex;
         }
 
-        private void RecalculateVoronoi(GoldMine goldMine)
+        private void RecalculateVoronoi()
         {
-            MapGenerator.Instance.RemoveEmptyMine(goldMine);
             voronoi.SetVoronoi(MapGenerator.goldMines);
         }
     }

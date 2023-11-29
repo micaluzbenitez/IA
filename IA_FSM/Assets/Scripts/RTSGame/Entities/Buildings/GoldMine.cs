@@ -31,7 +31,7 @@ namespace RTSGame.Entities.Buildings
 
         // Actions
         public Action OnGoldMineBeingUsed;
-        public Action<GoldMine> OnGoldMineEmpty;
+        public Action OnGoldMineEmpty;
 
         private void Start()
         {
@@ -55,8 +55,9 @@ namespace RTSGame.Entities.Buildings
 
             if (goldQuantity <= 0)
             {
-                OnGoldMineEmpty?.Invoke(this);
+                MapGenerator.Instance.RemoveEmptyMine(this);
                 MapGenerator.goldMinesBeingUsed.Remove(this);
+                OnGoldMineEmpty?.Invoke();
                 OnGoldMineBeingUsed?.Invoke();
                 beingUsed = false;
             }

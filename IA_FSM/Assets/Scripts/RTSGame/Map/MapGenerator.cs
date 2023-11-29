@@ -123,7 +123,6 @@ namespace RTSGame.Map
         public void RemoveEmptyMine(GoldMine goldMine)
         {
             goldMines.Remove(goldMine);
-            goldMine.OnGoldMineEmpty -= RemoveEmptyMine;
             goldMine.gameObject.SetActive(false);
         }
     }

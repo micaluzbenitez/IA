@@ -20,7 +20,7 @@ namespace VoronoiDiagram
         public Sector(GoldMine mine)
         {
             this.mine = mine;
-            color = Random.ColorHSV();
+            //color = Random.ColorHSV();
             color.a = 0.2f;
         }
 
