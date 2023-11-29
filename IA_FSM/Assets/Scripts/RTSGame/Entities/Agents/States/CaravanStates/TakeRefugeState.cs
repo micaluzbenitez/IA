@@ -41,6 +41,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
                 SetTargetPosition(caravan, urbanCenter.Position, agentPathNodes);
+                caravan.ReturnsToTakeRefuge = true;
             });
 
             return behaviours;

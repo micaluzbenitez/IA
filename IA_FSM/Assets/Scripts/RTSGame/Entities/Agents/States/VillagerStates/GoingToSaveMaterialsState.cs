@@ -38,6 +38,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
                 SetTargetPosition(villager, urbanCenter.Position, agentPathNodes);
+                villager.ReturnsToTakeRefuge = false;
             });
 
             return behaviours;

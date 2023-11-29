@@ -47,6 +47,7 @@ namespace RTSGame.Entities.Agents
 
         private string goldQuantityText;
         private bool needsFood = false;
+        private bool returnsToTakeRefuge = false;
 
         // Properties
         public string GoldQuantityText
@@ -58,6 +59,11 @@ namespace RTSGame.Entities.Agents
         {
             get { return needsFood; }
             set { needsFood = value; }
+        }
+        public bool ReturnsToTakeRefuge
+        {
+            get { return returnsToTakeRefuge; }
+            set { returnsToTakeRefuge = value; }
         }
 
         protected override void Awake()
@@ -107,7 +113,8 @@ namespace RTSGame.Entities.Agents
 
             // Add states
             fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine,
-                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }));
+                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }),
+                () => (new object[1] { this }));
 
             fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
                 () => (new object[5] { this, timePerMine, maxGoldRecolected, goldsPerFood, deltaTime }),
@@ -122,7 +129,8 @@ namespace RTSGame.Entities.Agents
                 () => (new object[3] { agentPathNodes, this, urbanCenter }));
 
             fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials,
-                () => (new object[3] { this, urbanCenter, maxGoldRecolected }));
+                () => (new object[3] { this, urbanCenter, maxGoldRecolected }),
+                () => (new object[1] { this }));
 
             fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge,
                 () => (new object[4] { this, speed, deltaTime, previousState }),

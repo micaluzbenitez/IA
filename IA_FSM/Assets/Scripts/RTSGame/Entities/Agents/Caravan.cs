@@ -39,12 +39,18 @@ namespace RTSGame.Entities.Agents
         private FSM_Caravan_States previousState;
 
         private string foodQuantityText;
+        private bool returnsToTakeRefuge = false;
 
         // Properties
         public string FoodQuantityText
         {
             get { return foodQuantityText; }
             set { foodQuantityText = value; }
+        }
+        public bool ReturnsToTakeRefuge
+        {
+            get { return returnsToTakeRefuge; }
+            set { returnsToTakeRefuge = value; }
         }
 
         protected override void Awake()
@@ -91,10 +97,12 @@ namespace RTSGame.Entities.Agents
                 () => (new object[3] { agentPathNodes, this, urbanCenter }));
 
             fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood,
-                () => (new object[2] { this, foodPerTravel}));
+                () => (new object[2] { this, foodPerTravel}),
+                () => (new object[1] { this }));
 
             fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine,
-                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }));
+                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }),
+                () => (new object[1] { this }));
 
             fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood,
                 () => (new object[2] { this, foodPerTravel }),

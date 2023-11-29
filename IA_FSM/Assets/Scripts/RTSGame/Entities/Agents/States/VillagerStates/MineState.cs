@@ -47,8 +47,14 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 goldMine = voronoi.GetMineCloser(villager.Position);
 
                 // Checks when returns to take refuge state
-                if (Vector2.Distance(villager.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                if (villager.ReturnsToTakeRefuge)
+                {
+                    if (Vector2.Distance(villager.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                    villager.ReturnsToTakeRefuge = false;
+                }
                 if (villager.NeedsFood) Transition((int)FSM_Villager_Flags.OnGoEat);
+
+                villager.ReturnsToTakeRefuge = false;
             });
 
             return behaviours;

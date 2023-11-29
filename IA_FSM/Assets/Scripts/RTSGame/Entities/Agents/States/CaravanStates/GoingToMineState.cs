@@ -37,10 +37,13 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
+            Caravan caravan = parameters[0] as Caravan;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
+                caravan.ReturnsToTakeRefuge = false;
             });
 
             return behaviours;
@@ -99,7 +102,6 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
                 else
                 {
                     currentPathIndex++;
-                    Debug.Log(currentPathIndex + " --- " + pathVectorList.Count);
                     if (currentPathIndex >= pathVectorList.Count)
                     {
                         pathVectorList = null; // Stop moving

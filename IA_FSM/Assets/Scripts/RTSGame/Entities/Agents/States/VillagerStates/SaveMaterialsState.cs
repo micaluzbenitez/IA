@@ -26,10 +26,13 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         public override List<Action> GetOnEnterBehaviours(params object[] parameters)
         {
+            Villager villager = parameters[0] as Villager;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
+                villager.ReturnsToTakeRefuge = false;
             });
 
             return behaviours;

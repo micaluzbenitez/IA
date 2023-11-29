@@ -41,6 +41,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
                 SetTargetPosition(villager, urbanCenter.Position, agentPathNodes);
+                villager.ReturnsToTakeRefuge = true;
             });
 
             return behaviours;
