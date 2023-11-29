@@ -99,6 +99,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
                 else
                 {
                     currentPathIndex++;
+                    Debug.Log(currentPathIndex + " --- " + pathVectorList.Count);
                     if (currentPathIndex >= pathVectorList.Count)
                     {
                         pathVectorList = null; // Stop moving

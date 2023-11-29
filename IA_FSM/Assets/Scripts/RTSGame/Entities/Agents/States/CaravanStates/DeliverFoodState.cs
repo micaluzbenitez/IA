@@ -46,7 +46,10 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
                 goldMine = voronoi.GetMineCloser(caravan.Position);
 
                 // Check when returns to take refuge state
-                if (Vector2.Distance(caravan.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                if (caravan.FoodQuantityText == "0")
+                {
+                    if (Vector2.Distance(caravan.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                }
             });
 
             return behaviours;
