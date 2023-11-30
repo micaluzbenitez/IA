@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
 
+public class StateParameters
+{
+    public object[] Parameters { get; set; }
+}
+
 namespace FiniteStateMachine
 {
     public class FSM
@@ -58,8 +63,8 @@ namespace FiniteStateMachine
             }
         }
 
-        public void AddState<T>(int stateIndex, Func<object[]> stateParams = null,
-            Func<object[]> stateOnEnterParams = null, Func<object[]> stateOnExitParams = null) where T : State, new()
+        public void AddState<T>(int stateIndex, StateParameters stateParams = null,
+            StateParameters stateOnEnterParams = null, StateParameters stateOnExitParams = null) where T : State, new()
         {
             if (!states.ContainsKey(stateIndex))
             {

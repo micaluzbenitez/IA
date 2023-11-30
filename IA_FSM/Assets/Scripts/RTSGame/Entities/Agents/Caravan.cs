@@ -93,8 +93,8 @@ namespace RTSGame.Entities.Agents
 
             // Add states
             fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood,
-                () => (new object[3] { this, speed, deltaTime }),
-                () => (new object[3] { agentPathNodes, this, urbanCenter }));
+                () => (new StateParameters[3] { this, speed, deltaTime }),
+                () => (new StateParameters[3] { agentPathNodes, this, urbanCenter }));
 
             fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood,
                 () => (new object[2] { this, foodPerTravel}),

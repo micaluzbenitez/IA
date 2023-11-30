@@ -120,6 +120,7 @@ namespace RTSGame.Map
             return GO;
         }
 
+        // Cambiar: no mandar la mine sino mandar solo la posicion
         public void RemoveEmptyMine(GoldMine goldMine)
         {
             goldMines.Remove(goldMine);
