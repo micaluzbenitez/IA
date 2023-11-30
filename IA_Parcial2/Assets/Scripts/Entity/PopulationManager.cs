@@ -9,6 +9,13 @@ using GridMap;
 
 // (15) La populaciones son conjuntos de agentes que tienen que poder cumplir una tarea en un entorno
 
+public enum STATES
+{
+    SEARCH,
+    SURVIVE,
+    FIGHT
+}
+
 public class PopulationManager : MonoBehaviour
 {
     [Serializable]
@@ -95,6 +102,9 @@ public class PopulationManager : MonoBehaviour
     private string fileName = "/Data/brain_data.json";
 
     private Grid<int> grid;
+
+    private STATES currentState = STATES.SEARCH;
+    public STATES CurrentState { get => currentState; }
 
     private float getBestFitness()
     {
