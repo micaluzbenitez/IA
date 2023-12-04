@@ -1,4 +1,5 @@
 using FiniteStateMachine;
+using Flocking;
 using RTSGame.Entities.Buildings;
 using UnityEngine;
 using VoronoiDiagram;
@@ -9,15 +10,20 @@ namespace RTSGame.Entities.Agents
     {
         [Header("Movement")]
         [SerializeField] protected float speed = 5f;
+        [SerializeField] protected float turnSpeed = 5f;
 
         [Header("Voronoi")]
         [SerializeField] protected Voronoi voronoi = null;
         [SerializeField] protected bool drawVoronoi;
 
+        [Header("Flocking")]
+        [SerializeField] protected CircleCollider2D circleCollider2D;
+        
         protected AgentPathNodes agentPathNodes;
         protected FSM fsm;
+        protected Vector3 target;
 
-        [SerializeField] protected UrbanCenter urbanCenter;
+        protected UrbanCenter urbanCenter;
         protected Vector3 position;
         protected float deltaTime;
 
@@ -35,6 +41,15 @@ namespace RTSGame.Entities.Agents
         {
             get { return urbanCenter; }
         }
+        public CircleCollider2D CircleCollider2D
+        {
+            get { return circleCollider2D; }
+        }
+        public Vector3 Target
+        {
+            get { return target; }
+            set { target = value; }
+        }
 
         protected virtual void Start()
         {
@@ -45,8 +60,9 @@ namespace RTSGame.Entities.Agents
 
         protected virtual void Update()
         {
-            transform.position = position;
             deltaTime = Time.deltaTime;
+            transform.position = position;
+            transform.up = Vector3.Lerp(transform.up, ACS(), turnSpeed * Time.deltaTime);
         }
 
         protected virtual void OnDrawGizmos()
@@ -57,6 +73,18 @@ namespace RTSGame.Entities.Agents
         public virtual void UpdateAgent() 
         {
             fsm.Update();
+        }
+
+        public Vector2 ACS()
+        {
+            Vector2 ACS = FlockingManager.instance.Alignment(this) + 
+                          FlockingManager.instance.Cohesion(this) + 
+                          FlockingManager.instance.Separation(this) + 
+                          FlockingManager.instance.Direction(this, target);
+
+            ACS.Normalize();
+
+            return ACS;
         }
     }
 }

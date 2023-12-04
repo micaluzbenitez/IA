@@ -75,6 +75,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             if (pathVectorList.Count > 0 && pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
+                caravan.Target = targetPosition;
 
                 if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
                 {

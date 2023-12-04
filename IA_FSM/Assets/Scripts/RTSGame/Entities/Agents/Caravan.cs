@@ -37,7 +37,6 @@ namespace RTSGame.Entities.Agents
         [SerializeField] private TextMesh foodText;
 
         private FSM_Caravan_States previousState;
-
         private string foodQuantityText;
         private bool returnsToTakeRefuge = false;
 

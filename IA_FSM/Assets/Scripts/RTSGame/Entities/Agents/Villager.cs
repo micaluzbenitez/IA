@@ -43,7 +43,6 @@ namespace RTSGame.Entities.Agents
         [SerializeField] private TextMesh goldText;
 
         private FSM_Villager_States previousState;
-
         private string goldQuantityText;
         private bool needsFood = false;
         private bool returnsToTakeRefuge = false;

@@ -92,6 +92,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             if (pathVectorList.Count > 0 && pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
+                villager.Target = targetPosition;
 
                 if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
