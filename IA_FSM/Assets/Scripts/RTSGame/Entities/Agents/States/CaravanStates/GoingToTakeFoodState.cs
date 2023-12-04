@@ -72,7 +72,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private void HandleMovement(Caravan caravan, float speed, float deltaTime)
         {
-            if (pathVectorList.Count > 0)
+            if (pathVectorList.Count > 0 && pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 

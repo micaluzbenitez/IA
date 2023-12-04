@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder.GridMap;
+using UnityEngine.UIElements;
 
 namespace Pathfinder
 {
@@ -18,6 +19,22 @@ namespace Pathfinder
         public bool available;
         public bool isWalkable;
         public PathNode cameFromNode;
+
+        public int GCost
+        {
+            get { return gCost; }
+            set { gCost = value; }
+        }
+        public int HCost
+        {
+            get { return hCost; }
+            set { hCost = value; }
+        }
+        public int FCost
+        {
+            get { return fCost; }
+            set { fCost = value; }
+        }
 
         #region PathNode_Type
         public enum PathNode_Type

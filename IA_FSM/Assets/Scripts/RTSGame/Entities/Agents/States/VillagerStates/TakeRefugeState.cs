@@ -75,7 +75,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         private void HandleMovement(Villager villager, float speed, float deltaTime)
         {
-            if (pathVectorList.Count > 0)
+            if (pathVectorList.Count > 0 && pathVectorList != null)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 

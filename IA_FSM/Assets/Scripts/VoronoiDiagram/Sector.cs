@@ -20,7 +20,7 @@ namespace VoronoiDiagram
         public Sector(GoldMine mine)
         {
             this.mine = mine;
-            color = Random.ColorHSV();
+            //color = Random.ColorHSV();
             color.a = 0.2f;
         }
 
@@ -30,7 +30,7 @@ namespace VoronoiDiagram
             // Calculo los segmentos con los limites del mapa
             for (int i = 0; i < limits.Count; i++)
             {
-                Vector2 origin = mine.transform.position;
+                Vector2 origin = mine.Position;
                 Vector2 final = limits[i].GetMapLimitPosition(origin); // Obtengo la posicion final del segmento
                 segments.Add(new Segment(origin, final));
             }

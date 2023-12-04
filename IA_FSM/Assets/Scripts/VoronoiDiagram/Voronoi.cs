@@ -51,7 +51,7 @@ namespace VoronoiDiagram
                 {
                     // Agrego los segmentos entre cada sector (menos entre si mismo)
                     if (i == j) continue;
-                    sectors[i].AddSegment(goldMines[i].transform.position, goldMines[j].transform.position);
+                    sectors[i].AddSegment(goldMines[i].Position, goldMines[j].Position);
                 }
             }
 

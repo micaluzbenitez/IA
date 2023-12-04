@@ -199,7 +199,7 @@ namespace Pathfinder
 
             for (int i = 1; i < pathNodeList.Count; i++)
             {
-                if (pathNodeList[i].fCost < lowestFCostNode.fCost)
+                if (pathNodeList[i].FCost < lowestFCostNode.FCost)
                 {
                     lowestFCostNode = pathNodeList[i];
                 }

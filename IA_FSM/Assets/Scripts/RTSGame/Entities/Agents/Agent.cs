@@ -17,7 +17,7 @@ namespace RTSGame.Entities.Agents
         protected AgentPathNodes agentPathNodes;
         protected FSM fsm;
 
-        protected UrbanCenter urbanCenter;
+        [SerializeField] protected UrbanCenter urbanCenter;
         protected Vector3 position;
         protected float deltaTime;
 
