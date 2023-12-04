@@ -15,19 +15,18 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private GoldMine goldMine;
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Voronoi voronoi = parameters[1] as Voronoi;
-            Caravan caravan = parameters[2] as Caravan;
-            float speed = Convert.ToSingle(parameters[3]);
-            float deltaTime = Convert.ToSingle(parameters[4]);
+            AgentPathNodes agentPathNodes = stateParameters.Parameters[0] as AgentPathNodes;
+            Voronoi voronoi = stateParameters.Parameters[1] as Voronoi;
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
+            float speed = Convert.ToSingle(stateParameters.Parameters[3]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 if (!goldMine) CheckForGoldMine(caravan, agentPathNodes, voronoi);
-                else HandleMovement(caravan, speed, deltaTime);
+                if (pathVectorList != null) HandleMovement(caravan, speed);
 
                 CheckActualGoldMine();
             });
@@ -35,9 +34,9 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            Caravan caravan = parameters[0] as Caravan;
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -49,7 +48,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -88,16 +87,16 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             }
         }
 
-        protected void HandleMovement(Caravan caravan, float speed, float deltaTime)
+        protected void HandleMovement(Caravan caravan, float speed)
         {
-            if (pathVectorList != null)
+            if (pathVectorList.Count > 0)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
                 if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - caravan.Position).normalized;
-                    caravan.Position = caravan.Position + moveDir * speed * deltaTime;
+                    caravan.Position = caravan.Position + moveDir * speed * caravan.DeltaTime;
                 }
                 else
                 {

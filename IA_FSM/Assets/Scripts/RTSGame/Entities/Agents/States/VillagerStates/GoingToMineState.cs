@@ -15,27 +15,26 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         private GoldMine goldMine;
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Voronoi voronoi = parameters[1] as Voronoi;
-            Villager villager = parameters[2] as Villager;
-            float speed = Convert.ToSingle(parameters[3]);
-            float deltaTime = Convert.ToSingle(parameters[4]);
+            AgentPathNodes agentPathNodes = stateParameters.Parameters[0] as AgentPathNodes;
+            Voronoi voronoi = stateParameters.Parameters[1] as Voronoi;
+            Villager villager = stateParameters.Parameters[2] as Villager;
+            float speed = Convert.ToSingle(stateParameters.Parameters[3]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 CheckForGoldMine(villager, agentPathNodes, voronoi);
-                HandleMovement(villager, speed, deltaTime);
+                HandleMovement(villager, speed);
             });
 
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            Villager villager = parameters[0] as Villager;
+            Villager villager = stateParameters.Parameters[2] as Villager;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -47,7 +46,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -88,7 +87,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             }
         }
 
-        private void HandleMovement(Villager villager, float speed, float deltaTime)
+        private void HandleMovement(Villager villager, float speed)
         {
             if (pathVectorList.Count > 0)
             {
@@ -97,7 +96,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - villager.Position).normalized;
-                    villager.Position = villager.Position + moveDir * speed * deltaTime;
+                    villager.Position = villager.Position + moveDir * speed * villager.DeltaTime;
                 }
                 else
                 {

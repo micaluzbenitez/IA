@@ -12,39 +12,37 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
         private int currentPathIndex;
         private List<Vector3> pathVectorList = new List<Vector3>();
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            Villager villager = parameters[0] as Villager;
-            float speed = Convert.ToSingle(parameters[1]);
-            float deltaTime = Convert.ToSingle(parameters[2]);
+            Villager villager = stateParameters.Parameters[2] as Villager;
+            float speed = Convert.ToSingle(stateParameters.Parameters[3]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                HandleMovement(villager, speed, deltaTime);
+                HandleMovement(villager, speed);
             });
 
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Villager villager = parameters[1] as Villager;
-            UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
+            AgentPathNodes agentPathNodes = stateParameters.Parameters[0] as AgentPathNodes;
+            Villager villager = stateParameters.Parameters[2] as Villager;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                SetTargetPosition(villager, urbanCenter.Position, agentPathNodes);
+                SetTargetPosition(villager, villager.UrbanCenter.Position, agentPathNodes);
                 villager.ReturnsToTakeRefuge = false;
             });
 
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -72,16 +70,16 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             }
         }
 
-        private void HandleMovement(Villager villager, float speed, float deltaTime)
+        private void HandleMovement(Villager villager, float speed)
         {
-            if (pathVectorList != null)
+            if (pathVectorList.Count > 0)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 
                 if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - villager.Position).normalized;
-                    villager.Position = villager.Position + moveDir * speed * deltaTime;
+                    villager.Position = villager.Position + moveDir * speed * villager.DeltaTime;
                 }
                 else
                 {

@@ -7,16 +7,15 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 {
     public class SaveMaterialsState : State
     {
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            Villager villager = parameters[0] as Villager;
-            UrbanCenter urbanCenter = parameters[1] as UrbanCenter;
-            int goldRecolected = Convert.ToInt32(parameters[2]);
+            Villager villager = stateParameters.Parameters[2] as Villager;
+            int maxGoldRecolected = Convert.ToInt32(stateParameters.Parameters[5]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                urbanCenter.DeliverGold(goldRecolected);
+                villager.UrbanCenter.DeliverGold(maxGoldRecolected);
                 villager.GoldQuantityText = "0";
                 Transition((int)FSM_Villager_Flags.OnGoMine);
             });
@@ -24,9 +23,9 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            Villager villager = parameters[0] as Villager;
+            Villager villager = stateParameters.Parameters[2] as Villager;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -38,7 +37,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>

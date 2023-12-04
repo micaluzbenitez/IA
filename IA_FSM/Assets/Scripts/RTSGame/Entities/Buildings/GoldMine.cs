@@ -13,6 +13,7 @@ namespace RTSGame.Entities.Buildings
         [Header("Food")]
         [SerializeField] private TextMesh foodText;
 
+        private SpriteRenderer spriteRenderer;
         private Vector3 position;
         private int foodQuantity;
         private int villagersOn;
@@ -35,6 +36,7 @@ namespace RTSGame.Entities.Buildings
 
         private void Start()
         {
+            spriteRenderer = GetComponent<SpriteRenderer>();
             position = transform.position;
             goldQuantityText = goldQuantity.ToString();
             foodQuantityText = foodQuantity.ToString();

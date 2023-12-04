@@ -11,9 +11,9 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
     {
         private GoldMine goldMine;
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            Villager villager = parameters[0] as Villager;
+            Villager villager = stateParameters.Parameters[2] as Villager;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -28,10 +28,10 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            Voronoi voronoi = parameters[0] as Voronoi;
-            Villager villager = parameters[1] as Villager;
+            Voronoi voronoi = stateParameters.Parameters[1] as Voronoi;
+            Villager villager = stateParameters.Parameters[2] as Villager;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -52,7 +52,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>

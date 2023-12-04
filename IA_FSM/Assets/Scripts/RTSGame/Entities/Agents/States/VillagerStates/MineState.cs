@@ -16,29 +16,28 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
         private int goldQuantity;
         private int totalGoldsRecolected;
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            Villager villager = parameters[0] as Villager;
-            float timePerMine = Convert.ToSingle(parameters[1]);
-            int maxGoldRecolected = Convert.ToInt32(parameters[2]);
-            int goldsPerFood = Convert.ToInt32(parameters[3]);
-            float deltaTime = Convert.ToSingle(parameters[4]);
+            Villager villager = stateParameters.Parameters[2] as Villager;
+            float timePerMine = Convert.ToSingle(stateParameters.Parameters[4]);
+            int maxGoldRecolected = Convert.ToInt32(stateParameters.Parameters[5]);
+            int goldsPerFood = Convert.ToInt32(stateParameters.Parameters[6]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 if (!mineTimer.Active) mineTimer.SetTimer(timePerMine, Timer.TIMER_MODE.DECREASE, true);
-                UpdateMineTimer(villager, deltaTime, maxGoldRecolected, goldsPerFood);
+                UpdateMineTimer(villager, maxGoldRecolected, goldsPerFood);
             });
 
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            Voronoi voronoi = parameters[0] as Voronoi;
-            Villager villager = parameters[1] as Villager;
-            int goldsPerFood = Convert.ToInt32(parameters[2]);
+            Voronoi voronoi = stateParameters.Parameters[1] as Voronoi;
+            Villager villager = stateParameters.Parameters[2] as Villager;
+            int goldsPerFood = Convert.ToInt32(stateParameters.Parameters[6]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -60,7 +59,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -77,9 +76,9 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             SetFlag?.Invoke(flag);
         }
 
-        private void UpdateMineTimer(Villager villager, float deltaTime, int maxGoldRecolected, int goldsPerFood)
+        private void UpdateMineTimer(Villager villager, int maxGoldRecolected, int goldsPerFood)
         {
-            if (mineTimer.Active) mineTimer.UpdateTimer(deltaTime);
+            if (mineTimer.Active) mineTimer.UpdateTimer(villager.DeltaTime);
             if (mineTimer.ReachedTimer()) Mine(villager, maxGoldRecolected, goldsPerFood);
         }
 

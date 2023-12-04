@@ -27,15 +27,19 @@ namespace RTSGame.Entities.Agents
             get { return position; }
             set { position = value; }
         }
-
-        protected virtual void Awake()
+        public float DeltaTime
         {
-            urbanCenter = FindObjectOfType<UrbanCenter>();
-            agentPathNodes = GetComponent<AgentPathNodes>();
+            get { return deltaTime; }
+        }
+        public UrbanCenter UrbanCenter
+        {
+            get { return urbanCenter; }
         }
 
         protected virtual void Start()
         {
+            urbanCenter = FindObjectOfType<UrbanCenter>();
+            agentPathNodes = GetComponent<AgentPathNodes>();
             position = transform.position;
         }
 

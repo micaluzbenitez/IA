@@ -43,7 +43,7 @@ public abstract class AgentBase : MonoBehaviour
     // Los que lo hicieron mejor de la generacion anteorir, continuan en la siguiente (elites)
     public void UpdateFitness(float fitness)
     {
-        this.fitness *= fitness;
+        this.fitness += fitness;
         SetGenomeFitness();
     }
 

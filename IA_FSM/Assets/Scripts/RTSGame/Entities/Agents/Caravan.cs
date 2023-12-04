@@ -41,6 +41,8 @@ namespace RTSGame.Entities.Agents
         private string foodQuantityText;
         private bool returnsToTakeRefuge = false;
 
+        StateParameters allParameters;
+
         // Properties
         public string FoodQuantityText
         {
@@ -53,9 +55,8 @@ namespace RTSGame.Entities.Agents
             set { returnsToTakeRefuge = value; }
         }
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             foodText.text = "0";
 
             // Recalculate voronoi on changes
@@ -71,6 +72,8 @@ namespace RTSGame.Entities.Agents
 
             foodQuantityText = foodText.text;
             fsm = new FSM(Enum.GetValues(typeof(FSM_Caravan_States)).Length, Enum.GetValues(typeof(FSM_Caravan_Flags)).Length);
+
+            allParameters = new StateParameters();
 
             // Set relations
             fsm.SetRelation((int)FSM_Caravan_States.GoingToTakeFood, (int)FSM_Caravan_Flags.OnTakingFood, (int)FSM_Caravan_States.TakeFood);
@@ -91,26 +94,15 @@ namespace RTSGame.Entities.Agents
             fsm.SetRelation((int)FSM_Caravan_States.TakeRefuge, (int)FSM_Caravan_Flags.OnGoMine, (int)FSM_Caravan_States.GoingToMine);
             fsm.SetRelation((int)FSM_Caravan_States.TakeRefuge, (int)FSM_Caravan_Flags.OnDeliveringFood, (int)FSM_Caravan_States.DeliverFood);
 
+            allParameters.Parameters = new object[6] { agentPathNodes, voronoi, this, speed, foodPerTravel, previousState };
+            //                                                0            1      2      3        4               5
+
             // Add states
-            fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood,
-                () => (new StateParameters[3] { this, speed, deltaTime }),
-                () => (new StateParameters[3] { agentPathNodes, this, urbanCenter }));
-
-            fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood,
-                () => (new object[2] { this, foodPerTravel}),
-                () => (new object[1] { this }));
-
-            fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine,
-                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }),
-                () => (new object[1] { this }));
-
-            fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood,
-                () => (new object[2] { this, foodPerTravel }),
-                () => (new object[2] { voronoi, this }));
-
-            fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge,
-                () => (new object[4] { this, speed, deltaTime, previousState }),
-                () => (new object[3] { agentPathNodes, this, urbanCenter }));
+            fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood, allParameters, allParameters);
+            fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood, allParameters, allParameters);
+            fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine, allParameters, allParameters);
+            fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood, allParameters, allParameters);
+            fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge, allParameters, allParameters);
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Caravan_States.TakeFood);

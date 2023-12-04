@@ -11,9 +11,9 @@ namespace FiniteStateMachine
     public class FSM
     {
         Dictionary<int, State> states;
-        Dictionary<int, Func<object[]>> statesParameters;
-        Dictionary<int, Func<object[]>> statesOnEnterParameters;
-        Dictionary<int, Func<object[]>> statesOnExitParameters;
+        Dictionary<int, StateParameters> statesParameters;
+        Dictionary<int, StateParameters> statesOnEnterParameters;
+        Dictionary<int, StateParameters> statesOnExitParameters;
         public int previousStateIndex = -1;
         public int currentStateIndex = 0;
         private int[,] relations;
@@ -30,16 +30,16 @@ namespace FiniteStateMachine
                 }
             }
             this.states = new Dictionary<int, State>();
-            this.statesParameters = new Dictionary<int, Func<object[]>>();
-            this.statesOnEnterParameters = new Dictionary<int, Func<object[]>>();
-            this.statesOnExitParameters = new Dictionary<int, Func<object[]>>();
+            this.statesParameters = new Dictionary<int, StateParameters>();
+            this.statesOnEnterParameters = new Dictionary<int, StateParameters>();
+            this.statesOnExitParameters = new Dictionary<int, StateParameters>();
         }
 
         public void SetCurrentStateForced(int state)
         {
             currentStateIndex = state;
 
-            foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))
+            foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]))
                 OnEnter?.Invoke();
         }
 
@@ -52,13 +52,13 @@ namespace FiniteStateMachine
         {
             if (relations[currentStateIndex, flag] != -1)
             {
-                foreach (Action OnExit in states[currentStateIndex].GetExitBehaviours(statesOnExitParameters[currentStateIndex]?.Invoke()))
+                foreach (Action OnExit in states[currentStateIndex].GetExitBehaviours(statesOnExitParameters[currentStateIndex]))
                     OnExit?.Invoke();
 
                 previousStateIndex = currentStateIndex;
                 currentStateIndex = relations[currentStateIndex, flag];
 
-                foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]?.Invoke()))
+                foreach (Action OnEnter in states[currentStateIndex].GetOnEnterBehaviours(statesOnEnterParameters[currentStateIndex]))
                     OnEnter?.Invoke();
             }
         }
@@ -81,7 +81,7 @@ namespace FiniteStateMachine
         {
             if (states.ContainsKey(currentStateIndex))
             {
-                foreach (Action behaviour in states[currentStateIndex].GetBehaviours(statesParameters[currentStateIndex]?.Invoke()))
+                foreach (Action behaviour in states[currentStateIndex].GetBehaviours(statesParameters[currentStateIndex]))
                 {
                     behaviour?.Invoke();
                 }

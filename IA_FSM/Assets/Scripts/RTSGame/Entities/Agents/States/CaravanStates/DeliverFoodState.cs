@@ -11,10 +11,10 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
     {
         private GoldMine goldMine;
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            Caravan caravan = parameters[0] as Caravan;
-            int foodPerTravel = Convert.ToInt32(parameters[1]);
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
+            int foodPerTravel = Convert.ToInt32(stateParameters.Parameters[4]);
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -34,10 +34,10 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            Voronoi voronoi = parameters[0] as Voronoi;
-            Caravan caravan = parameters[1] as Caravan;
+            Voronoi voronoi = stateParameters.Parameters[1] as Voronoi;
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -58,7 +58,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>

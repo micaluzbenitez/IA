@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using FiniteStateMachine;
-using RTSGame.Entities.Buildings;
 using RTSGame.Entities.Agents.States.VillagerStates;
 using RTSGame.Map;
 
@@ -49,6 +48,8 @@ namespace RTSGame.Entities.Agents
         private bool needsFood = false;
         private bool returnsToTakeRefuge = false;
 
+        StateParameters allParameters;
+
         // Properties
         public string GoldQuantityText
         {
@@ -66,9 +67,8 @@ namespace RTSGame.Entities.Agents
             set { returnsToTakeRefuge = value; }
         }
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             goldText.text = "0";
 
             // Recalculate voronoi on changes
@@ -84,6 +84,8 @@ namespace RTSGame.Entities.Agents
 
             goldQuantityText = goldText.text;
             fsm = new FSM(Enum.GetValues(typeof(FSM_Villager_States)).Length, Enum.GetValues(typeof(FSM_Villager_Flags)).Length);
+
+            allParameters = new StateParameters();
 
             // Set relations
             fsm.SetRelation((int)FSM_Villager_States.GoingToMine, (int)FSM_Villager_Flags.OnMining, (int)FSM_Villager_States.Mine);
@@ -111,30 +113,16 @@ namespace RTSGame.Entities.Agents
             fsm.SetRelation((int)FSM_Villager_States.TakeRefuge, (int)FSM_Villager_Flags.OnGoSaveMaterials, (int)FSM_Villager_States.GoingToSaveMaterials);
             fsm.SetRelation((int)FSM_Villager_States.TakeRefuge, (int)FSM_Villager_Flags.OnSaveMaterials, (int)FSM_Villager_States.SaveMaterials);
 
+            allParameters.Parameters = new object[8] { agentPathNodes, voronoi, this, speed, timePerMine, maxGoldRecolected, goldsPerFood, previousState };
+            //                                               0            1      2      3         4               5                6             7
+
             // Add states
-            fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine,
-                () => (new object[5] { agentPathNodes, voronoi, this, speed, deltaTime }),
-                () => (new object[1] { this }));
-
-            fsm.AddState<MineState>((int)FSM_Villager_States.Mine,
-                () => (new object[5] { this, timePerMine, maxGoldRecolected, goldsPerFood, deltaTime }),
-                () => (new object[3] { voronoi, this, goldsPerFood }));
-
-            fsm.AddState<EatState>((int)FSM_Villager_States.Eat,
-                () => (new object[1] { this }),
-                () => (new object[2] { voronoi, this }));
-
-            fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials,
-                () => (new object[3] { this, speed, deltaTime }),
-                () => (new object[3] { agentPathNodes, this, urbanCenter }));
-
-            fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials,
-                () => (new object[3] { this, urbanCenter, maxGoldRecolected }),
-                () => (new object[1] { this }));
-
-            fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge,
-                () => (new object[4] { this, speed, deltaTime, previousState }),
-                () => (new object[3] { agentPathNodes, this, urbanCenter }));
+            fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine, allParameters, allParameters);
+            fsm.AddState<MineState>((int)FSM_Villager_States.Mine, allParameters, allParameters);
+            fsm.AddState<EatState>((int)FSM_Villager_States.Eat, allParameters, allParameters);
+            fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials, allParameters, allParameters);
+            fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials, allParameters, allParameters);
+            fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge, allParameters, allParameters);
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Villager_States.GoingToMine);

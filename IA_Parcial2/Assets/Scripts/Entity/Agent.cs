@@ -1,5 +1,11 @@
 using UnityEngine;
 
+public enum STATES
+{
+    WALK,
+    EAT
+}
+
 public class Agent : AgentBase
 {
     [Header("Fitness Settings")]
@@ -32,6 +38,9 @@ public class Agent : AgentBase
     public bool Dead { get => dead; set => dead = value; }
     public TEAM Team { get => team; }
     public int FoodsConsumed { get => foodsConsumed; set => foodsConsumed = value; }
+
+
+    public STATES currentState = STATES.WALK;
 
     public void Init(float unit, int size, TEAM team)
     {
@@ -78,8 +87,12 @@ public class Agent : AgentBase
 
     public void ConsumeFood()
     {
-        bool isNearFood = nearFood != null && index == nearFood.Index;
-        UpdateFitness(isNearFood ? consumeNearFoodFitness : consumeFoodFitness);
+        if (currentState == STATES.EAT)
+        {
+            bool isNearFood = nearFood != null && index == nearFood.Index;
+            UpdateFitness(isNearFood ? consumeNearFoodFitness : consumeFoodFitness);
+        }
+
         foodsConsumed++;
         steps = 0;
         PopulationManager.Instance.AddFoodsConsumed(team);
@@ -91,13 +104,19 @@ public class Agent : AgentBase
         inputs[1] = index.y;
         inputs[2] = steps;
 
-        if (nearFood != null)
+        if (currentState == STATES.EAT)
         {
-            inputs[3] = nearFood.Index.x;
-            inputs[4] = nearFood.Index.y;
-            inputs[5] = index.x == nearFood.Index.x ? 1f : -1f;
-            inputs[6] = index.y == nearFood.Index.y ? 1f : -1f;
+            if (nearFood != null)
+            {
+                inputs[3] = nearFood.Index.x;
+                inputs[4] = nearFood.Index.y;
+                inputs[5] = index.x == nearFood.Index.x ? 1f : -1f;
+                inputs[6] = index.y == nearFood.Index.y ? 1f : -1f;
+            }
         }
+
+        Debug.Log(fitness);
+        if (fitness > 5 && currentState == STATES.WALK) currentState++;
     }
 
     protected override void ProcessOutputs(float[] outputs)
@@ -126,6 +145,11 @@ public class Agent : AgentBase
 
             UpdatePositionLimit();
             UpdateIndexLimit();
+
+            if (currentState == STATES.WALK)
+            {
+                if (!stay) UpdateFitness(2);
+            }
 
             if (moveIndex.y < 0 || moveIndex.y > maxIndex) // Chequeo el limite Y
             {

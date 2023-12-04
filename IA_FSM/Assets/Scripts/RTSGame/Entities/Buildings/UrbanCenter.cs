@@ -30,10 +30,9 @@ namespace RTSGame.Entities.Buildings
         public Vector3 Position
         {
             get { return position; }
-            set { position = value; }
         }
 
-        private void Start()
+        private void Awake()
         {
             position = transform.position;
             goldQuantityText = goldQuantity.ToString();

@@ -14,40 +14,38 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private FSM_Caravan_States previousState;
 
-        public override List<Action> GetBehaviours(params object[] parameters)
+        public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
-            Caravan caravan = parameters[0] as Caravan;
-            float speed = Convert.ToSingle(parameters[1]);
-            float deltaTime = Convert.ToSingle(parameters[2]);
-            previousState = (FSM_Caravan_States)parameters[3];
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
+            float speed = Convert.ToSingle(stateParameters.Parameters[3]);
+            previousState = (FSM_Caravan_States)stateParameters.Parameters[5];
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                HandleMovement(caravan, speed, deltaTime);
+                HandleMovement(caravan, speed, caravan.DeltaTime);
             });
 
             return behaviours;
         }
 
-        public override List<Action> GetOnEnterBehaviours(params object[] parameters)
+        public override List<Action> GetOnEnterBehaviours(StateParameters stateParameters)
         {
-            AgentPathNodes agentPathNodes = parameters[0] as AgentPathNodes;
-            Caravan caravan = parameters[1] as Caravan;
-            UrbanCenter urbanCenter = parameters[2] as UrbanCenter;
+            AgentPathNodes agentPathNodes = stateParameters.Parameters[0] as AgentPathNodes;
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
 
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStopAlarm += ReturnPreviousState;
-                SetTargetPosition(caravan, urbanCenter.Position, agentPathNodes);
+                SetTargetPosition(caravan, caravan.UrbanCenter.Position, agentPathNodes);
                 caravan.ReturnsToTakeRefuge = true;
             });
 
             return behaviours;
         }
 
-        public override List<Action> GetExitBehaviours(params object[] parameters)
+        public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
@@ -77,7 +75,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private void HandleMovement(Caravan caravan, float speed, float deltaTime)
         {
-            if (pathVectorList != null)
+            if (pathVectorList.Count > 0)
             {
                 Vector3 targetPosition = pathVectorList[currentPathIndex];
 

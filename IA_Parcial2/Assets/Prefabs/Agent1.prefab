@@ -48,6 +48,7 @@ MonoBehaviour:
   consumeNearFoodFitness: 5
   consumeFoodFitness: 2.5
   outLimitYFitness: 1
+  currentState: 0
 --- !u!1 &7299854100891921039
 GameObject:
   m_ObjectHideFlags: 0
