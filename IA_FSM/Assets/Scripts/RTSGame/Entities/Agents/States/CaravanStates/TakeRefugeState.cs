@@ -83,7 +83,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
                 if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - caravan.Position).normalized;
-                    caravan.Position = caravan.Position + moveDir * speed * deltaTime;
+                    caravan.Position += moveDir * speed * deltaTime;
                 }
                 else
                 {

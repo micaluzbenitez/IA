@@ -80,7 +80,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - villager.Position).normalized;
-                    villager.Position = villager.Position + moveDir * speed * villager.DeltaTime;
+                    villager.Position += moveDir * speed * villager.DeltaTime;
                 }
                 else
                 {

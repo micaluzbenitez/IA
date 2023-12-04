@@ -23,7 +23,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                HandleMovement(villager, speed, villager.DeltaTime);
+                HandleMovement(villager, speed);
             });
 
             return behaviours;
@@ -73,7 +73,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             }
         }
 
-        private void HandleMovement(Villager villager, float speed, float deltaTime)
+        private void HandleMovement(Villager villager, float speed)
         {
             if (pathVectorList.Count > 0 && pathVectorList != null)
             {
@@ -83,7 +83,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 if (Vector3.Distance(villager.Position, targetPosition) > 1f)
                 {
                     Vector3 moveDir = (targetPosition - villager.Position).normalized;
-                    villager.Position = villager.Position + moveDir * speed * deltaTime;
+                    villager.Position += moveDir * speed * villager.DeltaTime;
                 }
                 else
                 {
