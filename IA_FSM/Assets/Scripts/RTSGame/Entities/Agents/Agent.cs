@@ -62,7 +62,12 @@ namespace RTSGame.Entities.Agents
         {
             deltaTime = Time.deltaTime;
             transform.position = position;
+
+            /*
+            transform.position += transform.up * speed * Time.deltaTime;
+            position = transform.position;
             transform.up = Vector3.Lerp(transform.up, ACS(), turnSpeed * Time.deltaTime);
+            */
         }
 
         protected virtual void OnDrawGizmos()

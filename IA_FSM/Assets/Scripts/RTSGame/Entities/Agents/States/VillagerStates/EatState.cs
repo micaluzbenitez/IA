@@ -13,6 +13,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
+            Voronoi voronoi = stateParameters.Parameters[1] as Voronoi;
             Villager villager = stateParameters.Parameters[2] as Villager;
 
             List<Action> behaviours = new List<Action>();
@@ -22,6 +23,10 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 {
                     villager.NeedsFood = false;
                     Transition((int)FSM_Villager_Flags.OnMining);
+                }
+                else
+                {
+                    goldMine = voronoi.GetMineCloser(villager.Position);
                 }
             });
 
