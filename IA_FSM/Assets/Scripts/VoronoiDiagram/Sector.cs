@@ -251,7 +251,6 @@ namespace VoronoiDiagram
                 if (CheckPointInSector(nodePosition))
                 {
                     nodesInSector.Add(node);
-                    //Debug.Log(nodesInSector.Count);
                 }
             }
 
@@ -267,7 +266,6 @@ namespace VoronoiDiagram
                 totalWeight += node.GetPathNodeCost();
             }
 
-            Debug.Log(totalWeight);
             return totalWeight;
         }
 
