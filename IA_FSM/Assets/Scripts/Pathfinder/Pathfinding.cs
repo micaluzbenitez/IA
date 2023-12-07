@@ -13,6 +13,10 @@ namespace Pathfinder
         private List<PathNode> openList;    // Nodos para buscar
         private List<PathNode> closedList;  // Nodos que ya fueron buscados
 
+        private List<PathNode> nodesInSector = new List<PathNode>();
+
+        public List<PathNode> NodesInSector => nodesInSector;
+
         public static Pathfinding Instance { get; private set; }
         public Pathfinding(int width, int height, float cellSize = 10f, Vector3 originPosition = default)
         {
@@ -25,6 +29,7 @@ namespace Pathfinder
                 for (int y = 0; y < height; y++)
                 {
                     GetNode(x, y).SetRandomType();
+                    nodesInSector.Add(GetNode(x, y));
                 }
             }
         }

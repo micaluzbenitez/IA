@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using RTSGame.Map;
 using RTSGame.Entities.Buildings;
+using Pathfinder;
 
 namespace VoronoiDiagram
 {
@@ -13,6 +14,7 @@ namespace VoronoiDiagram
         private Color color;
         private List<Segment> segments = new List<Segment>();
         private List<Vector2> intersections = new List<Vector2>();
+        private List<PathNode> nodesInsideSector = new List<PathNode>();
         private Vector3[] points;
 
         public GoldMine Mine { get => mine; }
@@ -236,6 +238,37 @@ namespace VoronoiDiagram
             }
 
             return inside;
+        }
+
+        public List<PathNode> GetNodesInSector(List<PathNode> allNodes)
+        {
+            List<PathNode> nodesInSector = new List<PathNode>();
+
+            foreach (PathNode node in allNodes)
+            {
+                Vector3 nodePosition = MapGenerator.Instance.Pathfinding.GetGrid().GetWorldPosition(node.x, node.y);
+
+                if (CheckPointInSector(nodePosition))
+                {
+                    nodesInSector.Add(node);
+                    //Debug.Log(nodesInSector.Count);
+                }
+            }
+
+            return nodesInSector;
+        }
+
+        public int CalculateTotalWeight(List<PathNode> nodesInSector)
+        {
+            int totalWeight = 0;
+
+            foreach (PathNode node in nodesInSector)
+            {
+                totalWeight += node.GetPathNodeCost();
+            }
+
+            Debug.Log(totalWeight);
+            return totalWeight;
         }
 
         public void Draw()

@@ -38,6 +38,8 @@ namespace RTSGame.Map
 
         private Pathfinding pathfinding;
 
+        public Pathfinding Pathfinding => pathfinding;
+
         public static List<GoldMine> goldMines = new List<GoldMine>();
         public static List<GoldMine> goldMinesBeingUsed = new List<GoldMine>();
 
