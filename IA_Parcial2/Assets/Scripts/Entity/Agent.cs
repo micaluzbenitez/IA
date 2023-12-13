@@ -115,7 +115,6 @@ public class Agent : AgentBase
             }
         }
 
-        Debug.Log(fitness);
         if (fitness > 5 && currentState == STATES.WALK) currentState++;
     }
 
