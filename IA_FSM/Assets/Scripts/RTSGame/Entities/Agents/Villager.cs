@@ -3,6 +3,8 @@ using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Agents.States.VillagerStates;
 using RTSGame.Map;
+using System.Collections.Generic;
+using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents
 {
@@ -46,6 +48,9 @@ namespace RTSGame.Entities.Agents
         private string goldQuantityText;
         private bool needsFood = false;
         private bool returnsToTakeRefuge = false;
+        private int currentPathIndex;
+        private List<Vector3> pathVectorList = new List<Vector3>();
+        private GoldMine goldMine;
 
         StateParameters allParameters;
 
@@ -64,6 +69,21 @@ namespace RTSGame.Entities.Agents
         {
             get { return returnsToTakeRefuge; }
             set { returnsToTakeRefuge = value; }
+        }
+        public int CurrentPathIndex
+        {
+            get { return currentPathIndex; }
+            set { currentPathIndex = value; }
+        }
+        public List<Vector3> PathVectorList
+        {
+            get { return pathVectorList; }
+            set { pathVectorList = value; }
+        }
+        public GoldMine GoldMine
+        {
+            get { return goldMine; }
+            set { goldMine = value; }
         }
 
         private void Awake()
@@ -116,12 +136,12 @@ namespace RTSGame.Entities.Agents
             //                                               0            1      2      3         4               5                6             7
 
             // Add states
-            fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine, allParameters, allParameters);
-            fsm.AddState<MineState>((int)FSM_Villager_States.Mine, allParameters, allParameters);
-            fsm.AddState<EatState>((int)FSM_Villager_States.Eat, allParameters, allParameters);
-            fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials, allParameters, allParameters);
-            fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials, allParameters, allParameters);
-            fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge, allParameters, allParameters);
+            fsm.AddState<GoingToMineState>((int)FSM_Villager_States.GoingToMine, allParameters, allParameters, allParameters);
+            fsm.AddState<MineState>((int)FSM_Villager_States.Mine, allParameters, allParameters, allParameters);
+            fsm.AddState<EatState>((int)FSM_Villager_States.Eat, allParameters, allParameters, allParameters);
+            fsm.AddState<GoingToSaveMaterialsState>((int)FSM_Villager_States.GoingToSaveMaterials, allParameters, allParameters, allParameters);
+            fsm.AddState<SaveMaterialsState>((int)FSM_Villager_States.SaveMaterials, allParameters, allParameters, allParameters);
+            fsm.AddState<TakeRefugeState>((int)FSM_Villager_States.TakeRefuge, allParameters, allParameters, allParameters);
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Villager_States.GoingToMine);

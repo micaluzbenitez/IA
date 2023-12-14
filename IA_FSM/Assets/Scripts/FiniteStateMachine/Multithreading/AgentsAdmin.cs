@@ -11,7 +11,7 @@ namespace FiniteStateMachine.Multithreading
         private ConcurrentBag<Agent> agents = new ConcurrentBag<Agent>(); // ConcurrentBag tiene todo lo que tiene una lista, pero para multithreading
         private ParallelOptions options = null;
 
-        private const int maxDegreeOfParallelism = 1;
+        private const int maxDegreeOfParallelism = 5;
 
         private void Start()
         {

@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
-using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents.States.CaravanStates
 {
     public class GoingToTakeFoodState : State
     {
-        private int currentPathIndex;
-        private List<Vector3> pathVectorList = new List<Vector3>();
-
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
             Caravan caravan = stateParameters.Parameters[2] as Caravan;
@@ -44,11 +40,13 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
-                pathVectorList = null;
+                caravan.PathVectorList = null;
             });
 
             return behaviours;
@@ -61,20 +59,20 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private void SetTargetPosition(Caravan caravan, Vector3 targetPosition, AgentPathNodes agentPathNodes)
         {
-            currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(caravan.Position, targetPosition, agentPathNodes.pathNodeWalkables);
+            caravan.CurrentPathIndex = 0;
+            caravan.PathVectorList = Pathfinding.Instance.FindPath(caravan.Position, targetPosition, agentPathNodes.pathNodeWalkables);
 
-            if (pathVectorList != null && pathVectorList.Count > 1)
+            if (caravan.PathVectorList != null && caravan.PathVectorList.Count > 1)
             {
-                pathVectorList.RemoveAt(0);
+                caravan.PathVectorList.RemoveAt(0);
             }
         }
 
         private void HandleMovement(Caravan caravan, float speed, float deltaTime)
         {
-            if (pathVectorList.Count > 0 && pathVectorList != null)
+            if (caravan.PathVectorList != null && caravan.PathVectorList.Count > 0)
             {
-                Vector3 targetPosition = pathVectorList[currentPathIndex];
+                Vector3 targetPosition = caravan.PathVectorList[caravan.CurrentPathIndex];
                 caravan.Target = targetPosition;
 
                 if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
@@ -84,10 +82,10 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
                 }
                 else
                 {
-                    currentPathIndex++;
-                    if (currentPathIndex >= pathVectorList.Count)
+                    caravan.CurrentPathIndex++;
+                    if (caravan.CurrentPathIndex >= caravan.PathVectorList.Count)
                     {
-                        pathVectorList = null; // Stop moving
+                        caravan.PathVectorList = null; // Stop moving
                         Transition((int)FSM_Caravan_Flags.OnTakingFood);
                     }
                 }

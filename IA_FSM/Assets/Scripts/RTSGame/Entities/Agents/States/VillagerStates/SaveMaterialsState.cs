@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using FiniteStateMachine;
-using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents.States.VillagerStates
 {

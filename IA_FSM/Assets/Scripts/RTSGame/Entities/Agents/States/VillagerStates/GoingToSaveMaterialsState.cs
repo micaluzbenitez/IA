@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinder;
 using FiniteStateMachine;
-using RTSGame.Entities.Buildings; 
 
 namespace RTSGame.Entities.Agents.States.VillagerStates
 {
     public class GoingToSaveMaterialsState : State
     {
-        private int currentPathIndex;
-        private List<Vector3> pathVectorList = new List<Vector3>();
-
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
             Villager villager = stateParameters.Parameters[2] as Villager;
@@ -44,11 +40,13 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
+            Villager villager = stateParameters.Parameters[2] as Villager;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
-                pathVectorList = null;
+                villager.PathVectorList = null;
             });
 
             return behaviours;
@@ -61,20 +59,20 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         private void SetTargetPosition(Villager villager, Vector3 targetPosition, AgentPathNodes agentPathNodes)
         {
-            currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(villager.Position, targetPosition, agentPathNodes.pathNodeWalkables);
+            villager.CurrentPathIndex = 0;
+            villager.PathVectorList = Pathfinding.Instance.FindPath(villager.Position, targetPosition, agentPathNodes.pathNodeWalkables);
 
-            if (pathVectorList != null && pathVectorList.Count > 1)
+            if (villager.PathVectorList != null && villager.PathVectorList.Count > 1)
             {
-                pathVectorList.RemoveAt(0);
+                villager.PathVectorList.RemoveAt(0);
             }
         }
 
         private void HandleMovement(Villager villager, float speed)
         {
-            if (pathVectorList.Count > 0 && pathVectorList != null)
+            if (villager.PathVectorList != null && villager.PathVectorList.Count > 0)
             {
-                Vector3 targetPosition = pathVectorList[currentPathIndex];
+                Vector3 targetPosition = villager.PathVectorList[villager.CurrentPathIndex];
                 villager.Target = targetPosition;
 
                 if (Vector3.Distance(villager.Position, targetPosition) > 1f)
@@ -84,10 +82,10 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 }
                 else
                 {
-                    currentPathIndex++;
-                    if (currentPathIndex >= pathVectorList.Count)
+                    villager.CurrentPathIndex++;
+                    if (villager.CurrentPathIndex >= villager.PathVectorList.Count)
                     {
-                        pathVectorList = null; // Stop moving
+                        villager.PathVectorList = null; // Stop moving
                         Transition((int)FSM_Villager_Flags.OnSaveMaterials);
                     }
                 }

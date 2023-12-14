@@ -3,6 +3,8 @@ using UnityEngine;
 using FiniteStateMachine;
 using RTSGame.Entities.Agents.States.CaravanStates;
 using RTSGame.Map;
+using System.Collections.Generic;
+using RTSGame.Entities.Buildings;
 
 namespace RTSGame.Entities.Agents
 {
@@ -39,6 +41,9 @@ namespace RTSGame.Entities.Agents
         private FSM_Caravan_States previousState;
         private string foodQuantityText;
         private bool returnsToTakeRefuge = false;
+        private int currentPathIndex;
+        private List<Vector3> pathVectorList = new List<Vector3>();
+        private GoldMine goldMine;
 
         StateParameters allParameters;
 
@@ -52,6 +57,21 @@ namespace RTSGame.Entities.Agents
         {
             get { return returnsToTakeRefuge; }
             set { returnsToTakeRefuge = value; }
+        }
+        public int CurrentPathIndex
+        {
+            get { return currentPathIndex; }
+            set { currentPathIndex = value; }
+        }
+        public List<Vector3> PathVectorList
+        {
+            get { return pathVectorList; }
+            set { pathVectorList = value; }
+        }
+        public GoldMine GoldMine
+        {
+            get { return goldMine; }
+            set { goldMine = value; }
         }
 
         private void Awake()
@@ -97,11 +117,11 @@ namespace RTSGame.Entities.Agents
             //                                                0            1      2      3        4               5
 
             // Add states
-            fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood, allParameters, allParameters);
-            fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood, allParameters, allParameters);
-            fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine, allParameters, allParameters);
-            fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood, allParameters, allParameters);
-            fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge, allParameters, allParameters);
+            fsm.AddState<GoingToTakeFoodState>((int)FSM_Caravan_States.GoingToTakeFood, allParameters, allParameters, allParameters);
+            fsm.AddState<TakeFoodState>((int)FSM_Caravan_States.TakeFood, allParameters, allParameters, allParameters);
+            fsm.AddState<GoingToMineState>((int)FSM_Caravan_States.GoingToMine, allParameters, allParameters, allParameters);
+            fsm.AddState<DeliverMineState>((int)FSM_Caravan_States.DeliverFood, allParameters, allParameters, allParameters);
+            fsm.AddState<TakeRefugeState>((int)FSM_Caravan_States.TakeRefuge, allParameters, allParameters, allParameters);
 
             // Start FSM
             fsm.SetCurrentStateForced((int)FSM_Caravan_States.TakeFood);

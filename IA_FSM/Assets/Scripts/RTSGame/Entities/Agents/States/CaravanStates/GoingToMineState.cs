@@ -10,11 +10,6 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 {
     public class GoingToMineState : State
     {
-        private int currentPathIndex;
-        private List<Vector3> pathVectorList = new List<Vector3>();
-
-        private GoldMine goldMine;
-
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
             AgentPathNodes agentPathNodes = stateParameters.Parameters[0] as AgentPathNodes;
@@ -25,10 +20,10 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (!goldMine) CheckForGoldMine(caravan, agentPathNodes, voronoi);
-                if (pathVectorList != null) HandleMovement(caravan, speed);
+                if (!caravan.GoldMine) CheckForGoldMine(caravan, agentPathNodes, voronoi);
+                if (caravan.PathVectorList != null) HandleMovement(caravan, speed);
 
-                CheckActualGoldMine();
+                CheckActualGoldMine(caravan);
             });
 
             return behaviours;
@@ -50,12 +45,14 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         public override List<Action> GetExitBehaviours(StateParameters stateParameters)
         {
+            Caravan caravan = stateParameters.Parameters[2] as Caravan;
+
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
-                goldMine = null;
-                pathVectorList = null;
+                caravan.GoldMine = null;
+                caravan.PathVectorList = null;
             });
 
             return behaviours;
@@ -68,30 +65,30 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private void CheckForGoldMine(Caravan caravan, AgentPathNodes agentPathNodes, Voronoi voronoi)
         {
-            goldMine = voronoi.GetMineCloser(caravan.Position);
+            caravan.GoldMine = voronoi.GetMineCloser(caravan.Position);
 
-            if (goldMine)
+            if (caravan.GoldMine)
             {
-                SetTargetPosition(caravan, goldMine, agentPathNodes);
+                SetTargetPosition(caravan, caravan.GoldMine, agentPathNodes);
             }
         }
 
         protected void SetTargetPosition(Caravan caravan, GoldMine goldMine, AgentPathNodes agentPathNodes)
         {
-            currentPathIndex = 0;
-            pathVectorList = Pathfinding.Instance.FindPath(caravan.Position, goldMine.Position, agentPathNodes.pathNodeWalkables);
+            caravan.CurrentPathIndex = 0;
+            caravan.PathVectorList = Pathfinding.Instance.FindPath(caravan.Position, goldMine.Position, agentPathNodes.pathNodeWalkables);
 
-            if (pathVectorList != null && pathVectorList.Count > 1)
+            if (caravan.PathVectorList != null && caravan.PathVectorList.Count > 1)
             {
-                pathVectorList.RemoveAt(0);
+                caravan.PathVectorList.RemoveAt(0);
             }
         }
 
         protected void HandleMovement(Caravan caravan, float speed)
         {
-            if (pathVectorList.Count > 0 && pathVectorList != null)
+            if (caravan.PathVectorList != null && caravan.PathVectorList.Count > 0)
             {
-                Vector3 targetPosition = pathVectorList[currentPathIndex];
+                Vector3 targetPosition = caravan.PathVectorList[caravan.CurrentPathIndex];
                 caravan.Target = targetPosition;
 
                 if (Vector3.Distance(caravan.Position, targetPosition) > 1f)
@@ -101,21 +98,21 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
                 }
                 else
                 {
-                    currentPathIndex++;
-                    if (currentPathIndex >= pathVectorList.Count)
+                    caravan.CurrentPathIndex++;
+                    if (caravan.CurrentPathIndex >= caravan.PathVectorList.Count)
                     {
-                        pathVectorList = null; // Stop moving
+                        caravan.PathVectorList = null; // Stop moving
                         Transition((int)FSM_Caravan_Flags.OnDeliveringFood);
                     }
                 }
             }
         }
 
-        private void CheckActualGoldMine()
+        private void CheckActualGoldMine(Caravan caravan)
         {
-            if (goldMine)
+            if (caravan.GoldMine)
             {
-                if (!goldMine.BeingUsed) goldMine = null;
+                if (!caravan.GoldMine.BeingUsed) caravan.GoldMine = null;
             }
         }
     }
