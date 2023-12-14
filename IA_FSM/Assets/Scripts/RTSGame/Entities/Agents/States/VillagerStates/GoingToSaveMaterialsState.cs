@@ -86,7 +86,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                     if (villager.CurrentPathIndex >= villager.PathVectorList.Count)
                     {
                         villager.PathVectorList = null; // Stop moving
-                        Transition((int)FSM_Villager_Flags.OnSaveMaterials);
+                        //Transition((int)FSM_Villager_Flags.OnSaveMaterials);
                     }
                 }
             }

@@ -10,6 +10,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
     public class EatState : State
     {
         private GoldMine goldMine;
+        private Villager villager1;
 
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
@@ -43,6 +44,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             {
                 Alarm.OnStartAlarm += TakeRefuge;
                 goldMine = voronoi.GetMineCloser(villager.Position);
+                villager1 = villager;
 
                 // Check when returns to take refuge state
                 if (villager.ReturnsToTakeRefuge)
@@ -75,7 +77,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         private void TakeRefuge()
         {
-            if (goldMine) goldMine.RemoveVillager();
+            if (goldMine) goldMine.RemoveVillager(villager1);
             Transition((int)FSM_Villager_Flags.OnTakingRefuge);
         }
     }

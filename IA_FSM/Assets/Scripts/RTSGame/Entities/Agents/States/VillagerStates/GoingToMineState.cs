@@ -91,6 +91,13 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         private void HandleMovement(Villager villager, float speed)
         {
+            if (!goldMine.WithGold)
+            {
+                goldMine = null;
+                villager.PathVectorList = null;
+                return;
+            }
+
             if (villager.PathVectorList != null && villager.PathVectorList.Count > 0)
             {
                 if (villager.CurrentPathIndex >= villager.PathVectorList.Count) return;
@@ -108,7 +115,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                     villager.CurrentPathIndex++;
                     if (villager.CurrentPathIndex >= villager.PathVectorList.Count)
                     {
-                        goldMine.AddVillager();
+                        goldMine.AddVillager(villager);
                         villager.PathVectorList = null; // Stop moving
                         Transition((int)FSM_Villager_Flags.OnMining);
                     }

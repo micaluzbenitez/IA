@@ -47,8 +47,8 @@ namespace Pathfinder
         private readonly Dictionary<PathNode_Type, int> pathNodeCosts = new Dictionary<PathNode_Type, int>
         {
             { PathNode_Type.GRASS, 0 },
-            { PathNode_Type.MUD, 5 },
-            { PathNode_Type.WATER, 10 }
+            { PathNode_Type.MUD, 20 },
+            { PathNode_Type.WATER, 50 }
         };
 
         public PathNode_Type pathNodeType = PathNode_Type.GRASS;

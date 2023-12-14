@@ -14,6 +14,11 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
+                // Deliver gold
+                caravan.UrbanCenter.DeliverGold(int.Parse(caravan.GoldQuantityText));
+                caravan.GoldQuantityText = "0";
+
+                // Deliver food
                 caravan.FoodQuantityText = foodPerTravel.ToString();
                 Transition((int)FSM_Caravan_Flags.OnGoMine);
             });

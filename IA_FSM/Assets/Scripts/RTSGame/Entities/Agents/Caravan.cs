@@ -37,9 +37,11 @@ namespace RTSGame.Entities.Agents
 
         [Header("UI")]
         [SerializeField] private TextMesh foodText;
+        [SerializeField] private TextMesh goldText;
 
         private FSM_Caravan_States previousState;
         private string foodQuantityText;
+        private string goldQuantityText;
         private bool returnsToTakeRefuge = false;
         private int currentPathIndex;
         private List<Vector3> pathVectorList = new List<Vector3>();
@@ -51,6 +53,11 @@ namespace RTSGame.Entities.Agents
         {
             get { return foodQuantityText; }
             set { foodQuantityText = value; }
+        }
+        public string GoldQuantityText
+        {
+            get { return goldQuantityText; }
+            set { goldQuantityText = value; }
         }
         public bool ReturnsToTakeRefuge
         {
@@ -84,6 +91,7 @@ namespace RTSGame.Entities.Agents
             base.Start();
 
             foodQuantityText = foodText.text;
+            goldQuantityText = goldText.text;
             fsm = new FSM(Enum.GetValues(typeof(FSM_Caravan_States)).Length, Enum.GetValues(typeof(FSM_Caravan_Flags)).Length);
 
             allParameters = new StateParameters();
@@ -129,6 +137,7 @@ namespace RTSGame.Entities.Agents
         {
             base.Update();
             foodText.text = foodQuantityText;
+            goldText.text = goldQuantityText;
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;

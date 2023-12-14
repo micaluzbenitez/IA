@@ -238,9 +238,9 @@ MonoBehaviour:
   - pathNodeType: 0
     cost: 1
   - pathNodeType: 1
-    cost: 2
+    cost: 20
   - pathNodeType: 2
-    cost: 3
+    cost: 50
 --- !u!114 &3763820242339453498
 MonoBehaviour:
   m_ObjectHideFlags: 0

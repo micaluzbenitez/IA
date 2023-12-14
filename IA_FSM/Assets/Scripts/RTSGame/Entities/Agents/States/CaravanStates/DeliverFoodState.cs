@@ -10,6 +10,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
     public class DeliverMineState : State
     {
         private GoldMine goldMine;
+        private int goldQuantity;
 
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
@@ -21,6 +22,16 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             {
                 if (goldMine && goldMine.BeingUsed)
                 {
+                    // Take villagers gold
+                    for (int i = 0; i < goldMine.Villagers.Count; i++)
+                    {
+                        goldQuantity += int.Parse(goldMine.Villagers[i].GoldQuantityText);
+                        goldMine.Villagers[i].GoldQuantityText = "0";
+                    }
+                    caravan.GoldQuantityText = goldQuantity.ToString();
+                    goldQuantity = 0;
+
+                    // Deliver food
                     goldMine.DeliverFood(foodPerTravel);
                     caravan.FoodQuantityText = "0";
                     Transition((int)FSM_Caravan_Flags.OnGoTakeFood);

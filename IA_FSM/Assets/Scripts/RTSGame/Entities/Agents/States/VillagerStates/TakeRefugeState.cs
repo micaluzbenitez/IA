@@ -104,12 +104,12 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
                 case FSM_Villager_States.Eat:
                     Transition((int)FSM_Villager_Flags.OnGoEat);
                     break;
-                case FSM_Villager_States.GoingToSaveMaterials:
-                    Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
-                    break;
-                case FSM_Villager_States.SaveMaterials:
-                    Transition((int)FSM_Villager_Flags.OnSaveMaterials);
-                    break;
+                //case FSM_Villager_States.GoingToSaveMaterials:
+                //    Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
+                //    break;
+                //case FSM_Villager_States.SaveMaterials:
+                //    Transition((int)FSM_Villager_Flags.OnSaveMaterials);
+                //    break;
             }
         }
     }

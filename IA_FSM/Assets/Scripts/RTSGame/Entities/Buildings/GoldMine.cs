@@ -1,5 +1,7 @@
+using RTSGame.Entities.Agents;
 using RTSGame.Map;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RTSGame.Entities.Buildings
@@ -17,7 +19,11 @@ namespace RTSGame.Entities.Buildings
         private Vector3 position;
         private int foodQuantity;
         private int villagersOn;
+
         private bool beingUsed = false;
+        private bool withGold;
+        private List<Villager> villagers = new List<Villager>();
+
         private string goldQuantityText;
         private string foodQuantityText;
 
@@ -29,6 +35,8 @@ namespace RTSGame.Entities.Buildings
         }
 
         public bool BeingUsed => beingUsed;
+        public bool WithGold => withGold;
+        public List<Villager> Villagers => villagers;
 
         // Actions
         public Action OnGoldMineBeingUsed;
@@ -46,6 +54,9 @@ namespace RTSGame.Entities.Buildings
         {
             goldText.text = goldQuantityText;
             foodText.text = foodQuantityText;
+
+            if (goldQuantity > 0) withGold = true;
+            else withGold = false;
         }
 
         public bool ConsumeGold()
@@ -82,9 +93,10 @@ namespace RTSGame.Entities.Buildings
             return true;
         }
 
-        public void AddVillager()
+        public void AddVillager(Villager villager)
         {
             villagersOn++;
+            villagers.Add(villager);
 
             if (!beingUsed)
             {
@@ -94,9 +106,10 @@ namespace RTSGame.Entities.Buildings
             }
         }
 
-        public void RemoveVillager()
+        public void RemoveVillager(Villager villager)
         {
             villagersOn--;
+            villagers.Remove(villager);
 
             if (villagersOn <= 0 && beingUsed)
             {

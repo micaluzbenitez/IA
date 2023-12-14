@@ -15,6 +15,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
         private GoldMine goldMine;
         private int goldQuantity;
         private int totalGoldsRecolected;
+        private Villager villager1;
 
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
@@ -44,6 +45,7 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             {
                 Alarm.OnStartAlarm += TakeRefuge;
                 goldMine = voronoi.GetMineCloser(villager.Position);
+                villager1 = villager;
 
                 // Checks when returns to take refuge state
                 if (villager.ReturnsToTakeRefuge)
@@ -84,6 +86,8 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
         private void Mine(Villager villager, int maxGoldRecolected, int goldsPerFood)
         {
+            goldQuantity = int.Parse(villager.GoldQuantityText);
+
             if (goldMine && goldMine.ConsumeGold())
             {
                 goldQuantity++;
@@ -93,9 +97,9 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
 
                 if (goldQuantity == maxGoldRecolected) // Guardar oro
                 {
-                    goldQuantity = 0;
-                    goldMine.RemoveVillager();
-                    Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
+                    //goldQuantity = 0;
+                    //goldMine.RemoveVillager();
+                    //Transition((int)FSM_Villager_Flags.OnGoSaveMaterials);
                 }
                 else if (totalGoldsRecolected % goldsPerFood == 0) // Comer
                 {
@@ -109,14 +113,14 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             }
             else
             {
-                if (goldMine) goldMine.RemoveVillager();
+                if (goldMine) goldMine.RemoveVillager(villager);
                 Transition((int)FSM_Villager_Flags.OnGoMine);
             }
         }
 
         private void TakeRefuge()
         {
-            if (goldMine) goldMine.RemoveVillager();
+            if (goldMine) goldMine.RemoveVillager(villager1);
             Transition((int)FSM_Villager_Flags.OnTakingRefuge);
         }
     }
