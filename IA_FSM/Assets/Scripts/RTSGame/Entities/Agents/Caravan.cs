@@ -132,6 +132,8 @@ namespace RTSGame.Entities.Agents
 
             previousState = (FSM_Caravan_States)fsm.previousStateIndex;
             currentState = (FSM_Caravan_States)fsm.currentStateIndex;
+
+            Debug.Log(currentState);
         }
 
         private void RecalculateVoronoi()

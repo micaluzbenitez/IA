@@ -61,13 +61,6 @@ namespace VoronoiDiagram
                 // Calculo las intersecciones
                 sectors[i].SetIntersections();
             }
-
-            for (int i = 0; i < sectors.Count; i++)
-            {
-                List<PathNode> allNodes = MapGenerator.Instance.Pathfinding.NodesInSector;
-                List<PathNode> nodesInSector = sectors[i].GetNodesInSector(allNodes);
-                sectors[i].CalculateTotalWeight(nodesInSector);
-            }
         }
 
         public GoldMine GetMineCloser(Vector3 agentPosition)

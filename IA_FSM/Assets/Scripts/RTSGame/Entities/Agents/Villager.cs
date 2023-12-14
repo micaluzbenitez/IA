@@ -152,6 +152,8 @@ namespace RTSGame.Entities.Agents
 
             previousState = (FSM_Villager_States)fsm.previousStateIndex;
             currentState = (FSM_Villager_States)fsm.currentStateIndex;
+
+            Debug.Log(currentState);
         }
 
         private void RecalculateVoronoi()

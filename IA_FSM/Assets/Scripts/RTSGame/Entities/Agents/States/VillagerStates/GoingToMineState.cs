@@ -38,6 +38,9 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Villager_Flags.OnTakingRefuge); };
                 villager.ReturnsToTakeRefuge = false;
+                goldMine = null;
+                villager.PathVectorList = null;
+                villager.CurrentPathIndex = 0;
             });
 
             return behaviours;
@@ -90,6 +93,8 @@ namespace RTSGame.Entities.Agents.States.VillagerStates
         {
             if (villager.PathVectorList != null && villager.PathVectorList.Count > 0)
             {
+                if (villager.CurrentPathIndex >= villager.PathVectorList.Count) return;
+
                 Vector3 targetPosition = villager.PathVectorList[villager.CurrentPathIndex];
                 villager.Target = targetPosition;
 
