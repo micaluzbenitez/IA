@@ -10,6 +10,8 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 {
     public class GoingToMineState : State
     {
+        private GoldMine goldMine;
+
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
             AgentPathNodes agentPathNodes = stateParameters.Parameters[0] as AgentPathNodes;
@@ -20,7 +22,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (!caravan.GoldMine) CheckForGoldMine(caravan, agentPathNodes, voronoi);
+                if (!goldMine) CheckForGoldMine(caravan, agentPathNodes, voronoi);
                 if (caravan.PathVectorList != null) HandleMovement(caravan, speed);
 
                 CheckActualGoldMine(caravan);
@@ -51,7 +53,7 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm -= () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
-                caravan.GoldMine = null;
+                goldMine = null;
                 caravan.PathVectorList = null;
             });
 
@@ -65,11 +67,11 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private void CheckForGoldMine(Caravan caravan, AgentPathNodes agentPathNodes, Voronoi voronoi)
         {
-            caravan.GoldMine = voronoi.GetMineCloser(caravan.Position);
+            goldMine = voronoi.GetMineCloser(caravan.Position);
 
-            if (caravan.GoldMine)
+            if (goldMine)
             {
-                SetTargetPosition(caravan, caravan.GoldMine, agentPathNodes);
+                SetTargetPosition(caravan, goldMine, agentPathNodes);
             }
         }
 
@@ -110,9 +112,9 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 
         private void CheckActualGoldMine(Caravan caravan)
         {
-            if (caravan.GoldMine)
+            if (goldMine)
             {
-                if (!caravan.GoldMine.BeingUsed) caravan.GoldMine = null;
+                if (!goldMine.BeingUsed) goldMine = null;
             }
         }
     }

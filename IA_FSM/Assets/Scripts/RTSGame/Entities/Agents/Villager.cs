@@ -50,7 +50,6 @@ namespace RTSGame.Entities.Agents
         private bool returnsToTakeRefuge = false;
         private int currentPathIndex;
         private List<Vector3> pathVectorList = new List<Vector3>();
-        private GoldMine goldMine;
 
         StateParameters allParameters;
 
@@ -79,11 +78,6 @@ namespace RTSGame.Entities.Agents
         {
             get { return pathVectorList; }
             set { pathVectorList = value; }
-        }
-        public GoldMine GoldMine
-        {
-            get { return goldMine; }
-            set { goldMine = value; }
         }
 
         private void Awake()

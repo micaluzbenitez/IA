@@ -9,6 +9,8 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
 {
     public class DeliverMineState : State
     {
+        private GoldMine goldMine;
+
         public override List<Action> GetBehaviours(StateParameters stateParameters)
         {
             Caravan caravan = stateParameters.Parameters[2] as Caravan;
@@ -17,9 +19,9 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             List<Action> behaviours = new List<Action>();
             behaviours.Add(() =>
             {
-                if (caravan.GoldMine && caravan.GoldMine.BeingUsed)
+                if (goldMine && goldMine.BeingUsed)
                 {
-                    caravan.GoldMine.DeliverFood(foodPerTravel);
+                    goldMine.DeliverFood(foodPerTravel);
                     caravan.FoodQuantityText = "0";
                     Transition((int)FSM_Caravan_Flags.OnGoTakeFood);
                 }
@@ -41,12 +43,12 @@ namespace RTSGame.Entities.Agents.States.CaravanStates
             behaviours.Add(() =>
             {
                 Alarm.OnStartAlarm += () => { Transition((int)FSM_Caravan_Flags.OnTakingRefuge); };
-                caravan.GoldMine = voronoi.GetMineCloser(caravan.Position);
+                goldMine = voronoi.GetMineCloser(caravan.Position);
 
                 // Check when returns to take refuge state
                 if (caravan.ReturnsToTakeRefuge)
                 {
-                    if (Vector2.Distance(caravan.Position, caravan.GoldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
+                    if (Vector2.Distance(caravan.Position, goldMine.Position) > 1f) Transition((int)FSM_Villager_Flags.OnGoMine);
                     caravan.ReturnsToTakeRefuge = false;
                 }
 
